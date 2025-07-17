@@ -109,13 +109,13 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           </p>
         </div>
 
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-600 font-medium mb-2">Demo Accounts:</p>
-          <div className="text-xs text-gray-500 space-y-1">
-            <p>Student: 9876543210 / password</p>
-            <p>Faculty: 9876543211 / password</p>
-          </div>
-        </div>
+        {/* <div className="mt-8 p-4 bg-gray-50 rounded-lg"> */}
+        {/* <p className="text-sm text-gray-600 font-medium mb-2">Demo Accounts:</p> */}
+        {/* <div className="text-xs text-gray-500 space-y-1"> */}
+        {/* <p>Student: 9876543210 / password</p> */}
+        {/* <p>Faculty: 9876543211 / password</p> */}
+        {/* </div> */}
+        {/* </div> */}
       </div>
     </div>
   );
