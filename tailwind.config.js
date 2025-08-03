@@ -3,32 +3,35 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        isans: ["Instrument Sans", "sans-serif"],
+      },
       colors: {
-        // NSS Blue Theme
+        // NSS Primary Theme - Based on gradient colors #0F2027, #203A43, #2C5364
         nss: {
-          50: "#eff6ff", // Very light blue
-          100: "#dbeafe", // Light blue
-          200: "#bfdbfe", // Lighter blue
-          300: "#93c5fd", // Light blue
-          400: "#60a5fa", // Medium light blue
-          500: "#3b82f6", // Primary blue (NSS blue)
-          600: "#2563eb", // Darker blue
-          700: "#1d4ed8", // Dark blue
-          800: "#1e40af", // Very dark blue
-          900: "#1e3a8a", // Darkest blue
-          950: "#172554", // Ultra dark blue
+          50: "#f7f8f9", // Very light blue-gray
+          100: "#e8eef2", // Light blue-gray
+          200: "#d1dce5", // Lighter blue-gray
+          300: "#b3c4d1", // Light blue-gray
+          400: "#8fa5b8", // Medium blue-gray
+          500: "#2C5364", // Primary color (lightest of the three)
+          600: "#203A43", // Middle color
+          700: "#1a3139", // Darker variant
+          800: "#0F2027", // Darkest of the three
+          900: "#0c1a1f", // Very dark variant
+          950: "#081318", // Ultra dark variant
         },
         primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6", // Main NSS blue
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
+          50: "#f7f8f9",
+          100: "#e8eef2",
+          200: "#d1dce5",
+          300: "#b3c4d1",
+          400: "#8fa5b8",
+          500: "#2C5364", // Main NSS primary color
+          600: "#203A43",
+          700: "#1a3139",
+          800: "#0F2027",
+          900: "#0c1a1f",
         },
         secondary: {
           50: "#f8fafc",
@@ -46,16 +49,13 @@ export default {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "nss-gradient":
-          "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%)",
+          "linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%)",
         "nss-light-gradient":
-          "linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%)",
+          "linear-gradient(135deg, #f7f8f9 0%, #e8eef2 50%, #d1dce5 100%)",
       },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "bounce-slow": "bounce 2s infinite",
-      },
-      fontFamily: {
-        clash: ["ClashDisplay", "sans-serif"],
       },
     },
   },

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { LogIn, Eye, EyeOff, } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { TextField, Button } from '../global';
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
@@ -40,53 +41,37 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
             <LogIn className='h-12 w-12 text-white' />
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-black">
+        <h2 className="text-2xl font-bold text-black font-isans">
           Welcome Back
         </h2>
-        <p className="text-black mt-2">Sign in to your NSS account</p>
+        <p className="font-isans text-black mt-2">Sign in to your NSS account</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Mobile Number */}
-        <div>
-          <label htmlFor="mobile" className="block text-sm font-medium text-black mb-2">
-            Mobile Number
-          </label>
-          <input
-            type="tel"
-            id="mobile"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            className="w-full px-4 py-3 bg-white/80 border border-blue-400 rounded-lg focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-gray-500"
-            placeholder="Enter your mobile number"
-            required
-          />
-        </div>
+        <TextField
+          label="Mobile Number"
+          type="tel"
+          id="mobile"
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          placeholder="Enter your mobile number"
+          required
+        />
 
         {/* Password */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-black mb-2">
-            Password
-          </label>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-white/80 border border-blue-400 rounded-lg focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 pr-12 placeholder-gray-500"
-              placeholder="Enter your password"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-black hover:text-gray-700 transition-colors"
-            >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
+        <TextField
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
+          showPasswordToggle
+          showPassword={showPassword}
+          onTogglePassword={() => setShowPassword(!showPassword)}
+          required
+        />
 
         {/* Error Message */}
         {error && (
@@ -97,21 +82,30 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         )}
 
         {/* Submit Button */}
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-nss-500 to-nss-600 hover:from-nss-600 hover:to-nss-700 text-white py-3 px-4 rounded-lg font-medium focus:ring-2 focus:ring-nss-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+          isLoading={isLoading}
+          loadingText="Signing in..."
+          size="md"
+          variant="primary"
         >
-          {isLoading ? (
-            <div className="flex items-center justify-center space-x-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>Signing in...</span>
-            </div>
-          ) : (
-            'Sign In'
-          )}
-        </button>
+          Sign In
+        </Button>
       </form>
+
+      {/* Forgot Password Button */}
+      <div className="mt-4 text-left">
+        <button
+          className="text-sm text-nss-600 hover:text-nss-700 transition-colors duration-200"
+          onClick={() => {
+            // TODO: Implement forgot password functionality
+            console.log('Forgot password clicked');
+          }}
+        >
+          Forgot Password?
+        </button>
+      </div>
 
       {/* Register Link */}
       <div className="mt-6 text-center">
