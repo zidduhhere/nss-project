@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserPlus, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, Eye, EyeOff, BookOpen } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 interface RegisterFormProps {
@@ -77,73 +77,83 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mb-4">
-            <UserPlus className="h-8 w-8 text-white" />
+    <div className="w-full max-w-2xl mx-auto">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="mx-auto h-24 w-24 p-[3px] bg-gradient-to-r from-nss-400 to-nss-600 rounded-full mb-8">
+          <div className="bg-white h-full w-full rounded-full flex items-center justify-center shadow-inner">
+            <UserPlus className='h-12 w-12 text-nss-600' />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join the NSS Portal</p>
         </div>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-nss-700 to-nss-900 bg-clip-text text-transparent mb-2">
+          Create Account
+        </h2>
+        <p className="text-nss-600 text-lg">Join the NSS community today</p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name *
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                placeholder="Enter your full name"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-2">
-                Mobile Number *
-              </label>
-              <input
-                type="tel"
-                id="mobile"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                placeholder="Enter your mobile number"
-                required
-              />
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="name" className="block text-sm font-semibold text-nss-700 mb-3">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-4 bg-nss-50/50 border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
+              placeholder="Enter your full name"
+              required
+            />
           </div>
 
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-              Role *
+            <label htmlFor="mobile" className="block text-sm font-semibold text-nss-700 mb-3">
+              Mobile Number *
             </label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
+            <input
+              type="tel"
+              id="mobile"
+              name="mobile"
+              value={formData.mobile}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-4 bg-nss-50/50 border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
+              placeholder="Enter your mobile number"
               required
-            >
-              <option value="student">Student</option>
-              <option value="faculty">Faculty</option>
-            </select>
+            />
           </div>
+        </div>
 
-          {formData.role === 'student' && (
+        <div>
+          <label htmlFor="role" className="block text-sm font-semibold text-nss-700 mb-3">
+            Role *
+          </label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full px-4 py-4 bg-nss-50/50 border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 text-nss-800 font-medium"
+            required
+          >
+            <option value="student">Student</option>
+            <option value="faculty">Faculty</option>
+          </select>
+        </div>
+
+        {formData.role === 'student' && (
+          <div className="space-y-6 p-6 bg-gradient-to-r from-nss-50 to-blue-50 rounded-2xl border border-nss-200">
+            <h3 className="text-lg font-bold text-nss-700 mb-4 flex items-center">
+              <BookOpen className="h-5 w-5 mr-2" />
+              Student Information
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-2">
-                  Age *
+                <label htmlFor="age" className="block text-sm font-semibold text-nss-700 mb-3">
+                  Age
                 </label>
                 <input
                   type="number"
@@ -151,14 +161,13 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   name="age"
                   value={formData.age}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-4 bg-white border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
                   placeholder="Enter your age"
-                  required
                 />
               </div>
 
               <div>
-                <label htmlFor="place" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="place" className="block text-sm font-semibold text-nss-700 mb-3">
                   Place *
                 </label>
                 <input
@@ -167,14 +176,14 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   name="place"
                   value={formData.place}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-4 bg-white border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
                   placeholder="Enter your place"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="college" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="college" className="block text-sm font-semibold text-nss-700 mb-3">
                   College *
                 </label>
                 <input
@@ -183,15 +192,15 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   name="college"
                   value={formData.college}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-4 bg-white border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
                   placeholder="Enter your college name"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="fatherName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Father's Name *
+                <label htmlFor="fatherName" className="block text-sm font-semibold text-nss-700 mb-3">
+                  Father's Name
                 </label>
                 <input
                   type="text"
@@ -199,108 +208,106 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                   name="fatherName"
                   value={formData.fatherName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="Enter your father's name"
-                  required
+                  className="w-full px-4 py-4 bg-white border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
+                  placeholder="Enter father's name"
                 />
-              </div>
-
-              <div className="md:col-span-2">
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
-                  Address *
-                </label>
-                <textarea
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                  placeholder="Enter your complete address"
-                  required
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password *
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pr-12"
-                  placeholder="Enter your password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
               </div>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password *
+              <label htmlFor="address" className="block text-sm font-semibold text-nss-700 mb-3">
+                Address
               </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pr-12"
-                  placeholder="Confirm your password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
+              <textarea
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                rows={3}
+                className="w-full px-4 py-4 bg-white border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-nss-400 text-nss-800 font-medium"
+                placeholder="Enter your complete address"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="password" className="block text-sm font-semibold text-nss-700 mb-3">
+              Password *
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-4 bg-nss-50/50 border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 pr-12 placeholder-nss-400 text-nss-800 font-medium"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-nss-500 hover:text-nss-700 transition-colors p-1"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
           </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-semibold text-nss-700 mb-3">
+              Confirm Password *
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-4 bg-nss-50/50 border-2 border-nss-200 rounded-xl focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 pr-12 placeholder-nss-400 text-nss-800 font-medium"
+                placeholder="Confirm your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-nss-500 hover:text-nss-700 transition-colors p-1"
+              >
+                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            Already have an account?{' '}
-            <button
-              onClick={onSwitchToLogin}
-              className="text-green-600 hover:text-green-700 font-medium"
-            >
-              Sign in here
-            </button>
-          </p>
+          </div>
         </div>
+
+        {error && (
+          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-xl text-sm font-medium">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-gradient-to-r from-nss-500 to-nss-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-nss-600 hover:to-nss-700 focus:ring-4 focus:ring-nss-300 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+        >
+          {isLoading ? 'Creating Account...' : 'Create NSS Account'}
+        </button>
+      </form>
+
+      <div className="mt-8 text-center">
+        <p className="text-nss-600 text-lg">
+          Already have an account?{' '}
+          <button
+            onClick={onSwitchToLogin}
+            className="text-nss-700 hover:text-nss-800 font-bold transition-colors hover:underline"
+          >
+            Sign in here
+          </button>
+        </p>
       </div>
     </div>
   );

@@ -1,46 +1,28 @@
 import { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
-import LoginForm from './components/auth/LoginForm';
-import RegisterForm from './components/auth/RegisterForm';
+import { LoginView, RegisterView } from './views/auth';
 import StudentDashboard from './components/student/StudentDashboard';
 import FacultyDashboard from './components/faculty/FacultyDashboard';
 
 function AppContent() {
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const { user, isAuthenticated, isLoading } = useApp();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  const { user, isAuthenticated } = useApp();
+  const [showRegister, setShowRegister] = useState(false);
 
   if (!isAuthenticated) {
-    return authMode === 'login' ? (
-      <LoginForm onSwitchToRegister={() => setAuthMode('register')} />
-    ) : (
-      <RegisterForm onSwitchToLogin={() => setAuthMode('login')} />
+    return (
+      <div className="min-h-screen">
+        {showRegister ? (
+          <RegisterView onSwitchToLogin={() => setShowRegister(false)} />
+        ) : (
+          <LoginView onSwitchToRegister={() => setShowRegister(true)} />
+        )}
+      </div>
     );
-  }
-
-  if (user?.role === 'student') {
-    return <StudentDashboard />;
-  }
-
-  if (user?.role === 'faculty') {
-    return <FacultyDashboard />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <p className="text-gray-600">Invalid user role</p>
-      </div>
+    <div className="min-h-screen bg-nss-50">
+      {user?.role === 'student' ? <StudentDashboard /> : <FacultyDashboard />}
     </div>
   );
 }
@@ -48,7 +30,9 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
-      <AppContent />
+      <div className="font-sans antialiased">
+        <AppContent />
+      </div>
     </AppProvider>
   );
 }

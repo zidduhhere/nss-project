@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { LogIn, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { LogIn, Eye, EyeOff, } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 interface LoginFormProps {
@@ -32,94 +32,111 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white/15  rounded-2xl shadow-xl p-8 border ">
-        <div className="text-center mb-8">
-          <div className="mx-auto h-20 w-20 rounded-full bg-blue-600 flex items-center justify-center mb-4">
+    <div className="w-full max-w-md mx-auto">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="mx-auto h-20 w-20 p-[2px] bg-gradient-to-r from-nss-400 to-nss-600 rounded-full mb-6">
+          <div className="bg-nss-500 h-full w-full rounded-full flex items-center justify-center shadow-inner">
             <LogIn className='h-12 w-12 text-white' />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">NSS Portal Login</h1>
-          <p className="text-gray-600 mt-2">Sign in to your account</p>
+        </div>
+        <h2 className="text-2xl font-bold text-black">
+          Welcome Back
+        </h2>
+        <p className="text-black mt-2">Sign in to your NSS account</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Mobile Number */}
+        <div>
+          <label htmlFor="mobile" className="block text-sm font-medium text-black mb-2">
+            Mobile Number
+          </label>
+          <input
+            type="tel"
+            id="mobile"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            className="w-full px-4 py-3 bg-white/80 border border-blue-400 rounded-lg focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 placeholder-gray-500"
+            placeholder="Enter your mobile number"
+            required
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-2">
-              Mobile Number
-            </label>
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-black mb-2">
+            Password
+          </label>
+          <div className="relative">
             <input
-              type="tel"
-              id="mobile"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder="Enter your mobile number"
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 bg-white/80 border border-blue-400 rounded-lg focus:ring-2 focus:ring-nss-500 focus:border-nss-500 transition-all duration-200 pr-12 placeholder-gray-500"
+              placeholder="Enter your password"
               required
             />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
-                placeholder="Enter your password"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            Don't have an account?{' '}
             <button
-              onClick={onSwitchToRegister}
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-black hover:text-gray-700 transition-colors"
             >
-              Register here
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
-          </p>
+          </div>
         </div>
 
-        {/* <div className="mt-8 p-4 bg-gray-50 rounded-lg"> */}
-        {/* <p className="text-sm text-gray-600 font-medium mb-2">Demo Accounts:</p> */}
-        {/* <div className="text-xs text-gray-500 space-y-1"> */}
-        {/* <p>Student: 9876543210 / password</p> */}
-        {/* <p>Faculty: 9876543211 / password</p> */}
-        {/* </div> */}
-        {/* </div> */}
-      </div>
-      <div >
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center space-x-2">
+            <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0"></div>
+            <span>{error}</span>
+          </div>
+        )}
 
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-gradient-to-r from-nss-500 to-nss-600 hover:from-nss-600 hover:to-nss-700 text-white py-3 px-4 rounded-lg font-medium focus:ring-2 focus:ring-nss-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Signing in...</span>
+            </div>
+          ) : (
+            'Sign In'
+          )}
+        </button>
+      </form>
+
+      {/* Register Link */}
+      <div className="mt-6 text-center">
+        <p className="text-black">
+          Don't have an account?{' '}
+          <button
+            onClick={onSwitchToRegister}
+            className="bg-gradient-to-r from-nss-600 to-nss-700 bg-clip-text text-transparent hover:from-nss-700 hover:to-nss-800 font-medium transition-all duration-200"
+          >
+            Register here
+          </button>
+        </p>
       </div>
+
+
+      {/* <div className="mt-8 p-4 bg-nss-50 border border-black rounded-lg">
+        <p className="text-sm text-black font-medium mb-2 flex items-center">
+          <Shield className="h-4 w-4 mr-2" />
+          Demo Accounts:
+        </p>
+        <div className="text-xs text-black space-y-1">
+          <p className="font-mono bg-white px-2 py-1 rounded">Student: 9876543210 / password</p>
+          <p className="font-mono bg-white px-2 py-1 rounded">Faculty: 9876543211 / password</p>
+        </div>
+      </div> */}
     </div>
   );
 }

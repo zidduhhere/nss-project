@@ -1,3 +1,3 @@
-// Central export for auth components
-export { default as LoginForm } from "./LoginForm";
-export { default as RegisterForm } from "./RegisterForm";
+// Central export for auth views
+export { default as LoginView } from "./LoginView";
+export { default as RegisterView } from "./RegisterView";

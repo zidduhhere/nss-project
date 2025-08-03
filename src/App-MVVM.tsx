@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuthViewModel } from './viewmodels';
-import { LoginForm, RegisterForm, StudentDashboard, FacultyDashboard, LoadingSpinner } from './views';
-
+import { StudentDashboard, FacultyDashboard, LoadingSpinner } from './views';
+import { LoginForm, RegisterForm } from './components/auth';
 function App() {
     const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
     const authViewModel = useAuthViewModel();
