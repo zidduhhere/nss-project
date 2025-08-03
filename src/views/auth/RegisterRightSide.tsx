@@ -1,6 +1,6 @@
 import images from '../../assets/images';
 import { Heart, Users, BookOpen, Award, TreePine, Globe, Lightbulb, Target } from 'lucide-react';
-import { GlassCard } from '../../components/global';
+import { GlassCard } from '../common';
 
 export default function RegisterRightSide() {
     const nssCards = [
@@ -55,7 +55,7 @@ export default function RegisterRightSide() {
             </div>
 
             {/* NSS Cards Grid */}
-            <div className="flex flex-col justify-center items-center  ">
+            <div className="flex flex-col justify-center items-center w-full mx-10  ">
                 <div className="grid grid-cols-2 gap-4 max-w-full w-full">
                     {nssCards.map((card, index) => (
                         <GlassCard
