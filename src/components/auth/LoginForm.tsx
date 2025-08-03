@@ -113,7 +113,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           Don't have an account?{' '}
           <button
             onClick={onSwitchToRegister}
-            className="bg-gradient-to-r from-nss-600 to-nss-700 bg-clip-text text-transparent hover:from-nss-700 hover:to-nss-800 font-medium transition-all duration-200"
+            className="bg-gradient-to-r font-bold font-isans from-nss-600 to-nss-700 bg-clip-text text-transparent hover:from-nss-700 hover:to-nss-800 transition-all duration-200"
           >
             Register here
           </button>

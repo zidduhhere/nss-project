@@ -1,4 +1,4 @@
-import images from '../../assets/images';
+import images from '../../../../assets/images';
 
 export default function LoginRightSide() {
     return (
@@ -13,7 +13,7 @@ export default function LoginRightSide() {
                 <h1 className="font-isans text-2xl md:text-4xl bg-clip-text text-white my-3">
                     Welcome to NSS Portal
                 </h1>
-                <p className="my-6 text-white font-isans-400 text-lg md:text-xl max-w-md font-medium">
+                <p className="my-6 text-white font-isans  text-lg md:text-xl max-w-md font-extralight tracking-wide">
                     National Service Scheme - Building character through community service
                 </p>
             </div>
