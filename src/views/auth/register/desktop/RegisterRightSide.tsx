@@ -1,5 +1,5 @@
 import images from '../../../../assets/images';
-import { GlassCard } from '../../../common';
+import { GlassCard } from '../../../../components/ui';
 import { nssCards } from '../../../../utils/CardDetails';
 import HyphenLogo from '../../../../utils/HyphenLogo';
 

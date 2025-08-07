@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { TextField, Dropdown, Button } from '@/components/ui';
+import { TextField, Dropdown, Button } from '../ui';
 import StudentInfo from './StudentInfo';
 
 interface RegisterFormProps {
+  onRegister: (userData: any) => Promise<boolean>;
   onSwitchToLogin: () => void;
+  isLoading: boolean;
+  error: string | null;
 }
 
-export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+export default function RegisterForm({ onRegister, onSwitchToLogin, isLoading: externalLoading, error: externalError }: RegisterFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -25,9 +27,11 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { register } = useApp();
+
+  // Use external loading/error states or fallback to internal ones
+  const currentLoading = externalLoading;
+  const currentError = externalError || error;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -39,18 +43,15 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
-      setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
-      setIsLoading(false);
       return;
     }
 
@@ -71,14 +72,14 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         })
       };
 
-      const success = await register(userData);
-      if (!success) {
+      const success = await onRegister(userData);
+      if (!success && !externalError) {
         setError('Mobile number already exists');
       }
     } catch (err) {
-      setError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      if (!externalError) {
+        setError('Registration failed. Please try again.');
+      }
     }
   };
 
@@ -176,17 +177,17 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           />
         </div>
 
-        {error && (
+        {currentError && (
           <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-xl text-sm font-medium">
-            {error}
+            {currentError}
           </div>
         )}
 
         <div className='space-y-2'></div>
         <Button
           type="submit"
-          disabled={isLoading}
-          isLoading={isLoading}
+          disabled={currentLoading}
+          isLoading={currentLoading}
           loadingText="Creating Account..."
           size="md"
           variant="primary"

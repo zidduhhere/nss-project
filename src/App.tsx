@@ -1,30 +1,31 @@
-import { useState } from 'react';
-import { AppProvider, useApp } from './context/AppContext';
-import { LoginView, RegisterView } from './views/auth';
-import StudentDashboard from './components/student/StudentDashboard';
-import FacultyDashboard from './components/faculty/FacultyDashboard';
+import { AppProvider } from './context/AppContext';
+import HomePage from './views/home/HomePage';
 
 function AppContent() {
-  const { user, isAuthenticated } = useApp();
-  const [showRegister, setShowRegister] = useState(false);
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen">
-        {showRegister ? (
-          <RegisterView onSwitchToLogin={() => setShowRegister(false)} />
-        ) : (
-          <LoginView onSwitchToRegister={() => setShowRegister(true)} />
-        )}
-      </div>
-    );
-  }
+  // const { user, isAuthenticated } = useApp();
+  // const [showRegister, setShowRegister] = useState(false);
 
   return (
-    <div className="min-h-screen bg-nss-50">
-      {user?.role === 'student' ? <StudentDashboard /> : <FacultyDashboard />}
-    </div>
-  );
+    <HomePage />
+  )
+
+  // if (!isAuthenticated) {
+  //   return (
+  //     <div className="min-h-screen">
+  //       {showRegister ? (
+  //         <RegisterView onSwitchToLogin={() => setShowRegister(false)} />
+  //       ) : (
+  //         <LoginView onSwitchToRegister={() => setShowRegister(true)} />
+  //       )}
+  //     </div>
+  //   );
+  // }
+
+  // return (
+  //   <div className="min-h-screen bg-nss-50">
+  //     {user?.role === 'student' ? <StudentDashboard /> : <FacultyDashboard />}
+  //   </div>
+  // );
 }
 
 function App() {

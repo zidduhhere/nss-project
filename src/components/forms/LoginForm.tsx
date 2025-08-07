@@ -1,34 +1,37 @@
 import { useState } from 'react';
 import { LogIn } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { TextField, Button } from '@/components/ui';
+import { TextField, Button } from '../ui';
 
 interface LoginFormProps {
+  onLogin: (credentials: { mobile: string; password: string }) => Promise<boolean>;
   onSwitchToRegister: () => void;
+  isLoading: boolean;
+  error: string | null;
 }
 
-export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
+export default function LoginForm({ onLogin, onSwitchToRegister, isLoading: externalLoading, error: externalError }: LoginFormProps) {
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useApp();
+
+  // Use external loading/error states or fallback to internal ones
+  const currentLoading = externalLoading;
+  const currentError = externalError || error;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
 
     try {
-      const success = await login(mobile, password);
-      if (!success) {
+      const success = await onLogin({ mobile, password });
+      if (!success && !externalError) {
         setError('Invalid mobile number or password');
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      if (!externalError) {
+        setError('Login failed. Please try again.');
+      }
     }
   };
 
@@ -74,18 +77,16 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         />
 
         {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0"></div>
-            <span>{error}</span>
+        {/* Error Message */}
+        {currentError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center text-red-600">
+            <span>{currentError}</span>
           </div>
-        )}
-
-        {/* Submit Button */}
+        )}        {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isLoading}
-          isLoading={isLoading}
+          disabled={currentLoading}
+          isLoading={currentLoading}
           loadingText="Signing in..."
           size="md"
           variant="primary"
