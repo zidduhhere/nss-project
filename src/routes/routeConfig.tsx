@@ -1,4 +1,4 @@
-import HomePage from '@/views/home/HomePage';
+import HomePage from '@/views/home/HomeView';
 import { AboutView, BloodDonationView, TreeTagView, LoginView, RegisterView, BlogView, WebsiteTeamView, ContactView } from '@/views';
 import StudentDashboard from '@/components/student/StudentDashboard';
 import FacultyDashboard from '@/components/faculty/FacultyDashboard';
