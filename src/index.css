@@ -85,6 +85,32 @@
     .animate-glow {
         animation: glow 2s ease-in-out infinite alternate;
     }
+
+    /* Hide scrollbar utility for horizontal carousels */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Route transition helpers */
+    .route-fade {
+        min-height: 100%;
+        width: 100%;
+        animation-duration: 280ms;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .route-fade-enter {
+        animation-name: routeFadeIn;
+    }
+
+    .route-fade-exit {
+        animation-name: routeFadeOut;
+    }
 }
 
 @keyframes float {
@@ -104,6 +130,30 @@
 
     to {
         box-shadow: 0 0 30px #8fa5b8;
+    }
+}
+
+@keyframes routeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes routeFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-4px);
     }
 }
 

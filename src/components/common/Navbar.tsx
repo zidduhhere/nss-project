@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { appRoutes } from '@/routes/routeConfig';
+import { Menu, X } from 'lucide-react';
 import { OutlinedButton, FilledButton } from '../ui';
 
 interface NavbarProps {
@@ -7,34 +9,36 @@ interface NavbarProps {
         name: string;
         role: string;
     };
-    onLogout?: () => void;
 }
 
-export default function Navbar({ onLogout }: NavbarProps) {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+export default function Navbar({ }: NavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const navLinks = [
-        { name: 'Dashboard', href: '#', active: true },
-        { name: 'Blood Donation', href: '#' },
-        { name: 'Tree Tagging', href: '#' },
-        { name: 'Activities', href: '#' },
-        {
-            name: 'More',
-            href: '#',
-            hasDropdown: true,
-            dropdownItems: [
-                { name: 'Profile', href: '#' },
-                { name: 'History', href: '#' },
-                { name: 'Settings', href: '#' }
-            ]
-        }
+    const navLinks = appRoutes.filter(r => r.nav).map(r => ({ name: r.label!, path: r.path }));
+    const moreLinks = [
+        { name: 'Blog', path: '/blog' },
+        { name: 'Website Team', path: '/website-team' },
+        { name: 'Contact Us', path: '/contact' }
     ];
+    const [moreOpen, setMoreOpen] = useState(false);
+    const moreRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+                setMoreOpen(false);
+            }
+        };
+        window.addEventListener('click', handler);
+        return () => window.removeEventListener('click', handler);
+    }, []);
 
     return (
         <nav className="bg-transparent py-4">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-nss-700 backdrop-blur-lg border border-white/10 rounded-2xl">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-6">
+                <div className="bg-black border border-white/10 rounded-2xl">
                     <div className="flex items-center justify-between h-16 px-6">
                         {/* Logo */}
                         <div className="flex items-center">
@@ -45,74 +49,65 @@ export default function Navbar({ onLogout }: NavbarProps) {
                             </div>
                         </div>
 
-                        {/* Desktop Navigation */}
-                        <div className="hidden md:block">
+                        {/* Desktop Navigation (visible only on large screens) */}
+                        <div className="hidden lg:block">
                             <div className="ml-10 flex items-baseline space-x-8">
-                                {navLinks.map((link) => (
-                                    <div key={link.name} className="relative">
-                                        {link.hasDropdown ? (
-                                            <div>
+                                {navLinks.map((link) => {
+                                    const active = location.pathname === link.path;
+                                    return (
+                                        <button
+                                            key={link.name}
+                                            onClick={() => navigate(link.path)}
+                                            className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${active ? 'text-white bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                                        >
+                                            {link.name}
+                                        </button>
+                                    );
+                                })}
+                                {/* More dropdown */}
+                                <div className="relative" ref={moreRef}>
+                                    <button
+                                        onClick={() => setMoreOpen(o => !o)}
+                                        className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${moreLinks.some(l => l.path === location.pathname) ? 'text-white bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                                    >
+                                        More
+                                    </button>
+                                    {moreOpen && (
+                                        <div className="absolute right-0 mt-2 w-52 bg-black border border-white/10 rounded-xl shadow-lg py-2 z-50">
+                                            {moreLinks.map(l => (
                                                 <button
-                                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                                    className={`flex items-center px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${link.active
-                                                        ? 'text-white'
-                                                        : 'text-white/70 hover:text-white hover:bg-white/10'
-                                                        }`}
+                                                    key={l.path}
+                                                    onClick={() => { navigate(l.path); setMoreOpen(false); }}
+                                                    className={`w-full text-left px-4 py-2 text-sm transition ${location.pathname === l.path ? 'text-white bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                                                 >
-                                                    {link.name}
-                                                    <ChevronDown className="ml-1 h-4 w-4" />
+                                                    {l.name}
                                                 </button>
-
-                                                {/* Dropdown Menu */}
-                                                {isDropdownOpen && (
-                                                    <div className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 py-2 z-50">
-                                                        {link.dropdownItems?.map((item) => (
-                                                            <a
-                                                                key={item.name}
-                                                                href={item.href}
-                                                                className="block px-4 py-2 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors duration-200"
-                                                            >
-                                                                {item.name}
-                                                            </a>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <a
-                                                href={link.href}
-                                                className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${link.active
-                                                    ? 'text-white'
-                                                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                                                    }`}
-                                            >
-                                                {link.name}
-                                            </a>
-                                        )}
-                                    </div>
-                                ))}
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="hidden md:flex items-center space-x-3">
+                        {/* Action Buttons (desktop only) */}
+                        <div className="hidden lg:flex items-center space-x-3">
                             <OutlinedButton
-                                onClick={onLogout}
+                                onClick={() => navigate('/login')}
                                 size="md"
                             >
                                 Sign In
                             </OutlinedButton>
                             <FilledButton
-                                onClick={onLogout}
+                                onClick={() => navigate('/register')}
                                 size="md"
-                                variant="primary"
+                                variant="lightNss"
                             >
                                 Sign Up
                             </FilledButton>
                         </div>
 
-                        {/* Mobile menu button */}
-                        <div className="md:hidden">
+                        {/* Drawer trigger (shown on mobile & tablet) */}
+                        <div className="lg:hidden">
                             <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 className="text-white/70 hover:text-white p-2"
@@ -124,9 +119,9 @@ export default function Navbar({ onLogout }: NavbarProps) {
                 </div>
             </div>
 
-            {/* Mobile Side Menu */}
+            {/* Drawer for mobile & tablet */}
             {isMobileMenuOpen && (
-                <div className="md:hidden fixed inset-0 z-50">
+                <div className="lg:hidden fixed inset-0 z-50">
                     {/* Backdrop */}
                     <div
                         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
@@ -154,43 +149,49 @@ export default function Navbar({ onLogout }: NavbarProps) {
 
                             {/* Navigation Links */}
                             <div className="flex-1 px-6 py-4 space-y-2">
-                                {navLinks.map((link) => (
-                                    <div key={link.name}>
-                                        <a
-                                            href={link.href}
-                                            className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${link.active
-                                                ? 'text-white bg-white/10'
-                                                : 'text-white/70 hover:text-white hover:bg-white/10'
-                                                }`}
+                                {navLinks.map(link => {
+                                    const active = location.pathname === link.path;
+                                    return (
+                                        <button
+                                            key={link.name}
+                                            onClick={() => { navigate(link.path); setIsMobileMenuOpen(false); }}
+                                            className={`w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${active ? 'text-white bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                                         >
                                             {link.name}
-                                        </a>
-                                        {link.hasDropdown && link.dropdownItems?.map((item) => (
-                                            <a
-                                                key={item.name}
-                                                href={item.href}
-                                                className="block px-8 py-2 text-sm text-white/60 hover:text-white transition-colors duration-200"
+                                        </button>
+                                    );
+                                })}
+                                {/* More group (mobile) */}
+                                <div className="pt-4 border-t border-white/10">
+                                    <div className="px-4 pb-2 text-xs uppercase tracking-wide text-white/40">More</div>
+                                    {moreLinks.map(l => {
+                                        const active = location.pathname === l.path;
+                                        return (
+                                            <button
+                                                key={l.name}
+                                                onClick={() => { navigate(l.path); setIsMobileMenuOpen(false); }}
+                                                className={`w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${active ? 'text-white bg-white/10' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                                             >
-                                                {item.name}
-                                            </a>
-                                        ))}
-                                    </div>
-                                ))}
+                                                {l.name}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
                             {/* Action Buttons */}
                             <div className="p-6 border-t border-white/10 space-y-3">
                                 <OutlinedButton
-                                    onClick={onLogout}
+                                    onClick={() => { setIsMobileMenuOpen(false); navigate('/login'); }}
                                     size="lg"
                                     className="w-full"
                                 >
                                     Sign In
                                 </OutlinedButton>
                                 <FilledButton
-                                    onClick={onLogout}
+                                    onClick={() => { setIsMobileMenuOpen(false); navigate('/register'); }}
                                     size="lg"
-                                    variant="primary"
+                                    variant="lightNss"
                                     className="w-full"
                                 >
                                     Sign Up

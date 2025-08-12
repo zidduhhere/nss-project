@@ -19,7 +19,7 @@ const OutlinedButton = forwardRef<HTMLButtonElement, OutlinedButtonProps>(
         },
         ref
     ) => {
-        const baseStyles = 'font-semibold border-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
+        const baseStyles = 'font-semibold border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
 
         const sizeStyles = {
             sm: 'px-4 py-2 text-sm rounded-md',
@@ -27,7 +27,8 @@ const OutlinedButton = forwardRef<HTMLButtonElement, OutlinedButtonProps>(
             lg: 'px-8 py-4 text-lg rounded-md'
         };
 
-        const outlinedStyles = 'border-white/20 text-white hover:border-white/30 hover:bg-white/10 backdrop-blur-sm';
+        // Default outlined button: subtle white border that intensifies on hover
+        const outlinedStyles = 'border-white/40 text-white hover:border-white backdrop-blur-sm';
 
         const buttonClasses = `${baseStyles} ${outlinedStyles} ${sizeStyles[size]} ${className}`;
 

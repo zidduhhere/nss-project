@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Droplets, TreePine, Award, FileText, Plus } from 'lucide-react';
 import { Layout } from '../common';
 import { useApp } from '../../context/AppContext';

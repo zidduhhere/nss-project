@@ -1,7 +1,7 @@
-import images from '../../../../assets/images';
-import { GlassCard } from '../../../../components/ui';
-import { nssCards } from '../../../../utils/CardDetails';
-import HyphenLogo from '../../../../utils/HyphenLogo';
+import images from '../../../assets/images';
+import { GlassCard } from '../../../components/ui';
+import { nssCards } from '../../../utils/CardDetails';
+import HyphenLogo from '../../../utils/HyphenLogo';
 
 export default function RegisterRightSide() {
     return (

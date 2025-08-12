@@ -4,7 +4,7 @@ interface FilledButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
     size?: 'sm' | 'md' | 'lg';
     isLoading?: boolean;
     loadingText?: string;
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'lightNss';
 }
 
 const FilledButton = forwardRef<HTMLButtonElement, FilledButtonProps>(
@@ -29,9 +29,10 @@ const FilledButton = forwardRef<HTMLButtonElement, FilledButtonProps>(
             lg: 'px-8 py-4 text-lg rounded-md'
         };
 
-        const variantStyles = {
+        const variantStyles: Record<string, string> = {
             primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-            secondary: 'bg-gray-600 hover:bg-gray-700 text-white'
+            secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
+            lightNss: 'bg-nss-100 text-nss-700 hover:bg-nss-200 border border-nss-200'
         };
 
         const buttonClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
