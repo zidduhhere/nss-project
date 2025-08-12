@@ -1,4 +1,5 @@
 import { Heart, TreePine } from 'lucide-react';
+import { Placeholder } from '@/components/common/Placeholder';
 import { HeroButton } from '@/components/ui';
 import React from 'react';
 
@@ -28,7 +29,7 @@ export const HeroSection: React.FC = () => {
                     </div>
                     <div className="relative">
                         <div className="relative z-10">
-                            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1000&q=80&sat=20" alt="Community Service - Students Volunteering" className="rounded-2xl shadow-2xl w-full h-[500px] object-cover brightness-105" />
+                            <Placeholder size="hero" label="Home Hero" />
                         </div>
                         <div className="absolute -top-4 -left-4 bg-white/90 backdrop-blur-lg border border-gray-200 rounded-xl p-4 shadow-lg">
                             <div className="flex items-center space-x-3">

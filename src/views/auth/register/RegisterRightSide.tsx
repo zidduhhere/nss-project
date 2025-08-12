@@ -1,4 +1,4 @@
-import images from '../../../assets/images';
+import { Placeholder } from '@/components/common/Placeholder';
 import { GlassCard } from '../../../components/ui';
 import { nssCards } from '../../../utils/CardDetails';
 import HyphenLogo from '../../../utils/HyphenLogo';
@@ -8,7 +8,7 @@ export default function RegisterRightSide() {
         <div className="flex h-full bg-gradient-nss relative">
             {/* Logo and NSS APJKTU side by side */}
             <div className='flex items-center space-x-1 absolute top-8 left-8'>
-                <img src={images.logo} className='w-16 h-16' alt="NSS Logo" />
+                <Placeholder size='logo' variant='logo' shadow />
                 <h1 className="text-white font-isans text-lg">NSS APJKTU</h1>
             </div>
 

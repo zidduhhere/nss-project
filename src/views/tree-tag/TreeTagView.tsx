@@ -1,14 +1,26 @@
 import Navbar from '@/components/common/Navbar';
 import { Footer } from '@/components/ui/Footer';
+import { FinalCTA } from '@/components/ui/FinalCTA';
+import { TreeTagHeroSection } from './sections/HeroSection';
+import { TreeTagStatsSection } from './sections/StatsSection';
+import { TreeTagImpactSection } from './sections/ImpactSection';
+import { TreeTagWorkflowSection } from './sections/WorkflowSection';
+import { GreenCampusSection } from './sections/FlagshipSection';
+import { StewardsSection } from './sections/StewardsSection';
 
 export default function TreeTagView() {
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen font-isans bg-white">
             <Navbar />
-            <main className="pt-32 max-w-5xl mx-auto px-6 pb-24">
-                <h1 className="text-4xl font-bold mb-6 text-nss-text">Tree Tag</h1>
-                <p className="text-nss-text-secondary max-w-3xl">Form and tracking for tree tagging will be implemented here.</p>
+            <main>
+                <TreeTagHeroSection />
+                <TreeTagStatsSection />
+                <TreeTagImpactSection />
+                <TreeTagWorkflowSection />
+                <GreenCampusSection />
+                <StewardsSection />
             </main>
+            <FinalCTA />
             <Footer />
         </div>
     );

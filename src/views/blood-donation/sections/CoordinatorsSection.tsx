@@ -1,3 +1,4 @@
+import { Placeholder } from '@/components/common/Placeholder';
 interface Coordinator { name: string; region: string; role: string; image: string; }
 
 const studentCoordinators: Coordinator[] = [
@@ -22,7 +23,7 @@ export const CoordinatorsSection = () => (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {studentCoordinators.map((c, i) => (
                         <div key={i} className="group flex flex-col items-center text-center">
-                            <div className="w-36 h-36 rounded-2xl overflow-hidden mb-5 border border-nss-200 bg-nss-100"><img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></div>
+                            <div className="mb-5"><Placeholder size="avatar" variant="person" shadow /></div>
                             <h3 className="font-medium text-secondary-900">{c.name}</h3>
                             <p className="text-xs text-secondary-500 uppercase tracking-wide mt-1">{c.region}</p>
                             <p className="text-xs text-nss-600 mt-1">{c.role}</p>
@@ -35,7 +36,7 @@ export const CoordinatorsSection = () => (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {facultyCoordinators.map((c, i) => (
                         <div key={i} className="group flex flex-col items-center text-center">
-                            <div className="w-36 h-36 rounded-2xl overflow-hidden mb-5 border border-nss-200 bg-nss-100"><img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></div>
+                            <div className="mb-5"><Placeholder size="avatar" variant="person" shadow /></div>
                             <h3 className="font-medium text-secondary-900">{c.name}</h3>
                             <p className="text-xs text-secondary-500 uppercase tracking-wide mt-1">{c.region}</p>
                             <p className="text-xs text-nss-600 mt-1">{c.role}</p>

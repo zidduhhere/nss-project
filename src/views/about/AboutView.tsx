@@ -9,7 +9,7 @@ import { ContactSection } from './sections/ContactSection';
 
 export default function AboutView() {
     return (
-        <div className="min-h-screen bg-nss-50 font-isans text-secondary-800">
+        <div className="min-h-screen bg-white font-isans text-secondary-800">
             <Navbar />
             <main className="pt-32">
                 <AboutHeroSection />
