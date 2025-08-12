@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { TextField, Dropdown, Button } from '../../views/common';
+import { TextField, Dropdown, Button } from '@/components/ui';
 import StudentInfo from './StudentInfo';
 
 interface RegisterFormProps {

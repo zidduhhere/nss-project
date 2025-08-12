@@ -24,7 +24,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         },
         ref
     ) => {
-        const baseStyles = 'w-full px-4 py-4 bg-white/80 focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500';
+        const baseStyles = 'w-full px-4 py-2 bg-white/80 focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500';
 
         const variantStyles = {
             default: '',

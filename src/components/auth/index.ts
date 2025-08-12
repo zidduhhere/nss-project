@@ -1,2 +1,2 @@
-export { default as LoginForm } from "./LoginForm";
-export { default as RegisterForm } from "./RegisterForm";
+// Re-export forms for backward compatibility
+export { LoginForm, RegisterForm } from "../forms";

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
-import { TextField, TextArea } from '../../views/common';
+import { TextField, TextArea } from '@/components/ui';
 
 interface StudentInfoProps {
     formData: {

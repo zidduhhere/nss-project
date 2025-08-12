@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
-import { Calendar, Droplets, TreePine, Award, FileText, Plus } from 'lucide-react';
-import Layout from '../Layout';
+import { useState } from 'react';
+import { Droplets, TreePine, Award, FileText, Plus } from 'lucide-react';
+import { Layout } from '../common';
 import { useApp } from '../../context/AppContext';
 import BloodDonationForm from './BloodDonationForm';
 import TreeTaggingForm from './TreeTaggingForm';
 
-export default function StudentDashboard() {
+interface StudentDashboardProps {
+  user: {
+    id: string;
+    name: string;
+    role: string;
+  } | null;
+  onLogout: () => void;
+}
+
+export default function StudentDashboard({ user: propUser, onLogout }: StudentDashboardProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'blood' | 'tree'>('overview');
   const { user, bloodDonationSubmissions, treeTaggingSubmissions } = useApp();
 
+  // Use propUser if available, otherwise fallback to context user
+  const currentUser = propUser || user;
+
   const userSubmissions = {
-    blood: bloodDonationSubmissions.filter(sub => sub.studentId === user?.id),
-    tree: treeTaggingSubmissions.filter(sub => sub.studentId === user?.id)
+    blood: bloodDonationSubmissions.filter(sub => sub.studentId === currentUser?.id),
+    tree: treeTaggingSubmissions.filter(sub => sub.studentId === currentUser?.id)
   };
 
   const totalPoints = [
@@ -86,8 +98,8 @@ export default function StudentDashboard() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {[...userSubmissions.blood.map(sub => ({ ...sub, type: 'blood' })), 
-                      ...userSubmissions.tree.map(sub => ({ ...sub, type: 'tree' }))]
+                    {[...userSubmissions.blood.map(sub => ({ ...sub, type: 'blood' })),
+                    ...userSubmissions.tree.map(sub => ({ ...sub, type: 'tree' }))]
                       .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime())
                       .slice(0, 5)
                       .map((submission, index) => (
@@ -108,13 +120,12 @@ export default function StudentDashboard() {
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              submission.status === 'approved' 
-                                ? 'bg-green-100 text-green-800'
-                                : submission.status === 'rejected'
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${submission.status === 'approved'
+                              ? 'bg-green-100 text-green-800'
+                              : submission.status === 'rejected'
                                 ? 'bg-red-100 text-red-800'
                                 : 'bg-yellow-100 text-yellow-800'
-                            }`}>
+                              }`}>
                               {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
                             </span>
                             {submission.status === 'approved' && submission.points && (
@@ -135,11 +146,11 @@ export default function StudentDashboard() {
   };
 
   return (
-    <Layout title="Student Dashboard">
+    <Layout title="Student Dashboard" user={currentUser} onLogout={onLogout}>
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl text-white p-6">
-          <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.name}!</h2>
+          <h2 className="text-2xl font-bold mb-2">Welcome back, {currentUser?.name}!</h2>
           <p className="text-blue-100">Track your NSS activities and earn points for your contributions.</p>
         </div>
 
@@ -149,21 +160,19 @@ export default function StudentDashboard() {
             <nav className="flex space-x-8 px-6">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'overview'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'overview'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Overview
               </button>
               <button
                 onClick={() => setActiveTab('blood')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                  activeTab === 'blood'
-                    ? 'border-red-500 text-red-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === 'blood'
+                  ? 'border-red-500 text-red-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 <Droplets className="h-4 w-4" />
                 <span>Blood Donation</span>
@@ -171,11 +180,10 @@ export default function StudentDashboard() {
               </button>
               <button
                 onClick={() => setActiveTab('tree')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                  activeTab === 'tree'
-                    ? 'border-green-500 text-green-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === 'tree'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 <TreePine className="h-4 w-4" />
                 <span>Tree Tagging</span>

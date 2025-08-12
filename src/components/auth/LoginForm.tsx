@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { LogIn } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { TextField, Button } from '../../views/common';
+import { TextField, Button } from '@/components/ui';
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
