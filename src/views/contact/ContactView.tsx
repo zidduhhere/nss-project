@@ -1,5 +1,5 @@
 import Navbar from '@/components/common/Navbar';
-import { FooterSection } from '@/views/home/sections/FooterSection';
+import { Footer } from '@/components/ui/Footer';
 
 export default function ContactView() {
     return (
@@ -26,7 +26,7 @@ export default function ContactView() {
                     <button type="button" className="px-6 py-3 rounded-full bg-nss-600 hover:bg-nss-700 text-white text-sm font-medium">Send Message</button>
                 </form>
             </main>
-            <FooterSection />
+            <Footer />
         </div>
     );
 }

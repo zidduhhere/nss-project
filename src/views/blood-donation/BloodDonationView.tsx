@@ -1,19 +1,19 @@
 import Navbar from '@/components/common/Navbar';
-import { FooterSection } from '@/views/home/sections/FooterSection';
+import { Footer } from '@/components/ui/Footer';
 import { BloodHeroSection } from './sections/HeroSection';
 import { BloodStatsSection } from './sections/StatsSection';
 import { BloodImportanceSection } from './sections/ImportanceSection';
 import { BloodFlowSection } from './sections/FlowSection';
 import { RudhirasenaSection } from './sections/RudhirasenaSection';
 import { CoordinatorsSection } from './sections/CoordinatorsSection';
-import { FinalCTASection } from '../home/sections/FinalCTASection';
+import { FinalCTA } from '@/components/ui/FinalCTA';
 
 export default function BloodDonationView() {
 
     return (
-        <div className="min-h-screen bg-nss-50 font-isans text-secondary-800">
+        <div className="min-h-screen  font-isans bg-white">
             <Navbar />
-            <main className="pt-32">
+            <main className="">
                 <BloodHeroSection />
                 <BloodStatsSection />
                 <BloodImportanceSection />
@@ -21,8 +21,8 @@ export default function BloodDonationView() {
                 <RudhirasenaSection />
                 <CoordinatorsSection />
             </main>
-            <FinalCTASection />
-            <FooterSection />
+            <FinalCTA />
+            <Footer />
         </div>
     );
 }

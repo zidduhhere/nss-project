@@ -1,5 +1,5 @@
 import Navbar from '@/components/common/Navbar';
-import { FooterSection } from '@/views/home/sections/FooterSection';
+import { Footer } from '@/components/ui/Footer';
 
 export default function BlogView() {
     return (
@@ -9,7 +9,7 @@ export default function BlogView() {
                 <h1 className="text-4xl font-semibold text-secondary-900 mb-6">Blog</h1>
                 <p className="text-secondary-600 leading-relaxed">Updates, highlights, and impact stories will appear here.</p>
             </main>
-            <FooterSection />
+            <Footer />
         </div>
     );
 }

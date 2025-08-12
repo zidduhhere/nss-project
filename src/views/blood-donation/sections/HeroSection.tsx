@@ -2,7 +2,7 @@ import { Droplet } from 'lucide-react';
 
 export const BloodHeroSection = () => (
     <section className="relative overflow-hidden bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-20 grid lg:grid-cols-2 gap-14 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
                 <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-secondary-900">Donate Blood. Sustain Life.</h1>
                 <p className="text-lg text-secondary-600 leading-relaxed max-w-xl">NSS blood donation initiatives streamline awareness, mobilize volunteers, and ensure safe, ethical collection. Each unit impacts multiple lives—your contribution matters.</p>
@@ -16,7 +16,7 @@ export const BloodHeroSection = () => (
                 </div>
             </div>
             <div className="relative">
-                <img src="https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1000&q=80" alt="Student blood donation drive" className="rounded-2xl shadow-2xl w-full h-[480px] object-cover" />
+                <img src="https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1000&q=80" alt="Student blood donation drive" className="rounded-2xl shadow-2xl w-full h-[500px] object-cover" />
                 <div className="absolute -top-4 -left-4 bg-white/90 backdrop-blur-lg border border-nss-200 rounded-xl p-4 shadow-lg flex items-center gap-3">
                     <div className="bg-red-500 p-2 rounded-lg"><Droplet className="h-6 w-6 text-white" /></div>
                     <div><div className="text-secondary-900 font-semibold">Every Drop Counts</div><div className="text-secondary-600 text-xs">Help replenish blood banks</div></div>

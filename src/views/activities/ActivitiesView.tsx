@@ -1,5 +1,5 @@
 import Navbar from '@/components/common/Navbar';
-import { FooterSection } from '@/views/home/sections/FooterSection';
+import { Footer } from '@/components/ui/Footer';
 
 export default function ActivitiesView() {
     return (
@@ -9,7 +9,7 @@ export default function ActivitiesView() {
                 <h1 className="text-4xl font-bold mb-6 text-nss-text">Activities</h1>
                 <p className="text-nss-text-secondary max-w-3xl">Upcoming and past NSS activities will be listed here.</p>
             </main>
-            <FooterSection />
+            <Footer />
         </div>
     );
 }

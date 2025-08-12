@@ -1,0 +1,18 @@
+export const AboutHeroSection = () => (
+    <section className="max-w-7xl mx-auto px-6 lg:px-12 pb-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+                <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-secondary-900">Empowering Social Impact</h1>
+                <p className="text-lg leading-relaxed text-secondary-600 max-w-xl">We enable students to transform intent into measurable community contribution. Through structured tracking and faculty validation, NSSApp builds lifelong civic responsibility.</p>
+                <div className="grid grid-cols-3 gap-6 pt-4">
+                    <div><div className="text-2xl font-semibold text-secondary-900">500+</div><div className="text-xs text-secondary-500 uppercase tracking-wide">Donations</div></div>
+                    <div><div className="text-2xl font-semibold text-secondary-900">1K+</div><div className="text-xs text-secondary-500 uppercase tracking-wide">Trees Tagged</div></div>
+                    <div><div className="text-2xl font-semibold text-secondary-900">200+</div><div className="text-xs text-secondary-500 uppercase tracking-wide">Active Members</div></div>
+                </div>
+            </div>
+            <div className="relative">
+                <div className="aspect-[4/3] w-full rounded-2xl bg-gradient-to-br from-nss-100 to-nss-200 border border-nss-200 flex items-center justify-center text-secondary-400 text-sm">Image Placeholder</div>
+            </div>
+        </div>
+    </section>
+);

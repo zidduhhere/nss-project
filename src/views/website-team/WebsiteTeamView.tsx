@@ -1,5 +1,5 @@
 import Navbar from '@/components/common/Navbar';
-import { FooterSection } from '@/views/home/sections/FooterSection';
+import { Footer } from '@/components/ui/Footer';
 
 export default function WebsiteTeamView() {
     return (
@@ -18,7 +18,7 @@ export default function WebsiteTeamView() {
                     ))}
                 </div>
             </main>
-            <FooterSection />
+            <Footer />
         </div>
     );
 }

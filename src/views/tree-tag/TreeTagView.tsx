@@ -1,5 +1,5 @@
 import Navbar from '@/components/common/Navbar';
-import { FooterSection } from '@/views/home/sections/FooterSection';
+import { Footer } from '@/components/ui/Footer';
 
 export default function TreeTagView() {
     return (
@@ -9,7 +9,7 @@ export default function TreeTagView() {
                 <h1 className="text-4xl font-bold mb-6 text-nss-text">Tree Tag</h1>
                 <p className="text-nss-text-secondary max-w-3xl">Form and tracking for tree tagging will be implemented here.</p>
             </main>
-            <FooterSection />
+            <Footer />
         </div>
     );
 }
