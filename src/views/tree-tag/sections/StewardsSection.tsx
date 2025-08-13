@@ -16,14 +16,14 @@ const facultyStewards: Steward[] = [
 ];
 
 export const StewardsSection = () => (
-    <section className="py-24 bg-nss-50">
+    <section className="py-24 bg-nss-50 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-20">
             <div>
                 <h2 className="text-3xl font-semibold text-secondary-900 mb-8">Student Tree Stewards</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {studentStewards.map((c, i) => (
                         <div key={i} className="group flex flex-col items-center text-center">
-                            <div className="mb-5"><Placeholder size="avatar" variant="person" shadow /></div>
+                            <div className="mb-5"><Placeholder size="avatar" variant="person" rounded='rounded-full' /></div>
                             <h3 className="font-medium text-secondary-900">{c.name}</h3>
                             <p className="text-xs text-secondary-500 uppercase tracking-wide mt-1">{c.zone}</p>
                             <p className="text-xs text-nss-600 mt-1">{c.role}</p>
@@ -36,7 +36,7 @@ export const StewardsSection = () => (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {facultyStewards.map((c, i) => (
                         <div key={i} className="group flex flex-col items-center text-center">
-                            <div className="mb-5"><Placeholder size="avatar" variant="person" shadow /></div>
+                            <div className="mb-5"><Placeholder size="avatar" variant="person" rounded='rounded-full' /></div>
                             <h3 className="font-medium text-secondary-900">{c.name}</h3>
                             <p className="text-xs text-secondary-500 uppercase tracking-wide mt-1">{c.zone}</p>
                             <p className="text-xs text-nss-600 mt-1">{c.role}</p>

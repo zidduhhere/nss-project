@@ -1,20 +1,29 @@
-export const BloodStatsSection = () => (
-    <section className="py-24 bg-nss-50">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+import { StatCard } from '@/components/ui/StatCard';
+import { StatSectionWrapper } from '@/components/ui/StatSectionWrapper';
+
+export const BloodStatsSection = () => {
+    const stats = [
+        { value: '820', label: 'Units Collected (Year)', sub: '+18% YoY' },
+        { value: '310', label: 'Emergency Requests', sub: 'Fulfilled 94%' },
+        { value: '560', label: 'Active Donor Pool', sub: 'Verified' },
+        { value: '12', label: 'Hospital Partners', sub: 'MoUs Signed' },
+    ];
+    return (
+        <StatSectionWrapper
+            bgColor="bg-blood-50"
+            paddingY="py-24"
+            className="reveal-on-scroll"
+        >
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {[
-                    { label: 'Units Collected (Year)', value: '820', sub: '+18% YoY' },
-                    { label: 'Emergency Requests', value: '310', sub: 'Fulfilled 94%' },
-                    { label: 'Active Donor Pool', value: '560', sub: 'Verified' },
-                    { label: 'Hospital Partners', value: '12', sub: 'MoUs Signed' },
-                ].map((s, i) => (
-                    <div key={i} className="p-6 bg-white rounded-xl border border-nss-200 hover:shadow-sm transition">
-                        <div className="text-3xl font-semibold text-secondary-900 mb-1">{s.value}</div>
-                        <div className="text-sm font-medium text-secondary-600">{s.label}</div>
-                        <div className="text-xs text-nss-600 mt-1">{s.sub}</div>
-                    </div>
+                {stats.map((s, i) => (
+                    <StatCard
+                        key={i}
+                        titleStat={s.value}
+                        subtitle={s.label}
+                        description={s.sub}
+                    />
                 ))}
             </div>
-        </div>
-    </section>
-);
+        </StatSectionWrapper>
+    );
+};

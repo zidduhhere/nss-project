@@ -7,10 +7,12 @@ import { TreeTagImpactSection } from './sections/ImpactSection';
 import { TreeTagWorkflowSection } from './sections/WorkflowSection';
 import { GreenCampusSection } from './sections/FlagshipSection';
 import { StewardsSection } from './sections/StewardsSection';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export default function TreeTagView() {
+    useScrollReveal();
     return (
-        <div className="min-h-screen font-isans bg-white">
+        <div className="min-h-screen font-isans bg-white bg-tree-main-gradient">
             <Navbar />
             <main>
                 <TreeTagHeroSection />

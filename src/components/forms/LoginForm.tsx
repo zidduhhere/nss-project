@@ -1,19 +1,22 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { TextField, Button } from '../ui';
+import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants';
 
 interface LoginFormProps {
   onLogin: (credentials: { mobile: string; password: string }) => Promise<boolean>;
-  onSwitchToRegister: () => void;
   isLoading: boolean;
   error: string | null;
 }
 
-export default function LoginForm({ onLogin, onSwitchToRegister, isLoading: externalLoading, error: externalError }: LoginFormProps) {
+export default function LoginForm({ onLogin, isLoading: externalLoading, error: externalError }: LoginFormProps) {
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [navLoading, setNavLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Use external loading/error states or fallback to internal ones
   const currentLoading = externalLoading;
@@ -113,13 +116,28 @@ export default function LoginForm({ onLogin, onSwitchToRegister, isLoading: exte
         <p className="text-black">
           Don't have an account?{' '}
           <button
-            onClick={onSwitchToRegister}
-            className="bg-gradient-to-r font-bold font-isans from-nss-600 to-nss-700 bg-clip-text text-transparent hover:from-nss-700 hover:to-nss-800 transition-all duration-200"
+            disabled={navLoading}
+            onClick={async () => {
+              setNavLoading(true);
+              // allow spinner paint before synchronous navigation triggers Suspense fallback
+              requestAnimationFrame(() => setTimeout(() => navigate('/register'), NAVIGATION_TRANSITION_DELAY));
+            }}
+            className="relative bg-gradient-to-r font-bold font-isans from-nss-600 to-nss-700 bg-clip-text text-transparent hover:from-nss-700 hover:to-nss-800 transition-all duration-200 disabled:opacity-60"
           >
+            {navLoading && (
+              <span className="absolute -left-6 top-1/2 -translate-y-1/2 inline-flex h-4 w-4">
+                <span className="animate-spin h-4 w-4 rounded-full border-2 border-nss-600 border-t-transparent" />
+              </span>
+            )}
             Register here
           </button>
         </p>
       </div>
+      {navLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
+          <div className="h-12 w-12 rounded-full border-4 border-nss-600 border-t-transparent animate-spin" />
+        </div>
+      )}
 
 
       {/* <div className="mt-8 p-4 bg-nss-50 border border-black rounded-lg">

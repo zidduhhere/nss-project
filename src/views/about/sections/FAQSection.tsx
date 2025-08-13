@@ -13,7 +13,7 @@ const faqData: FaqItem[] = [
 export const FAQSection = () => {
     const [openFaq, setOpenFaq] = useState<number | null>(0);
     return (
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-white reveal-on-scroll">
             <div className="max-w-6xl mx-auto px-6 lg:px-10">
                 <div className="grid lg:grid-cols-3 gap-12">
                     <div className="space-y-6 lg:col-span-1">

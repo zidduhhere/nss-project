@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { TextField, Dropdown, Button } from '../ui';
 import StudentInfo from './StudentInfo';
+import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants';
 
 interface RegisterFormProps {
   onRegister: (userData: any) => Promise<boolean>;
-  onSwitchToLogin: () => void;
   isLoading: boolean;
   error: string | null;
 }
 
-export default function RegisterForm({ onRegister, onSwitchToLogin, isLoading: externalLoading, error: externalError }: RegisterFormProps) {
+export default function RegisterForm({ onRegister, isLoading: externalLoading, error: externalError }: RegisterFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -28,6 +29,9 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, isLoading: e
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
+
+  const [navLoading, setNavLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Use external loading/error states or fallback to internal ones
   const currentLoading = externalLoading;
@@ -200,13 +204,27 @@ export default function RegisterForm({ onRegister, onSwitchToLogin, isLoading: e
         <p className="text-nss-600 text-md">
           Already have an account?{' '}
           <button
-            onClick={onSwitchToLogin}
-            className="text-nss-700 hover:text-nss-800 font-bold transition-colors hover:underline"
+            disabled={navLoading}
+            onClick={() => {
+              setNavLoading(true);
+              requestAnimationFrame(() => setTimeout(() => navigate('/login'), NAVIGATION_TRANSITION_DELAY));
+            }}
+            className="relative text-nss-700 hover:text-nss-800 font-bold transition-colors hover:underline disabled:opacity-60"
           >
+            {navLoading && (
+              <span className="absolute -left-6 top-1/2 -translate-y-1/2 inline-flex h-4 w-4">
+                <span className="animate-spin h-4 w-4 rounded-full border-2 border-nss-600 border-t-transparent" />
+              </span>
+            )}
             Sign in here
           </button>
         </p>
       </div>
+      {navLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
+          <div className="h-12 w-12 rounded-full border-4 border-nss-600 border-t-transparent animate-spin" />
+        </div>
+      )}
     </div>
   );
 }

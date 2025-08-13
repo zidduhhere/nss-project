@@ -6,6 +6,10 @@
     font-display: swap;
 }
 
+html {
+    scrollbar-color: white;
+    scroll-behavior: smooth;
+}
 
 
 @tailwind base;

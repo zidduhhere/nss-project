@@ -1,10 +1,19 @@
-import HomePage from '@/views/home/HomeView';
-import { AboutView, BloodDonationView, TreeTagView, LoginView, RegisterView, BlogView, WebsiteTeamView, ContactView } from '@/views';
-import StudentDashboard from '@/components/student/StudentDashboard';
-import FacultyDashboard from '@/components/faculty/FacultyDashboard';
-import NotFoundView from '../views/not-found/NotFoundView';
-import { ComponentType } from 'react';
+import { lazy, ComponentType } from 'react';
 import { Navigate } from 'react-router-dom';
+
+// Lazy-loaded route components
+const HomePage = lazy(() => import('@/views/home/HomeView'));
+const AboutView = lazy(() => import('@/views/about/AboutView'));
+const BloodDonationView = lazy(() => import('@/views/blood-donation/BloodDonationView'));
+const TreeTagView = lazy(() => import('@/views/tree-tag/TreeTagView'));
+const BlogView = lazy(() => import('@/views/blog/BlogView'));
+const WebsiteTeamView = lazy(() => import('@/views/website-team/WebsiteTeamView'));
+const ContactView = lazy(() => import('@/views/contact/ContactView'));
+const LoginView = lazy(() => import('@/views/auth/login/LoginView'));
+const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
+const StudentDashboard = lazy(() => import('@/components/student/StudentDashboard'));
+const FacultyDashboard = lazy(() => import('@/components/faculty/FacultyDashboard'));
+const NotFoundView = lazy(() => import('../views/not-found/NotFoundView'));
 
 export interface AppRoute {
     path: string;

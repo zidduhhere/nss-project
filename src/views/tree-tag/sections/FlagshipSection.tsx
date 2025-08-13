@@ -1,7 +1,7 @@
 import { TreePine } from 'lucide-react';
 
 export const GreenCampusSection = () => (
-    <section className="py-24 bg-white border-y border-nss-100">
+    <section className="py-24 bg-white border-y border-nss-100 reveal-on-scroll">
         <div className="max-w-6xl mx-auto px-6 lg:px-10 grid lg:grid-cols-2 gap-16 items-start">
             <div className="space-y-8">
                 <h2 className="text-3xl font-semibold text-secondary-900">Green Campus Program</h2>

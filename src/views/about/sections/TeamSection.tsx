@@ -10,7 +10,7 @@ const team: TeamMember[] = [
 ];
 
 export const TeamSection = () => (
-    <section className="py-24 bg-nss-50">
+    <section className="py-24 bg-nss-50 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-12">
                 <div className="space-y-4 max-w-xl">

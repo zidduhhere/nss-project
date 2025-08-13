@@ -1,7 +1,7 @@
 import { Target, HeartHandshake } from 'lucide-react';
 
 export const MissionVisionSection = () => (
-    <section className="bg-white border-y border-nss-100 py-24">
+    <section className="bg-white border-y border-nss-100 py-24 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-3 gap-14 items-start">
             <div className="space-y-6 lg:col-span-1">
                 <h2 className="text-3xl font-semibold text-secondary-900">Mission & Vision</h2>

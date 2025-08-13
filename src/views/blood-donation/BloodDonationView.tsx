@@ -7,11 +7,13 @@ import { BloodFlowSection } from './sections/FlowSection';
 import { RudhirasenaSection } from './sections/RudhirasenaSection';
 import { CoordinatorsSection } from './sections/CoordinatorsSection';
 import { FinalCTA } from '@/components/ui/FinalCTA';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export default function BloodDonationView() {
+    useScrollReveal();
 
     return (
-        <div className="min-h-screen  font-isans bg-white">
+        <div className="min-h-screen font-isans bg-blood-main-gradient">
             <Navbar />
             <main className="">
                 <BloodHeroSection />
