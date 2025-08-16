@@ -1,18 +1,15 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
-import { TextField, TextArea } from '../ui';
+import { TextField } from '../ui';
 
 interface StudentInfoProps {
     formData: {
-        age: string;
-        place: string;
+        district: string;
         college: string;
-        fatherName: string;
-        address: string;
         ktuRegistrationNumber: string;
-        unitNumber: string;
+        email?: string;
     };
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
 export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
@@ -24,29 +21,36 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TextField
-                    label="Age *"
-                    type="number"
-                    id="age"
-                    name="age"
-                    value={formData.age}
-                    onChange={onChange}
-                    placeholder="Enter your age"
-                    className="bg-white"
-                    required
-                />
-
-                <TextField
-                    label="Place *"
-                    type="text"
-                    id="place"
-                    name="place"
-                    value={formData.place}
-                    onChange={onChange}
-                    placeholder="Enter your place"
-                    className="bg-white"
-                    required
-                />
+                {/* District Dropdown (Kerala - 14 districts) */}
+                <div className="flex flex-col space-y-2">
+                    <label htmlFor="district" className="text-sm font-medium text-gray-700">
+                        District *
+                    </label>
+                    <select
+                        id="district"
+                        name="district" /* keeping underlying field name 'district' for backward compatibility */
+                        value={formData.district}
+                        onChange={onChange}
+                        required
+                        className="bg-white border border-gray-50 text-gray-900 text-sm rounded-lg focus:ring-nss-50 focus:border-nss-50 block w-full px-4 py-2"
+                    >
+                        <option value="" disabled>Select your district</option>
+                        <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="Kollam">Kollam</option>
+                        <option value="Pathanamthitta">Pathanamthitta</option>
+                        <option value="Alappuzha">Alappuzha</option>
+                        <option value="Kottayam">Kottayam</option>
+                        <option value="Idukki">Idukki</option>
+                        <option value="Ernakulam">Ernakulam</option>
+                        <option value="Thrissur">Thrissur</option>
+                        <option value="Palakkad">Palakkad</option>
+                        <option value="Malappuram">Malappuram</option>
+                        <option value="Kozhikode">Kozhikode</option>
+                        <option value="Wayanad">Wayanad</option>
+                        <option value="Kannur">Kannur</option>
+                        <option value="Kasaragod">Kasaragod</option>
+                    </select>
+                </div>
 
                 <TextField
                     label="College *"
@@ -56,18 +60,6 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                     value={formData.college}
                     onChange={onChange}
                     placeholder="Enter your college name"
-                    className="bg-white"
-                    required
-                />
-
-                <TextField
-                    label="Father's Name *"
-                    type="text"
-                    id="fatherName"
-                    name="fatherName"
-                    value={formData.fatherName}
-                    onChange={onChange}
-                    placeholder="Enter father's name"
                     className="bg-white"
                     required
                 />
@@ -85,29 +77,21 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                 />
 
                 <TextField
-                    label="Unit Number *"
-                    type="text"
-                    id="unitNumber"
-                    name="unitNumber"
-                    value={formData.unitNumber}
+                    label="Email *"
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email || ''}
                     onChange={onChange}
-                    placeholder="Enter unit number"
+                    placeholder="Enter your email address"
                     className="bg-white"
                     required
                 />
             </div>
 
-            <TextArea
-                label="Address *"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={onChange}
-                rows={3}
-                placeholder="Enter your complete address"
-                className="bg-white"
-                required
-            />
+            {/* Removed address, age, father's name, unit number per new requirements */}
+
+
         </div>
     );
 }

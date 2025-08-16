@@ -1,22 +1,61 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+/**
+ * LoginForm
+ * -------------
+ * A single unified login form component that supports BOTH student and faculty
+ * authentication flows through the `roleMode` prop.
+ *
+ * Core ideas:
+ * - Identifier Field Switching:
+ *   Students authenticate with their KTU ID, while faculty use an Email ID.
+ *   The label / input type changes automatically based on `roleMode`.
+ * - External vs Internal State:
+ *   Loading & error states can be driven by a parent (e.g. async auth calls) via
+ *   the `isLoading` and `error` props. If an auth attempt fails and no external
+ *   error is supplied, the component sets an internal, role-aware error string.
+ * - Navigation Enhancements:
+ *   Uses <NavTransitionLink /> for smoother route transitions with optional
+ *   inline / overlay spinners. Secondary link switches between student / faculty
+ *   login depending on context.
+ * - Accessibility & UX:
+ *   Provides clear labeling, required attributes, password visibility toggle,
+ *   and concise error messaging adjusted per role (KTU ID vs email).
+ *
+ * Props Contract:
+ * - onLogin: (credentials) => Promise<boolean>
+ *     Should resolve to true on success, false on invalid credentials.
+ * - isLoading: externally controlled loading indicator for submit button.
+ * - error: externally supplied error message (overrides internal one if present).
+ * - hideRegisterLink: suppresses the register prompt (used for faculty login).
+ * - secondaryLinkMode: decides which alternate login link to show (faculty|student).
+ * - roleMode: selects identifier semantics ('student' => KTU ID, 'faculty' => Email).
+ *
+ * Failure Messaging Logic:
+ * - If onLogin returns false and no external error is provided, an internal
+ *   message like `Invalid KTU ID or password` or `Invalid email or password` is set.
+ * - Unexpected exceptions fall back to a generic retry message.
+ */
 import { LogIn } from 'lucide-react';
+import NavTransitionLink from '../common/NavTransitionLink';
 import { TextField, Button } from '../ui';
-import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants';
+// import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants'; // no longer needed after NavTransitionLink abstraction
 
 interface LoginFormProps {
-  onLogin: (credentials: { mobile: string; password: string }) => Promise<boolean>;
+  onLogin: (credentials: { identifier: string; password: string }) => Promise<boolean>;
   isLoading: boolean;
   error: string | null;
+  hideRegisterLink?: boolean; // hide register for faculty login
+  secondaryLinkMode?: 'faculty' | 'student'; // controls the bottom alternate link
+  roleMode?: 'student' | 'faculty'; // determines which identifier field to show
 }
 
-export default function LoginForm({ onLogin, isLoading: externalLoading, error: externalError }: LoginFormProps) {
-  const [mobile, setMobile] = useState('');
+export default function LoginForm({ onLogin, isLoading: externalLoading, error: externalError, hideRegisterLink = false, secondaryLinkMode = 'faculty', roleMode = 'student' }: LoginFormProps) {
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [navLoading, setNavLoading] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // no longer used; NavTransitionLink handles navigation
 
   // Use external loading/error states or fallback to internal ones
   const currentLoading = externalLoading;
@@ -27,9 +66,10 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
     setError('');
 
     try {
-      const success = await onLogin({ mobile, password });
+      const success = await onLogin({ identifier, password });
       if (!success && !externalError) {
-        setError('Invalid mobile number or password');
+        const idLabel = roleMode === 'student' ? 'KTU ID' : 'email';
+        setError(`Invalid ${idLabel} or password`);
       }
     } catch (err) {
       if (!externalError) {
@@ -54,18 +94,31 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Mobile Number */}
-        <TextField
-          label="Mobile Number"
-          type="tel"
-          id="mobile"
-          value={mobile}
-          onChange={(e) => setMobile(e.target.value)}
-          placeholder="Enter your mobile number"
-          required
-        />
+        {/* Identifier Field (Dynamic: KTU ID for students, Email for faculty) */}
+        {roleMode === 'student' && (
+          <TextField
+            label="KTU ID"
+            type="text"
+            id="ktuId"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your KTU Registration ID"
+            required
+          />
+        )}
+        {roleMode === 'faculty' && (
+          <TextField
+            label="Email ID"
+            type="email"
+            id="email"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your institutional email"
+            required
+          />
+        )}
 
-        {/* Password */}
+        {/* Password Field (with show / hide toggle) */}
         <TextField
           label="Password"
           type={showPassword ? 'text' : 'password'}
@@ -79,8 +132,7 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
           required
         />
 
-        {/* Error Message */}
-        {/* Error Message */}
+        {/* Error Message (externalError takes precedence unless absent) */}
         {currentError && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center text-red-600">
             <span>{currentError}</span>
@@ -111,45 +163,51 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
         </button>
       </div>
 
-      {/* Register Link */}
       <div className="mt-6 text-center">
-        <p className="text-black">
-          Don't have an account?{' '}
-          <button
-            disabled={navLoading}
-            onClick={async () => {
-              setNavLoading(true);
-              // allow spinner paint before synchronous navigation triggers Suspense fallback
-              requestAnimationFrame(() => setTimeout(() => navigate('/register'), NAVIGATION_TRANSITION_DELAY));
-            }}
-            className="relative bg-gradient-to-r font-bold font-isans from-nss-600 to-nss-700 bg-clip-text text-transparent hover:from-nss-700 hover:to-nss-800 transition-all duration-200 disabled:opacity-60"
-          >
-            {navLoading && (
-              <span className="absolute -left-6 top-1/2 -translate-y-1/2 inline-flex h-4 w-4">
-                <span className="animate-spin h-4 w-4 rounded-full border-2 border-nss-600 border-t-transparent" />
-              </span>
-            )}
-            Register here
-          </button>
-        </p>
+        {!hideRegisterLink && (
+          <p className="text-black">
+            Don't have an account?{' '}
+            <NavTransitionLink
+              to="/register"
+              navLoading={navLoading}
+              setNavLoadingExternal={setNavLoading}
+              showInlineSpinner
+              showOverlaySpinner
+              ariaLabel="Navigate to registration form"
+            >
+              Register here
+            </NavTransitionLink>
+          </p>
+        )}
+        {secondaryLinkMode === 'faculty' && (
+          <p className="text-xs text-secondary-600 mt-4">
+            Faculty member?{' '}
+            <NavTransitionLink
+              to="/login/faculty"
+              textColorClass="font-medium text-nss-600 hover:text-nss-700 hover:underline"
+              ariaLabel="Navigate to faculty login"
+              showInlineSpinner={false}
+              showOverlaySpinner={false}
+            >
+              Faculty Login
+            </NavTransitionLink>
+          </p>
+        )}
+        {secondaryLinkMode === 'student' && (
+          <p className="text-xs text-secondary-600 mt-4">
+            Student member?{' '}
+            <NavTransitionLink
+              to="/login"
+              textColorClass="font-medium text-nss-600 hover:text-nss-700 hover:underline"
+              ariaLabel="Navigate to student login"
+              showInlineSpinner={false}
+              showOverlaySpinner={false}
+            >
+              Student Login
+            </NavTransitionLink>
+          </p>
+        )}
       </div>
-      {navLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
-          <div className="h-12 w-12 rounded-full border-4 border-nss-600 border-t-transparent animate-spin" />
-        </div>
-      )}
-
-
-      {/* <div className="mt-8 p-4 bg-nss-50 border border-black rounded-lg">
-        <p className="text-sm text-black font-medium mb-2 flex items-center">
-          <Shield className="h-4 w-4 mr-2" />
-          Demo Accounts:
-        </p>
-        <div className="text-xs text-black space-y-1">
-          <p className="font-mono bg-white px-2 py-1 rounded">Student: 9876543210 / password</p>
-          <p className="font-mono bg-white px-2 py-1 rounded">Faculty: 9876543211 / password</p>
-        </div>
-      </div> */}
     </div>
   );
 }

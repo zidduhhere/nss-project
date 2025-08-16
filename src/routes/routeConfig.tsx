@@ -10,6 +10,7 @@ const BlogView = lazy(() => import('@/views/blog/BlogView'));
 const WebsiteTeamView = lazy(() => import('@/views/website-team/WebsiteTeamView'));
 const ContactView = lazy(() => import('@/views/contact/ContactView'));
 const LoginView = lazy(() => import('@/views/auth/login/LoginView'));
+const FacultyLoginView = lazy(() => import('@/views/auth/faculty-login/FacultyLoginView'));
 const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
 const StudentDashboard = lazy(() => import('@/components/student/StudentDashboard'));
 const FacultyDashboard = lazy(() => import('@/components/faculty/FacultyDashboard'));
@@ -36,6 +37,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/website-team', label: 'Website Team', component: WebsiteTeamView },
     { path: '/contact', label: 'Contact Us', component: ContactView },
     { path: '/login', component: LoginView },
+    { path: '/login/faculty', component: FacultyLoginView },
     { path: '/register', component: RegisterView },
     { path: '/dashboard/student', protected: true, roles: ['student'], component: StudentDashboard },
     { path: '/dashboard/faculty', protected: true, roles: ['faculty'], component: FacultyDashboard },

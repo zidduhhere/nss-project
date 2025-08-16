@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
-import { TextField, Dropdown, Button } from '../ui';
+import { TextField, Button } from '../ui';
 import StudentInfo from './StudentInfo';
-import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants';
+// import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants'; // no longer needed after NavTransitionLink abstraction
+import NavTransitionLink from '../common/NavTransitionLink';
 
 interface RegisterFormProps {
   onRegister: (userData: any) => Promise<boolean>;
@@ -17,21 +17,16 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
     mobile: '',
     password: '',
     confirmPassword: '',
-    role: 'student' as 'student' | 'faculty',
-    age: '',
-    place: '',
+    district: '',
     college: '',
-    fatherName: '',
-    address: '',
     ktuRegistrationNumber: '',
-    unitNumber: ''
+    email: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
 
-  const [navLoading, setNavLoading] = useState(false);
-  const navigate = useNavigate();
+  // Navigation loading handled internally by NavTransitionLink
 
   // Use external loading/error states or fallback to internal ones
   const currentLoading = externalLoading;
@@ -63,17 +58,12 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
       const userData = {
         name: formData.name,
         mobile: formData.mobile,
-        role: formData.role,
+        role: 'student' as const,
         password: formData.password,
-        ...(formData.role === 'student' && {
-          age: parseInt(formData.age),
-          place: formData.place,
-          college: formData.college,
-          fatherName: formData.fatherName,
-          address: formData.address,
-          ktuRegistrationNumber: formData.ktuRegistrationNumber,
-          unitNumber: formData.unitNumber
-        })
+        district: formData.district,
+        college: formData.college,
+        ktuRegistrationNumber: formData.ktuRegistrationNumber,
+        email: formData.email
       };
 
       const success = await onRegister(userData);
@@ -126,30 +116,15 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
           />
         </div>
 
-        <Dropdown
-          label="Role *"
-          id="role"
-          name="role"
-          value={formData.role}
+        <StudentInfo
+          formData={{
+            district: formData.district,
+            college: formData.college,
+            ktuRegistrationNumber: formData.ktuRegistrationNumber,
+            email: formData.email
+          }}
           onChange={handleChange}
-          options={['Student', 'Faculty']}
-          required
         />
-
-        {formData.role === 'student' && (
-          <StudentInfo
-            formData={{
-              age: formData.age,
-              place: formData.place,
-              college: formData.college,
-              fatherName: formData.fatherName,
-              address: formData.address,
-              ktuRegistrationNumber: formData.ktuRegistrationNumber,
-              unitNumber: formData.unitNumber
-            }}
-            onChange={handleChange}
-          />
-        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField
@@ -203,28 +178,17 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
       <div className="mt-4 text-center mb-24">
         <p className="text-nss-600 text-md">
           Already have an account?{' '}
-          <button
-            disabled={navLoading}
-            onClick={() => {
-              setNavLoading(true);
-              requestAnimationFrame(() => setTimeout(() => navigate('/login'), NAVIGATION_TRANSITION_DELAY));
-            }}
-            className="relative text-nss-700 hover:text-nss-800 font-bold transition-colors hover:underline disabled:opacity-60"
+          <NavTransitionLink
+            to="/login"
+            showInlineSpinner
+            showOverlaySpinner
+            ariaLabel="Navigate to login form"
+            textColorClass="font-bold font-isans text-nss-700 hover:text-nss-800 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-nss-500/40"
           >
-            {navLoading && (
-              <span className="absolute -left-6 top-1/2 -translate-y-1/2 inline-flex h-4 w-4">
-                <span className="animate-spin h-4 w-4 rounded-full border-2 border-nss-600 border-t-transparent" />
-              </span>
-            )}
             Sign in here
-          </button>
+          </NavTransitionLink>
         </p>
       </div>
-      {navLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
-          <div className="h-12 w-12 rounded-full border-4 border-nss-600 border-t-transparent animate-spin" />
-        </div>
-      )}
     </div>
   );
 }

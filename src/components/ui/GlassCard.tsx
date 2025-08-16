@@ -11,7 +11,7 @@ export default function GlassCard({ icon: IconComponent, title, message, classNa
     return (
         <div className={`relative group ${className}`}>
             {/* Glass Card */}
-            <div className=" relative bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 h-56 overflow-hidden transition-all duration-300 hover:bg-white/15 hover:border-white/30 hover:scale-105">
+            <div className="  relative bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 h-48 overflow-hidden transition-all duration-300 hover:bg-white/15 hover:border-white/30 hover:scale-105">
                 {/* Subtle gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"></div>
 

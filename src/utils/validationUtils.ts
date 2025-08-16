@@ -52,6 +52,25 @@ export const validateEmail = (email: string): ValidationResult => {
   return { isValid: true };
 };
 
+// Basic KTU ID validation (adjust pattern as real format clarifies)
+export const validateKtuId = (ktuId: string): ValidationResult => {
+  const pattern = /^[A-Z0-9]{6,}$/i;
+  if (!ktuId) return { isValid: false, error: "KTU ID is required" };
+  if (!pattern.test(ktuId))
+    return { isValid: false, error: "Invalid KTU ID format" };
+  return { isValid: true };
+};
+
+// Unified identifier validator based on role
+export const validateIdentifier = (
+  identifier: string,
+  role: "student" | "faculty"
+): ValidationResult => {
+  return role === "student"
+    ? validateKtuId(identifier)
+    : validateEmail(identifier);
+};
+
 export const validateNumber = (
   value: string,
   fieldName: string,

@@ -1,0 +1,32 @@
+import { Placeholder } from '@/components/common/Placeholder';
+
+export default function FacultyLoginRightSide() {
+    return (
+        <div className="flex h-full bg-gradient-nss relative">
+            {/* Logo */}
+            <div className='flex items-center space-x-1 absolute top-8 left-8'>
+                <Placeholder size='logo' variant='logo' shadow />
+                <h1 className="text-white font-isans text-lg">NSS APJKTU</h1>
+            </div>
+
+            <div className="flex flex-col justify-center text-center items-center mx-auto ">
+                <h1 className="font-isans text-2xl md:text-4xl bg-clip-text text-white my-3">
+                    Faculty Portal Access
+                </h1>
+                <p className="my-6 text-white font-isans text-lg md:text-xl max-w-md font-extralight tracking-wide">
+                    Manage submissions, reviews and student engagement
+                </p>
+            </div>
+
+            <div className='flex items-center space-x-2 absolute bottom-8 left-8'>
+                <p className="text-white/80 font-isans text-sm">Powered by</p>
+                <div className='flex items-center space-x-1'>
+                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">H</span>
+                    </div>
+                    <span className="text-white font-isans font-semibold text-sm">Hyphen</span>
+                </div>
+            </div>
+        </div>
+    );
+}
