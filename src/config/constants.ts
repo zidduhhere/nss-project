@@ -1,3 +1,2 @@
-// Centralized application-wide constants
-// Navigation transition artificial delay (ms) used to allow spinner paint before route change
-export const NAVIGATION_TRANSITION_DELAY = 350;
+// Non-visual application-wide constants (keep UI styles in uiConstants.ts)
+export * from "./uiConstants"; // temporary re-export for backwards compatibility; refactor imports later

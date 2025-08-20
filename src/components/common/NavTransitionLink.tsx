@@ -1,5 +1,5 @@
 import React from 'react';
-import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants';
+import { NAVIGATION_TRANSITION_DELAY } from '@/config/uiConstants';
 import { useNavigate } from 'react-router-dom';
 
 export interface NavTransitionLinkProps {

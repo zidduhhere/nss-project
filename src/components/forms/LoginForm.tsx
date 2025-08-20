@@ -18,7 +18,7 @@ import { useState } from 'react';
  *   inline / overlay spinners. Secondary link switches between student / faculty
  *   login depending on context.
  * - Accessibility & UX:
- *   Provides clear labeling, required attributes, password visibility toggle,
+ *   Provides clear labeling, password visibility toggle (all validation removed per new requirements),
  *   and concise error messaging adjusted per role (KTU ID vs email).
  *
  * Props Contract:
@@ -103,7 +103,6 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             placeholder="Enter your KTU Registration ID"
-            required
           />
         )}
         {roleMode === 'faculty' && (
@@ -114,7 +113,6 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             placeholder="Enter your institutional email"
-            required
           />
         )}
 
@@ -129,7 +127,6 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
           showPasswordToggle
           showPassword={showPassword}
           onTogglePassword={() => setShowPassword(!showPassword)}
-          required
         />
 
         {/* Error Message (externalError takes precedence unless absent) */}

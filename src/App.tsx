@@ -1,10 +1,8 @@
 // Root application module: wires global context (AppProvider) and declarative routing.
-// Routing is driven by a central routeConfig (appRoutes) so navigation + guards stay DRY.
-// Protected routes (protected: true) are wrapped with <ProtectedRoute/> to enforce auth + role checks.
+// Front-end only demo: all routes render directly without auth guards.
 import { AppProvider } from './context/AppContext';
 import { Routes, Route } from 'react-router-dom';
 import { appRoutes, notFoundRoute } from '@/routes/routeConfig';
-import ProtectedRoute from '@/routes/ProtectedRoute';
 import { Suspense } from 'react';
 
 function GlobalLoader() {
@@ -18,22 +16,9 @@ function GlobalLoader() {
 function AppContent() {
   return (
     <Routes>
-      {/** Iterate all configured routes.
-       *  If a route is marked protected we wrap its component in <ProtectedRoute/> which:
-       *    - Redirects to /login when not authenticated.
-       *    - Optionally enforces role-based access (roles array).
-       *  Otherwise we render the component directly.
-       */}
+      {/** Iterate all configured routes (no protected logic in front-end only mode). */}
       {appRoutes.map(route => (
-        route.protected ? (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={<ProtectedRoute roles={route.roles} component={route.component} />}
-          />
-        ) : (
-          <Route key={route.path} path={route.path} element={<route.component />} />
-        )
+        <Route key={route.path} path={route.path} element={<route.component />} />
       ))}
       {/** Wildcard / 404 route must come last to catch unmatched paths */}
       <Route path={notFoundRoute.path} element={<notFoundRoute.component />} />

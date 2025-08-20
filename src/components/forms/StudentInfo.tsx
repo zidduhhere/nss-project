@@ -24,14 +24,14 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                 {/* District Dropdown (Kerala - 14 districts) */}
                 <div className="flex flex-col space-y-2">
                     <label htmlFor="district" className="text-sm font-medium text-gray-700">
-                        District *
+                        District
                     </label>
                     <select
                         id="district"
                         name="district" /* keeping underlying field name 'district' for backward compatibility */
                         value={formData.district}
                         onChange={onChange}
-                        required
+                        // validation removed
                         className="bg-white border border-gray-50 text-gray-900 text-sm rounded-lg focus:ring-nss-50 focus:border-nss-50 block w-full px-4 py-2"
                     >
                         <option value="" disabled>Select your district</option>
@@ -53,7 +53,7 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                 </div>
 
                 <TextField
-                    label="College *"
+                    label="College"
                     type="text"
                     id="college"
                     name="college"
@@ -61,11 +61,11 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                     onChange={onChange}
                     placeholder="Enter your college name"
                     className="bg-white"
-                    required
+                // validation removed
                 />
 
                 <TextField
-                    label="KTU Registration Number *"
+                    label="KTU Registration Number"
                     type="text"
                     id="ktuRegistrationNumber"
                     name="ktuRegistrationNumber"
@@ -73,11 +73,11 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                     onChange={onChange}
                     placeholder="Enter KTU registration number"
                     className="bg-white"
-                    required
+                // validation removed
                 />
 
                 <TextField
-                    label="Email *"
+                    label="Email"
                     type="email"
                     id="email"
                     name="email"
@@ -85,7 +85,7 @@ export default function StudentInfo({ formData, onChange }: StudentInfoProps) {
                     onChange={onChange}
                     placeholder="Enter your email address"
                     className="bg-white"
-                    required
+                // validation removed
                 />
             </div>
 

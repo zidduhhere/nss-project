@@ -44,15 +44,7 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
     e.preventDefault();
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
+    // Validation removed per new front-end only requirements
 
     try {
       const userData = {
@@ -101,7 +93,6 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             value={formData.name}
             onChange={handleChange}
             placeholder="Enter your full name"
-            required
           />
 
           <TextField
@@ -112,7 +103,6 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             value={formData.mobile}
             onChange={handleChange}
             placeholder="Enter your mobile number"
-            required
           />
         </div>
 
@@ -138,7 +128,6 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             showPasswordToggle
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
-            required
           />
 
           <TextField
@@ -152,7 +141,6 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             showPasswordToggle
             showPassword={showConfirmPassword}
             onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
-            required
           />
         </div>
 

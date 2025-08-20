@@ -90,7 +90,7 @@ export default function BloodDonationForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="hospitalName" className="block text-sm font-medium text-gray-700 mb-2">
-              Hospital Name *
+              Hospital Name
             </label>
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -102,14 +102,13 @@ export default function BloodDonationForm() {
                 onChange={handleChange}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                 placeholder="Enter hospital name"
-                required
               />
             </div>
           </div>
 
           <div>
             <label htmlFor="donationDate" className="block text-sm font-medium text-gray-700 mb-2">
-              Date of Donation *
+              Date of Donation
             </label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -120,7 +119,7 @@ export default function BloodDonationForm() {
                 value={formData.donationDate}
                 onChange={handleChange}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
-                required
+
               />
             </div>
           </div>
@@ -128,7 +127,7 @@ export default function BloodDonationForm() {
 
         <div>
           <label htmlFor="unitsdonated" className="block text-sm font-medium text-gray-700 mb-2">
-            Units Donated *
+            Units Donated
           </label>
           <input
             type="number"
@@ -139,7 +138,6 @@ export default function BloodDonationForm() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
             placeholder="Enter number of units donated"
             min="1"
-            required
           />
         </div>
 
@@ -160,7 +158,7 @@ export default function BloodDonationForm() {
 
         <div>
           <label htmlFor="certificate" className="block text-sm font-medium text-gray-700 mb-2">
-            Upload Certificate *
+            Upload Certificate
           </label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-400 transition-colors">
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -175,7 +173,6 @@ export default function BloodDonationForm() {
                   onChange={handleFileChange}
                   accept=".pdf,.jpg,.jpeg,.png"
                   className="hidden"
-                  required
                 />
               </label>
               <p className="text-sm text-gray-500">PDF, JPG, JPEG, PNG up to 10MB</p>

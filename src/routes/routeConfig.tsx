@@ -2,19 +2,19 @@ import { lazy, ComponentType } from 'react';
 import { Navigate } from 'react-router-dom';
 
 // Lazy-loaded route components
-const HomePage = lazy(() => import('@/views/home/HomeView'));
-const AboutView = lazy(() => import('@/views/about/AboutView'));
-const BloodDonationView = lazy(() => import('@/views/blood-donation/BloodDonationView'));
-const TreeTagView = lazy(() => import('@/views/tree-tag/TreeTagView'));
-const BlogView = lazy(() => import('@/views/blog/BlogView'));
-const WebsiteTeamView = lazy(() => import('@/views/website-team/WebsiteTeamView'));
+const HomePage = lazy(() => import('@/views/miscellaneous/home/HomeView'));
+const AboutView = lazy(() => import('@/views/miscellaneous/about/AboutView'));
+const BloodDonationView = lazy(() => import('@/views/miscellaneous/blood-donation/BloodDonationView'));
+const TreeTagView = lazy(() => import('@/views/miscellaneous/tree-tag/TreeTagView'));
+const BlogView = lazy(() => import('@/views/miscellaneous/blog/BlogView'));
+const WebsiteTeamView = lazy(() => import('@/views/miscellaneous/website-team/WebsiteTeamView'));
 const ContactView = lazy(() => import('@/views/contact/ContactView'));
 const LoginView = lazy(() => import('@/views/auth/login/LoginView'));
 const FacultyLoginView = lazy(() => import('@/views/auth/faculty-login/FacultyLoginView'));
 const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
 const StudentDashboard = lazy(() => import('@/components/student/StudentDashboard'));
 const FacultyDashboard = lazy(() => import('@/components/faculty/FacultyDashboard'));
-const NotFoundView = lazy(() => import('../views/not-found/NotFoundView'));
+const NotFoundView = lazy(() => import('../views/miscellaneous/not-found/NotFoundView'));
 
 export interface AppRoute {
     path: string;
@@ -39,8 +39,9 @@ export const appRoutes: AppRoute[] = [
     { path: '/login', component: LoginView },
     { path: '/login/faculty', component: FacultyLoginView },
     { path: '/register', component: RegisterView },
-    { path: '/dashboard/student', protected: true, roles: ['student'], component: StudentDashboard },
-    { path: '/dashboard/faculty', protected: true, roles: ['faculty'], component: FacultyDashboard },
+    // Dashboards now unprotected in front-end only mode
+    { path: '/dashboard/student', component: StudentDashboard },
+    { path: '/dashboard/faculty', component: FacultyDashboard },
 ];
 
 export const notFoundRoute: AppRoute = { path: '*', component: NotFoundView };

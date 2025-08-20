@@ -98,7 +98,7 @@ export default function TreeTaggingForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="studentName" className="block text-sm font-medium text-gray-700 mb-2">
-            Student Name *
+            Student Name
           </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -110,7 +110,6 @@ export default function TreeTaggingForm() {
               onChange={handleChange}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               placeholder="Enter your name"
-              required
             />
           </div>
         </div>
@@ -118,7 +117,7 @@ export default function TreeTaggingForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="treeName" className="block text-sm font-medium text-gray-700 mb-2">
-              Tree Name *
+              Tree Name
             </label>
             <input
               type="text"
@@ -128,13 +127,12 @@ export default function TreeTaggingForm() {
               onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               placeholder="Enter common tree name"
-              required
             />
           </div>
 
           <div>
             <label htmlFor="scientificName" className="block text-sm font-medium text-gray-700 mb-2">
-              Scientific Name *
+              Scientific Name
             </label>
             <input
               type="text"
@@ -144,14 +142,13 @@ export default function TreeTaggingForm() {
               onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               placeholder="Enter scientific name"
-              required
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-            Location *
+            Location
           </label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -163,14 +160,13 @@ export default function TreeTaggingForm() {
               rows={3}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               placeholder="Describe the exact location where the tree is tagged"
-              required
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="treeImage" className="block text-sm font-medium text-gray-700 mb-2">
-            Tree Image *
+            Tree Image
           </label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -185,7 +181,6 @@ export default function TreeTaggingForm() {
                   onChange={handleFileChange}
                   accept=".jpg,.jpeg,.png"
                   className="hidden"
-                  required
                 />
               </label>
               <p className="text-sm text-gray-500">JPG, JPEG, PNG up to 10MB</p>
