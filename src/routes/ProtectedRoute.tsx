@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useApp } from '@/context/AppContext';
+import { useMasterAuth } from '@/context/MasterAuthContext';
 import { ComponentType } from 'react';
 
 interface ProtectedRouteProps {
@@ -9,7 +9,8 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ component: Component, roles, ...rest }: ProtectedRouteProps) {
-    const { isAuthenticated, user, logout } = useApp();
+    const { currentUser: user, logout } = useMasterAuth();
+    const isAuthenticated = !!user;
     const location = useLocation();
 
     if (!isAuthenticated) {

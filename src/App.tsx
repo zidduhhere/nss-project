@@ -1,6 +1,6 @@
 // Root application module: wires global context (AppProvider) and declarative routing.
 // Front-end only demo: all routes render directly without auth guards.
-import { AppProvider } from './context/AppContext';
+import { MasterAuthProvider } from './context/MasterAuthContext';
 import { AuthProvider } from './context/AuthContext';
 import { Routes, Route } from 'react-router-dom';
 import { appRoutes, notFoundRoute } from '@/routes/routeConfig';
@@ -24,16 +24,16 @@ function AppContent() {
 
 function App() {
   return (
-    // AppProvider supplies auth + submission state globally.
+    // MasterAuthProvider supplies combined student + faculty auth.
     <AuthProvider>
-      <AppProvider>
+      <MasterAuthProvider>
         {/* font-sans + antialiased sets typography baseline; all view components render inside */}
         <div className="font-sans antialiased">
           <Suspense fallback={<GlobalLoader />}>
             <AppContent />
           </Suspense>
         </div>
-      </AppProvider>
+      </MasterAuthProvider>
     </AuthProvider>
   );
 }

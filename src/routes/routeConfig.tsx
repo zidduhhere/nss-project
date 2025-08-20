@@ -1,6 +1,5 @@
 import { lazy, ComponentType } from 'react';
 import { Navigate } from 'react-router-dom';
-
 // Lazy-loaded route components
 const HomePage = lazy(() => import('@/views/miscellaneous/home/HomeView'));
 const AboutView = lazy(() => import('@/views/miscellaneous/about/AboutView'));
@@ -45,3 +44,6 @@ export const appRoutes: AppRoute[] = [
 ];
 
 export const notFoundRoute: AppRoute = { path: '*', component: NotFoundView };
+
+
+
