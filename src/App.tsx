@@ -1,17 +1,13 @@
 // Root application module: wires global context (AppProvider) and declarative routing.
 // Front-end only demo: all routes render directly without auth guards.
 import { AppProvider } from './context/AppContext';
+import { AuthProvider } from './context/AuthContext';
 import { Routes, Route } from 'react-router-dom';
 import { appRoutes, notFoundRoute } from '@/routes/routeConfig';
 import { Suspense } from 'react';
+import { GlobalLoader } from '@/components/common/GlobalLoader';
 
-function GlobalLoader() {
-  return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/60 backdrop-blur-sm">
-      <div className="h-14 w-14 rounded-full border-4 border-nss-600 border-t-transparent animate-spin" />
-    </div>
-  );
-}
+
 
 function AppContent() {
   return (
@@ -29,14 +25,16 @@ function AppContent() {
 function App() {
   return (
     // AppProvider supplies auth + submission state globally.
-    <AppProvider>
-      {/* font-sans + antialiased sets typography baseline; all view components render inside */}
-      <div className="font-sans antialiased">
-        <Suspense fallback={<GlobalLoader />}>
-          <AppContent />
-        </Suspense>
-      </div>
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        {/* font-sans + antialiased sets typography baseline; all view components render inside */}
+        <div className="font-sans antialiased">
+          <Suspense fallback={<GlobalLoader />}>
+            <AppContent />
+          </Suspense>
+        </div>
+      </AppProvider>
+    </AuthProvider>
   );
 }
 

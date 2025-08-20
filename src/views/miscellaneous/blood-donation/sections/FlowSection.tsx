@@ -1,5 +1,5 @@
 import { Activity, Users, ShieldCheck, Syringe, HandHeart, HeartPulse } from 'lucide-react';
-import FlowDiagram from '../../../components/ui/FlowDiagram';
+import FlowDiagram from '@/components/ui/FlowDiagram';
 
 export const BloodFlowSection = () => {
     const steps = [

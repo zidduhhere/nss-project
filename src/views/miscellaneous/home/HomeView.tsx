@@ -1,4 +1,4 @@
-import { Navbar } from '../../components/common';
+import { Navbar } from '@/components/common';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { HeroSection } from './sections/HeroSection';
 import { FeaturesSection } from './sections/FeaturesSection';

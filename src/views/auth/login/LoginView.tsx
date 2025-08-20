@@ -21,6 +21,7 @@ export default function LoginView() {
         return (
             <div className="min-h-screen bg-gradient-nss flex flex-col">
                 {/* Mobile Header */}
+
                 <div className="p-6 text-center">
                     <h1 className="text-white text-2xl font-bold font-isans mb-2">NSS Portal</h1>
                     <p className="text-white/80 font-isans">Sign in to continue</p>
@@ -40,7 +41,6 @@ export default function LoginView() {
             <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen w-full">
                 {/* Left Side - Login Form */}
                 <LoginLeftSide />
-
                 {/* Right Side - NSS Branding */}
                 <LoginRightSide />
             </div>

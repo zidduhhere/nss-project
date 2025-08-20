@@ -1,11 +1,10 @@
-import { Placeholder } from '@/components/common/Placeholder';
-
+import { images } from '@/assets/images'
 export default function LoginRightSide() {
     return (
         <div className="flex h-full bg-gradient-nss relative">
             {/* Logo and NSS APJKTU side by side */}
             <div className='flex items-center space-x-1 absolute top-8 left-8'>
-                <Placeholder size='logo' variant='logo' shadow />
+                <img src={images.logo} width="100" height="100" ></img>
                 <h1 className="text-white font-isans text-lg">NSS APJKTU</h1>
             </div>
 

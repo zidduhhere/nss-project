@@ -1,5 +1,5 @@
 import { MapPin, Hash, ClipboardList, Camera, Database, Leaf } from 'lucide-react';
-import FlowDiagram from '../../../components/ui/FlowDiagram';
+import FlowDiagram from '@/components/ui/FlowDiagram';
 
 export const TreeTagWorkflowSection = () => {
     const steps = [

@@ -27,9 +27,9 @@ export interface AppRoute {
 
 // NOTE: Order matters: root redirect should precede wildcard in final rendering.
 export const appRoutes: AppRoute[] = [
-    // Redirect legacy '/' to new '/hom' path
-    { path: '/', component: () => <Navigate to="/hom" replace /> },
-    { path: '/hom', label: 'Home', nav: true, component: HomePage },
+    // Redirect legacy '/' to new '/home' path
+    { path: '/', component: () => <Navigate to="/home" replace /> },
+    { path: '/home', label: 'Home', nav: true, component: HomePage },
     { path: '/about', label: 'About Us', nav: true, component: AboutView },
     { path: '/blood-donation', label: 'Blood Donation', nav: true, component: BloodDonationView },
     { path: '/tree-tag', label: 'Tree Tag', nav: true, component: TreeTagView },
