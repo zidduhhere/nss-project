@@ -1,9 +1,9 @@
-import { Navbar } from "../common";
+import DashboardNavigation from "@/components/common/DashboardNavigation";
 
 export default function StudentDashboard() {
   return (
     <div className="p-4">
-      <Navbar />
+      <DashboardNavigation />
       {/* Dashboard content goes here */}
     </div>
   );

@@ -1,9 +1,9 @@
 // Shared core types for user and auth contexts.
-export type UserRole = "student" | "faculty";
+export type UserRole = "student" | "unit";
 
 export interface BaseUser {
   id: string;
-  name?: string; // Student name or faculty unit number / display name
+  name?: string; // Student name or UNIT display name
   mobile: string;
   email: string;
   college?: string;
@@ -27,7 +27,7 @@ export interface BaseAuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   loginStudent: (email: string, password: string) => Promise<boolean>;
-  loginFaculty: (email: string, password: string) => Promise<boolean>;
+  loginUnit: (email: string, password: string) => Promise<boolean>;
   register: (
     data: Omit<BaseUser, "id"> & { password: string }
   ) => Promise<boolean>;

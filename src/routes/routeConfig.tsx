@@ -9,18 +9,19 @@ const BlogView = lazy(() => import('@/views/miscellaneous/blog/BlogView'));
 const WebsiteTeamView = lazy(() => import('@/views/miscellaneous/website-team/WebsiteTeamView'));
 const ContactView = lazy(() => import('@/views/contact/ContactView'));
 const LoginView = lazy(() => import('@/views/auth/login/LoginView'));
-const FacultyLoginView = lazy(() => import('@/views/auth/faculty-login/FacultyLoginView'));
+const UnitLoginView = lazy(() => import('@/views/auth/unit-login/UnitLoginView'));
 const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
 const StudentDashboard = lazy(() => import('@/components/student/StudentDashboard'));
-const FacultyDashboard = lazy(() => import('@/components/faculty/FacultyDashboard'));
+const UnitDashboard = lazy(() => import('@/views/dashboard/unit/UnitDashboard'));
 const NotFoundView = lazy(() => import('../views/miscellaneous/not-found/NotFoundView'));
 
 export interface AppRoute {
     path: string;
     label?: string;        // For navbar
-    nav?: boolean;         // Should appear in navbar
+    nav?: boolean;
+    dashboard?: boolean;    // Should appear in the dashboard
     protected?: boolean;   // Requires auth
-    roles?: Array<'student' | 'faculty'>; // Allowed roles
+    roles?: Array<'student' | 'unit'>; // Allowed roles
     component: ComponentType<any>;
 }
 
@@ -36,11 +37,15 @@ export const appRoutes: AppRoute[] = [
     { path: '/website-team', label: 'Website Team', component: WebsiteTeamView },
     { path: '/contact', label: 'Contact Us', component: ContactView },
     { path: '/login', component: LoginView },
-    { path: '/login/faculty', component: FacultyLoginView },
+    { path: '/login/unit', component: UnitLoginView },
+    // Legacy redirect
+    { path: '/login/faculty', component: () => <Navigate to="/login/unit" replace /> },
     { path: '/register', component: RegisterView },
     // Dashboards now unprotected in front-end only mode
     { path: '/dashboard/student', component: StudentDashboard },
-    { path: '/dashboard/faculty', component: FacultyDashboard },
+    { path: '/dashboard/unit', component: UnitDashboard },
+    // Legacy redirect
+    { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
 ];
 
 export const notFoundRoute: AppRoute = { path: '*', component: NotFoundView };

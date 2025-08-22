@@ -26,7 +26,7 @@ Your React NSS project has been successfully restructured from a Context-based a
 
 - `AuthViewModel.ts` - Authentication state management
 - `StudentViewModel.ts` - Student dashboard logic
-- `FacultyViewModel.ts` - Faculty dashboard logic
+- `UnitViewModel.ts` - UNIT dashboard logic
 - Business logic and state management hooks
 
 #### **Views Layer** (`/src/views/`)
@@ -34,7 +34,7 @@ Your React NSS project has been successfully restructured from a Context-based a
 - **Common Components**: Layout, StatCard, LoadingSpinner, ErrorMessage
 - **Auth Views**: LoginForm, RegisterForm (pure UI)
 - **Student Views**: StudentDashboard, BloodDonationForm, TreeTaggingForm
-- **Faculty Views**: FacultyDashboard, SubmissionReviewPanel, SubmissionHistory
+- **UNIT Views**: UnitDashboard, SubmissionReviewPanel, SubmissionHistory
 - Pure presentation components with no business logic
 
 #### **Utils Layer** (`/src/utils/`)
@@ -56,7 +56,7 @@ Your React NSS project has been successfully restructured from a Context-based a
 ### 3. **Preserved Features**
 
 - ✅ User authentication (login/register)
-- ✅ Student and faculty role-based dashboards
+- ✅ Student and UNIT role-based dashboards
 - ✅ Blood donation form and tracking
 - ✅ Tree tagging form and tracking
 - ✅ Submission review and approval system

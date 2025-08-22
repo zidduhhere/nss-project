@@ -1,6 +1,6 @@
 import { Placeholder } from '@/components/common/Placeholder';
 
-export default function FacultyLoginRightSide() {
+export default function UnitLoginRightSide() {
     return (
         <div className="flex h-full bg-gradient-nss relative">
             {/* Logo */}
@@ -11,7 +11,7 @@ export default function FacultyLoginRightSide() {
 
             <div className="flex flex-col justify-center text-center items-center mx-auto ">
                 <h1 className="font-isans text-2xl md:text-4xl bg-clip-text text-white my-3">
-                    Faculty Portal Access
+                    UNIT Portal Access
                 </h1>
                 <p className="my-6 text-white font-isans text-lg md:text-xl max-w-md font-extralight tracking-wide">
                     Manage submissions, reviews and student engagement

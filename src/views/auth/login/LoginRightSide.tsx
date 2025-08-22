@@ -10,6 +10,7 @@ export default function LoginRightSide() {
 
             <div className="flex flex-col justify-center text-center items-center mx-auto ">
                 <h1 className="font-isans text-2xl md:text-4xl bg-clip-text text-white my-3">
+
                     Welcome to NSS Portal
                 </h1>
                 <p className="my-6 text-white font-isans  text-lg md:text-xl max-w-md font-extralight tracking-wide">

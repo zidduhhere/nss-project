@@ -1,6 +1,7 @@
 // import { useState } from 'react';
 // import { useAuthViewModel } from './viewmodels';
-// import { StudentDashboard, FacultyDashboard } from './views';
+// import { StudentDashboard } from './views';
+// import UnitDashboard from './components/unit/UnitDashboard';
 // import { LoadingSpinner } from './components/common';
 // import { LoginForm, RegisterForm } from './components/forms';
 // function App() {
@@ -40,8 +41,8 @@
 //         return <StudentDashboard user={authViewModel.user} onLogout={authViewModel.logout} />;
 //     }
 
-//     if (authViewModel.user?.role === 'faculty') {
-//         return <FacultyDashboard user={authViewModel.user} onLogout={authViewModel.logout} />;
+//     if (authViewModel.user?.role === 'unit') {
+//         return <UnitDashboard user={authViewModel.user} onLogout={authViewModel.logout} />;
 //     }
 
 //     // Fallback for invalid user role

@@ -21,7 +21,7 @@ src/
 ├── viewmodels/            # Business logic and state management
 │   ├── AuthViewModel.ts   # Authentication state and logic
 │   ├── StudentViewModel.ts # Student dashboard logic
-│   ├── FacultyViewModel.ts # Faculty dashboard logic
+│   ├── UnitViewModel.ts # UNIT dashboard logic
 │   └── index.ts           # Central export
 │
 ├── views/                 # UI components (pure presentation)

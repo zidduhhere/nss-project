@@ -4,10 +4,10 @@ import { useState } from 'react';
 interface FaqItem { question: string; answer: string; }
 
 const faqData: FaqItem[] = [
-    { question: 'What is NSSApp?', answer: 'A platform that helps students record, validate, and showcase community service like blood donation, tree tagging, and social initiatives—transparent, structured, and faculty verified.' },
-    { question: 'How does it work?', answer: 'Students log activities. Faculty review and approve. Points and impact metrics accumulate toward recognition milestones.' },
-    { question: 'Is it free to use?', answer: 'Yes. The platform is free for students and academic institutions adopting structured social engagement.' },
-    { question: 'Who can join?', answer: 'Any enrolled student or authorized faculty member participating in the National Service Scheme or equivalent community programs.' },
+    { question: 'What is NSSApp?', answer: 'A platform that helps students record, validate, and showcase community service like blood donation, tree tagging, and social initiatives—transparent, structured, and UNIT verified.' },
+    { question: 'How does it work?', answer: 'Students log activities. UNIT roles review and approve. Points and impact metrics accumulate toward recognition milestones.' },
+    { question: 'Is it free to use?', answer: 'Yes. The platform is free for students and participating institutions adopting structured social engagement.' },
+    { question: 'Who can join?', answer: 'Any enrolled student or authorized UNIT member participating in the National Service Scheme or equivalent community programs.' },
 ];
 
 export const FAQSection = () => {

@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { appRoutes } from '@/routes/routeConfig';
-import { Menu, X } from 'lucide-react';
+import { X, Menu } from 'lucide-react';
 import { OutlinedButton, FilledButton } from '../ui';
+import ProfilePlaceholder from '../ui/ProfilePlaceholder';
 
 interface NavbarProps {
     user?: {
@@ -13,6 +14,8 @@ interface NavbarProps {
 
 export default function Navbar({ }: NavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -52,7 +55,7 @@ export default function Navbar({ }: NavbarProps) {
                         {/* Desktop Navigation (visible only on large screens) */}
                         <div className="hidden lg:block">
                             <div className="ml-10 flex items-baseline space-x-8">
-                                {navLinks.map((link) => {
+                                {(navLinks).map((link) => {
                                     const active = location.pathname === link.path;
                                     return (
                                         <button
@@ -91,19 +94,36 @@ export default function Navbar({ }: NavbarProps) {
 
                         {/* Action Buttons (desktop only) */}
                         <div className="hidden lg:flex items-center space-x-3">
-                            <OutlinedButton
-                                onClick={() => navigate('/login')}
-                                size="md"
-                            >
-                                Sign In
-                            </OutlinedButton>
-                            <FilledButton
-                                onClick={() => navigate('/register')}
-                                size="md"
-                                variant="lightNss"
-                            >
-                                Sign Up
-                            </FilledButton>
+                            {
+                                isLoggedIn ?
+                                    <div className='hidden lg:flex items-center space-x-3'>
+                                        <OutlinedButton
+                                            onClick={() => navigate('/login')}
+                                            size="md"
+                                        >
+                                            Sign In
+                                        </OutlinedButton>
+                                        <FilledButton
+                                            onClick={() => navigate('/register')}
+                                            size="md"
+                                            variant="lightNss"
+                                        >
+                                            Sign Up
+                                        </FilledButton>
+                                    </div>
+                                    : <div className='hidden lg:flex items-center space-x-3'>
+                                        <ProfilePlaceholder size="sm" />
+                                        <OutlinedButton
+                                            onClick={() => navigate('/login')}
+                                            size="md"
+                                        >
+                                            Logout
+                                        </OutlinedButton>
+                                    </div>
+                            }
+
+
+
                         </div>
 
                         {/* Drawer trigger (shown on mobile & tablet) */}

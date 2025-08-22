@@ -2,11 +2,11 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 
 // Front-end only auth context: stores a minimal user role for UI gating.
 // No backend calls or validation; purely for navigation flows.
-export type FrontendUser = { role: 'student' | 'faculty'; name?: string } | null;
+export type FrontendUser = { role: 'student' | 'unit'; name?: string } | null;
 
 interface FrontendAuthContextValue {
     user: FrontendUser;
-    loginAs: (role: 'student' | 'faculty') => void;
+    loginAs: (role: 'student' | 'unit') => void;
     logout: () => void;
 }
 
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } catch { /* ignore */ }
     }, []);
 
-    const loginAs = (role: 'student' | 'faculty') => {
+    const loginAs = (role: 'student' | 'unit') => {
         const u: FrontendUser = { role };
         setUser(u);
         try { localStorage.setItem('nss_user', JSON.stringify(u)); } catch { /* ignore */ }

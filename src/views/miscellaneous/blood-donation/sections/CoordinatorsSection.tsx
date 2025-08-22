@@ -8,11 +8,11 @@ const studentCoordinators: Coordinator[] = [
     { name: 'Kunal Verma', region: 'West', role: 'Regional Coordinator', image: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=60' },
 ];
 
-const facultyCoordinators: Coordinator[] = [
-    { name: 'Dr. Priya Nair', region: 'North', role: 'Faculty Coordinator', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=60' },
-    { name: 'Prof. Amit Desai', region: 'South', role: 'Faculty Coordinator', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=60' },
-    { name: 'Dr. Kavita Sen', region: 'East', role: 'Faculty Coordinator', image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=60' },
-    { name: 'Prof. Raj Malhotra', region: 'West', role: 'Faculty Coordinator', image: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=60' },
+const unitCoordinators: Coordinator[] = [
+    { name: 'Dr. Priya Nair', region: 'North', role: 'UNIT Coordinator', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=60' },
+    { name: 'Prof. Amit Desai', region: 'South', role: 'UNIT Coordinator', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=60' },
+    { name: 'Dr. Kavita Sen', region: 'East', role: 'UNIT Coordinator', image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=60' },
+    { name: 'Prof. Raj Malhotra', region: 'West', role: 'UNIT Coordinator', image: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=60' },
 ];
 
 export const CoordinatorsSection = () => (
@@ -32,9 +32,9 @@ export const CoordinatorsSection = () => (
                 </div>
             </div>
             <div>
-                <h2 className="text-3xl font-semibold text-secondary-900 mb-8">Regional Faculty Coordinators</h2>
+                <h2 className="text-3xl font-semibold text-secondary-900 mb-8">Regional UNIT Coordinators</h2>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                    {facultyCoordinators.map((c, i) => (
+                    {unitCoordinators.map((c, i) => (
                         <div key={i} className="group flex flex-col items-center text-center">
                             <div className="mb-5"><Placeholder size="avatar" variant="person" rounded='rounded-full' /></div>
                             <h3 className="font-medium text-secondary-900">{c.name}</h3>

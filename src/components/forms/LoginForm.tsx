@@ -2,12 +2,12 @@ import { useState } from 'react';
 /**
  * LoginForm
  * -------------
- * A single unified login form component that supports BOTH student and faculty
+ * A single unified login form component that supports BOTH student and UNIT
  * authentication flows through the `roleMode` prop.
  *
  * Core ideas:
  * - Identifier Field Switching:
- *   Students authenticate with their KTU ID, while faculty use an Email ID.
+ *   Students authenticate with their KTU ID, while UNIT uses an Email ID.
  *   The label / input type changes automatically based on `roleMode`.
  * - External vs Internal State:
  *   Loading & error states can be driven by a parent (e.g. async auth calls) via
@@ -15,7 +15,7 @@ import { useState } from 'react';
  *   error is supplied, the component sets an internal, role-aware error string.
  * - Navigation Enhancements:
  *   Uses <NavTransitionLink /> for smoother route transitions with optional
- *   inline / overlay spinners. Secondary link switches between student / faculty
+ *   inline / overlay spinners. Secondary link switches between student / UNIT
  *   login depending on context.
  * - Accessibility & UX:
  *   Provides clear labeling, password visibility toggle (all validation removed per new requirements),
@@ -26,9 +26,9 @@ import { useState } from 'react';
  *     Should resolve to true on success, false on invalid credentials.
  * - isLoading: externally controlled loading indicator for submit button.
  * - error: externally supplied error message (overrides internal one if present).
- * - hideRegisterLink: suppresses the register prompt (used for faculty login).
- * - secondaryLinkMode: decides which alternate login link to show (faculty|student).
- * - roleMode: selects identifier semantics ('student' => KTU ID, 'faculty' => Email).
+ * - hideRegisterLink: suppresses the register prompt (used for UNIT login).
+ * - secondaryLinkMode: decides which alternate login link to show (unit|student).
+ * - roleMode: selects identifier semantics ('student' => KTU ID, 'unit' => Email).
  *
  * Failure Messaging Logic:
  * - If onLogin returns false and no external error is provided, an internal
@@ -44,12 +44,12 @@ interface LoginFormProps {
   onLogin: (credentials: { identifier: string; password: string }) => Promise<boolean>;
   isLoading: boolean;
   error: string | null;
-  hideRegisterLink?: boolean; // hide register for faculty login
-  secondaryLinkMode?: 'faculty' | 'student'; // controls the bottom alternate link
-  roleMode?: 'student' | 'faculty'; // determines which identifier field to show
+  hideRegisterLink?: boolean; // hide register for UNIT login
+  secondaryLinkMode?: 'unit' | 'student'; // controls the bottom alternate link
+  roleMode?: 'student' | 'unit'; // determines which identifier field to show
 }
 
-export default function LoginForm({ onLogin, isLoading: externalLoading, error: externalError, hideRegisterLink = false, secondaryLinkMode = 'faculty', roleMode = 'student' }: LoginFormProps) {
+export default function LoginForm({ onLogin, isLoading: externalLoading, error: externalError, hideRegisterLink = false, secondaryLinkMode = 'unit', roleMode = 'student' }: LoginFormProps) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -94,7 +94,7 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Identifier Field (Dynamic: KTU ID for students, Email for faculty) */}
+        {/* Identifier Field (Dynamic: KTU ID for students, Email for UNIT) */}
         {roleMode === 'student' && (
           <TextField
             label="KTU ID"
@@ -105,7 +105,7 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
             placeholder="Enter your KTU Registration ID"
           />
         )}
-        {roleMode === 'faculty' && (
+        {roleMode === 'unit' && (
           <TextField
             label="Email ID"
             type="email"
@@ -176,17 +176,17 @@ export default function LoginForm({ onLogin, isLoading: externalLoading, error: 
             </NavTransitionLink>
           </p>
         )}
-        {secondaryLinkMode === 'faculty' && (
+        {secondaryLinkMode === 'unit' && (
           <p className="text-xs text-secondary-600 mt-4">
-            Faculty member?{' '}
+            UNIT member?{' '}
             <NavTransitionLink
-              to="/login/faculty"
+              to="/login/unit"
               textColorClass="font-medium text-nss-600 hover:text-nss-700 hover:underline"
-              ariaLabel="Navigate to faculty login"
+              ariaLabel="Navigate to UNIT login"
               showInlineSpinner={false}
               showOverlaySpinner={false}
             >
-              Faculty Login
+              UNIT Login
             </NavTransitionLink>
           </p>
         )}

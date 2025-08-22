@@ -4,7 +4,7 @@ import { ComponentType } from 'react';
 
 interface ProtectedRouteProps {
     component: ComponentType<any>;
-    roles?: Array<'student' | 'faculty'>;
+    roles?: Array<'student' | 'unit'>;
     [key: string]: any;
 }
 

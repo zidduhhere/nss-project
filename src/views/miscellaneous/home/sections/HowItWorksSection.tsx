@@ -7,9 +7,9 @@ export const HowItWorksSection: React.FC = () => {
                 <div className="grid lg:grid-cols-2 gap-14 items-start">
                     <div className="space-y-6">
                         <h2 className="text-3xl md:text-4xl font-isans font-semibold text-gray-900">How It Works</h2>
-                        <p className="text-gray-600 text-lg">We simplify NSS participation with a transparent, student‑friendly workflow that keeps faculty in control and students motivated.</p>
+                        <p className="text-gray-600 text-lg">We simplify NSS participation with a transparent, student‑friendly workflow that keeps UNIT mentors in control and students motivated.</p>
                         <ul className="space-y-5">
-                            {[{ step: '01', title: 'Log Your Activity', desc: 'Submit blood donation, tree tagging, or community service details with proof.' }, { step: '02', title: 'Faculty Review', desc: 'Faculty verify authenticity and award NSS points.' }, { step: '03', title: 'Track Progress', desc: 'Monitor your cumulative points and achievements in real-time.' }, { step: '04', title: 'Earn Recognition', desc: 'Reach milestones and gain badges and certificates.' }].map(item => (
+                            {[{ step: '01', title: 'Log Your Activity', desc: 'Submit blood donation, tree tagging, or community service details with proof.' }, { step: '02', title: 'UNIT Review', desc: 'UNIT roles verify authenticity and award NSS points.' }, { step: '03', title: 'Track Progress', desc: 'Monitor your cumulative points and achievements in real-time.' }, { step: '04', title: 'Earn Recognition', desc: 'Reach milestones and gain badges and certificates.' }].map(item => (
                                 <li key={item.step} className="flex items-start space-x-4">
                                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-nss-600 text-white flex items-center justify-center font-semibold text-sm">{item.step}</div>
                                     <div><p className="font-medium text-gray-900 font-isans">{item.title}</p><p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p></div>
@@ -25,7 +25,7 @@ export const HowItWorksSection: React.FC = () => {
                                 <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">500+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Blood Donations</p></div>
                                 <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">1000+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Trees Tagged</p></div>
                                 <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">200+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Active Students</p></div>
-                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">80+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Faculty Reviews</p></div>
+                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">80+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">UNIT Reviews</p></div>
                             </div>
                             <p className="text-sm text-gray-600 leading-relaxed">Data represents cumulative impact recorded on the platform and inspires continuous participation.</p>
                         </div>

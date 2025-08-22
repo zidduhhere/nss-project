@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
-export default function FacultyLoginLeftSide() {
+export default function UnitLoginLeftSide() {
     const navigate = useNavigate();
     const { loginAs } = useAuth();
     const [email, setEmail] = useState('');
@@ -10,15 +10,15 @@ export default function FacultyLoginLeftSide() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        loginAs('faculty');
-        navigate('/dashboard/faculty');
+        loginAs('unit' as any); // compatibility with legacy simple auth context
+        navigate('/dashboard/unit');
     };
 
     return (
         <div className="flex items-center justify-center w-full p-8">
             <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6 bg-white/60 backdrop-blur rounded-2xl p-8 shadow">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-black font-isans">Faculty Sign In</h2>
+                    <h2 className="text-2xl font-bold text-black font-isans">UNIT Sign In</h2>
                     <p className="font-isans text-black mt-2 text-sm">Instant demo login (no backend)</p>
                 </div>
                 <div>
@@ -28,7 +28,7 @@ export default function FacultyLoginLeftSide() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 border rounded-lg bg-white/80"
-                        placeholder="faculty@example.com"
+                        placeholder="unit@example.com"
                     />
                 </div>
                 <div>

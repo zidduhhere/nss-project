@@ -3,7 +3,7 @@
 // import LoginForm from './components/forms/LoginForm';
 // import RegisterForm from './components/forms/RegisterForm';
 // import StudentDashboard from './components/student/StudentDashboard';
-// import FacultyDashboard from './components/faculty/FacultyDashboard';
+// import UnitDashboard from './components/unit/UnitDashboard';
 
 // function AppContent() {
 //   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -32,8 +32,8 @@
 //     return <StudentDashboard />;
 //   }
 
-//   if (user?.role === 'faculty') {
-//     return <FacultyDashboard />;
+//   if (user?.role === 'unit') {
+//     return <UnitDashboard />;
 //   }
 
 //   return (

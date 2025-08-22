@@ -172,6 +172,14 @@ The application uses React Context API for:
 - Global application settings
 - Form data persistence
 
+## 🔁 Migration Note (Faculty -> UNIT)
+
+- The role name "faculty" has been renamed to "unit" across the codebase.
+- Old routes continue to work via redirects:
+  - `/login/faculty` -> `/login/unit`
+  - `/dashboard/faculty` -> `/dashboard/unit`
+- LocalStorage migration: on first load, any existing `nss_user_faculty` entry is migrated to `nss_user_unit` and the old key is removed.
+
 ---
 
 **Designed and developed by Hyphen**
