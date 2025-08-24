@@ -22,7 +22,7 @@ export const TreeTagHeroSection = () => (
             <div className="relative">
                 <Placeholder size="hero" label="Tree Tag Hero" />
                 <HeroInfoBadge
-                    className="absolute top-4 left-4"
+                    className="absolute -top-4 -left-4"
                     icon={<Leaf className="h-6 w-6 text-white" />}
                     title="Every Tree Counts"
                     subtitle="Track, nurture, sustain"

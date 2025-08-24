@@ -13,7 +13,7 @@ export default function AboutView() {
     return (
         <div className="min-h-screen font-isans text-secondary-800 bg-nss-gradient">
             <Navbar />
-            <main className="pt-32">
+            <main className="">
                 <AboutHeroSection />
                 <MissionVisionSection />
                 <TeamSection />

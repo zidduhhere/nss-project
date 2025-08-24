@@ -16,7 +16,7 @@ interface HomePageProps {
 export default function HomePage({ }: HomePageProps) {
     useScrollReveal();
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen  bg-nss-gradient">
             <Navbar />
             <HeroSection />
             <FeaturesSection />
