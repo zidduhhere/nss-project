@@ -1,4 +1,4 @@
-import rudhirasenaLogo from "./rudhirasena.png";
+import rudhirasenaLogo from "./logos/rudhirasena.png";
 import loginBackground from "./backgrounds/background-login.png";
 export const images = {
   logo: rudhirasenaLogo,

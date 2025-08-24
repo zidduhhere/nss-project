@@ -1,15 +1,34 @@
 import RegisterLeftSide from './RegisterLeftSide';
 import RegisterRightSide from './RegisterRightSide';
-
+import { useEffect, useState } from 'react';
 export default function RegisterView() {
+
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth < 1024); // lg breakpoint
+        }
+        window.addEventListener('resize', checkScreenSize);
+        checkScreenSize(); // Initial check
+        return () => {
+            window.removeEventListener('resize', checkScreenSize);
+        };
+    }, []);
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-nss-50 via-blue-50 to-indigo-100 flex items-center justify-center">
-            <div className="grid lg:grid-cols-2 w-full ">
+        <div className="min-h-screen bg-gray-50 md:w-screen flex items-center justify-center">
+            <div className="grid lg:grid-cols-2 w-full max-w-screen">
                 {/* Left Side - Register Form */}
                 <RegisterLeftSide />
 
+                {!isMobile && (
+                    <div className="">
+                        <RegisterRightSide />
+                    </div>
+                )}
                 {/* Right Side - NSS Mission Cards */}
-                <RegisterRightSide />
+
             </div>
         </div>
     );

@@ -83,7 +83,7 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
         </h2>
         <p className="text-nss-600 text-lg">Join the NSS community today</p>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 mx-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField
             label="Full Name *"

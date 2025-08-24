@@ -11,7 +11,10 @@ const ContactView = lazy(() => import('@/views/contact/ContactView'));
 const LoginView = lazy(() => import('@/views/auth/login/LoginView'));
 const UnitLoginView = lazy(() => import('@/views/auth/unit-login/UnitLoginView'));
 const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
-const StudentDashboard = lazy(() => import('@/components/student/StudentDashboard'));
+const StudentDashboard = lazy(() => import('@/views/dashboard/student/StudentDashboard'));
+const StudentProfile = lazy(() => import('@/views/dashboard/student/StudentProfile'));
+const CertificateSubmission = lazy(() => import('@/views/dashboard/student/CertificateSubmission'));
+const ActivitySubmissionPage = lazy(() => import('@/views/dashboard/student/ActivitySubmissionPage'));
 const UnitDashboard = lazy(() => import('@/views/dashboard/unit/UnitDashboard'));
 const NotFoundView = lazy(() => import('../views/miscellaneous/not-found/NotFoundView'));
 
@@ -43,6 +46,9 @@ export const appRoutes: AppRoute[] = [
     { path: '/register', component: RegisterView },
     // Dashboards now unprotected in front-end only mode
     { path: '/dashboard/student', component: StudentDashboard },
+    { path: '/dashboard/student/profile', component: StudentProfile },
+    { path: '/dashboard/student/certificates', component: CertificateSubmission },
+    { path: '/dashboard/student/submit', component: ActivitySubmissionPage },
     { path: '/dashboard/unit', component: UnitDashboard },
     // Legacy redirect
     { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
