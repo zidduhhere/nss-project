@@ -4,6 +4,7 @@ import { appRoutes } from '@/routes/routeConfig';
 import { X, Menu } from 'lucide-react';
 import { OutlinedButton, FilledButton } from '../ui';
 import ProfilePlaceholder from '../ui/ProfilePlaceholder';
+import images from '@/assets/images';
 
 interface NavbarProps {
     user?: {
@@ -46,8 +47,8 @@ export default function Navbar({ }: NavbarProps) {
                         {/* Logo */}
                         <div className="flex items-center">
                             <div className="flex-shrink-0">
-                                <div className="w-12 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                    <span className="text-white font-bold text-sm">NSS</span>
+                                <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+                                    <img src={images.logo} alt='logo' />
                                 </div>
                             </div>
                         </div>
