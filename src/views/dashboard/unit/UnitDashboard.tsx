@@ -102,7 +102,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                 <p className="text-sm font-medium text-gray-600">Total Students</p>
                                 <p className="text-2xl font-bold text-gray-900">{demoStudents.length}</p>
                             </div>
-                            <div className="h-12 w-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <div className="h-12 w-12 bg-nss-500 rounded-lg flex items-center justify-center">
                                 <Users className="h-6 w-6 text-white" />
                             </div>
                         </div>
@@ -113,7 +113,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                 <p className="text-sm font-medium text-gray-600">Active Courses</p>
                                 <p className="text-2xl font-bold text-gray-900">5</p>
                             </div>
-                            <div className="h-12 w-12 bg-green-500 rounded-lg flex items-center justify-center">
+                            <div className="h-12 w-12 bg-nss-500 rounded-lg flex items-center justify-center">
                                 <BookOpen className="h-6 w-6 text-white" />
                             </div>
                         </div>
@@ -124,7 +124,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                 <p className="text-sm font-medium text-gray-600">Avg Semester</p>
                                 <p className="text-2xl font-bold text-gray-900">5.9</p>
                             </div>
-                            <div className="h-12 w-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                            <div className="h-12 w-12 bg-nss-500 rounded-lg flex items-center justify-center">
                                 <GraduationCap className="h-6 w-6 text-white" />
                             </div>
                         </div>

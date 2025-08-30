@@ -189,25 +189,25 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
             label: 'Total Submissions',
             value: demoSubmissions.length,
             icon: FileText,
-            color: 'bg-blue-500'
+            color: 'bg-nss-500'
         },
         {
             label: 'Pending Review',
             value: demoSubmissions.filter(s => s.status === 'Pending').length,
             icon: Clock,
-            color: 'bg-yellow-500'
+            color: 'bg-nss-500'
         },
         {
             label: 'Approved',
             value: demoSubmissions.filter(s => s.status === 'Approved').length,
             icon: CheckCircle,
-            color: 'bg-green-500'
+            color: 'bg-nss-500'
         },
         {
             label: 'Rejected',
             value: demoSubmissions.filter(s => s.status === 'Rejected').length,
             icon: XCircle,
-            color: 'bg-red-500'
+            color: 'bg-nss-500'
         }
     ];
 

@@ -116,19 +116,19 @@ export default function UnitActivity({ }: UnitActivityProps) {
             label: 'Total Activities',
             value: demoActivities.length,
             icon: Calendar,
-            color: 'bg-blue-500'
+            color: 'bg-nss-500'
         },
         {
             label: 'Upcoming Events',
             value: demoActivities.filter(a => a.status === 'Upcoming').length,
             icon: Clock,
-            color: 'bg-yellow-500'
+            color: 'bg-nss-500'
         },
         {
             label: 'Total Participants',
             value: demoActivities.reduce((sum, a) => sum + a.registeredParticipants, 0),
             icon: Users,
-            color: 'bg-green-500'
+            color: 'bg-nss-500'
         }
     ];
 
@@ -227,7 +227,7 @@ export default function UnitActivity({ }: UnitActivityProps) {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                            className="bg-nss-500 h-2 rounded-full transition-all duration-300"
                                             style={{
                                                 width: `${(activity.registeredParticipants / activity.maxParticipants) * 100}%`
                                             }}
