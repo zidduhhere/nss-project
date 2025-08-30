@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
 import { useMasterAuth } from '../../context/MasterAuthContext';
+import { UnitInfoCard } from './UnitInfoCard';
 
 interface DashboardNavigationProps {
     mode: 'student' | 'unit';
@@ -20,9 +21,10 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
         } else {
             return [
                 { name: 'Dashboard', path: '/dashboard/unit' },
-                { name: 'Profile', path: '/dashboard/unit/profile' },
-                { name: 'Enrollment', path: '/dashboard/unit/enrollment' },
+                { name: 'Volunteers', path: '/dashboard/unit/volunteer' },
                 { name: 'Submissions', path: '/dashboard/unit/submissions' },
+                { name: 'Activity', path: '/dashboard/unit/activity' }
+
             ];
         }
     };
@@ -87,6 +89,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                         </button>
                     </div>
                 </div>
+
             </div>
         </nav>
     );

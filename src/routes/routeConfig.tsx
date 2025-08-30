@@ -16,6 +16,10 @@ const StudentProfile = lazy(() => import('@/views/dashboard/student/StudentProfi
 const CertificateSubmission = lazy(() => import('@/views/dashboard/student/CertificateSubmission'));
 const ActivitySubmissionPage = lazy(() => import('@/views/dashboard/student/ActivitySubmissionPage'));
 const UnitDashboard = lazy(() => import('@/views/dashboard/unit/UnitDashboard'));
+const UnitProfile = lazy(() => import('@/views/dashboard/unit/UnitProfile'));
+const UnitVolunteers = lazy(() => import('@/views/dashboard/unit/UnitVolunteers'));
+const UnitSubmissions = lazy(() => import('@/views/dashboard/unit/UnitSubmissions'));
+const UnitActivity = lazy(() => import('@/views/dashboard/unit/UnitActivity'));
 const NotFoundView = lazy(() => import('../views/miscellaneous/not-found/NotFoundView'));
 
 export interface AppRoute {
@@ -50,6 +54,10 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/student/certificates', component: CertificateSubmission },
     { path: '/dashboard/student/submit', component: ActivitySubmissionPage },
     { path: '/dashboard/unit', component: UnitDashboard },
+    { path: '/dashboard/unit/profile', component: UnitProfile },
+    { path: '/dashboard/unit/volunteer', component: UnitVolunteers },
+    { path: '/dashboard/unit/submissions', component: UnitSubmissions },
+    { path: '/dashboard/unit/activity', component: UnitActivity },
     // Legacy redirect
     { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
 ];

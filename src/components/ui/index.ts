@@ -9,3 +9,4 @@ export { default as FileUpload } from "./FileUpload";
 export { default as GlassCard } from "./GlassCard";
 export { default as StatCard } from "./StatCard";
 export { default as HeroButton } from "./HeroButton";
+export { Table } from "./Table";
