@@ -1,18 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { TextField, Button } from '@/components/ui';
-import { useState } from 'react';
+import { useState, } from 'react';
 
 export default function LoginLeftSide() {
     const navigate = useNavigate();
-    const { loginAs } = useAuth();
+    const { signIn } = useAuth();
     const [ktuId, setKtuId] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // No validation / backend – instant demo login
-        loginAs('student');
+        await signIn(ktuId, password);
         navigate('/dashboard/student');
     };
 

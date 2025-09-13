@@ -8,7 +8,7 @@ function requireEnv(name: string): string {
   return value;
 }
 
-const supabaseUrl = requireEnv("REACT_APP_SUPABASE_URL");
-const supabaseKey = requireEnv("REACT_APP_SUPABASE_ANON_KEY");
+const supabaseUrl = requireEnv("VITE_SUPABASE_URL");
+const supabaseKey = requireEnv("VITE__SUPABASE_ANON_KEY");
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

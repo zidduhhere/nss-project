@@ -6,17 +6,16 @@ import { Routes, Route } from 'react-router-dom';
 import { appRoutes, notFoundRoute } from '@/routes/routeConfig';
 import { Suspense } from 'react';
 import { GlobalLoader } from '@/components/common/GlobalLoader';
+import ProtectedRoute from '@/routes/ProtectedRoute';
 
 
 
 function AppContent() {
   return (
     <Routes>
-      {/** Iterate all configured routes (no protected logic in front-end only mode). */}
       {appRoutes.map(route => (
-        <Route key={route.path} path={route.path} element={<route.component />} />
+        <Route key={route.path} path={route.path} element={route.protected ? <ProtectedRoute component={route.component} /> : <route.component />} />
       ))}
-      {/** Wildcard / 404 route must come last to catch unmatched paths */}
       <Route path={notFoundRoute.path} element={<notFoundRoute.component />} />
     </Routes>
   );
@@ -27,7 +26,6 @@ function App() {
     // MasterAuthProvider supplies combined student + faculty auth.
     <AuthProvider>
       <MasterAuthProvider>
-        {/* font-sans + antialiased sets typography baseline; all view components render inside */}
         <div className="font-sans antialiased">
           <Suspense fallback={<GlobalLoader />}>
             <AppContent />

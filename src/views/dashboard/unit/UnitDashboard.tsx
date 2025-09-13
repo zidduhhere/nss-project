@@ -1,8 +1,7 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { UnitInfoCard } from '../../../components/common';
 import { Table } from '../../../components/ui';
 import { useMasterAuth } from '../../../context/MasterAuthContext';
-import { demoStudents, Student } from '../../../assets/data/students';
+import { demoStudents, Student } from '@/assets/utils/students';
 import { Users, Mail, Phone, GraduationCap, Calendar, BookOpen } from 'lucide-react';
 
 interface UnitDashboardProps {

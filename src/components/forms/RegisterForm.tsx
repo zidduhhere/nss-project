@@ -4,7 +4,6 @@ import { TextField, Button } from '../ui';
 import StudentInfo from './StudentInfo';
 // import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants'; // no longer needed after NavTransitionLink abstraction
 import NavTransitionLink from '../common/NavTransitionLink';
-
 interface RegisterFormProps {
   onRegister: (userData: any) => Promise<boolean>;
   isLoading: boolean;
@@ -43,28 +42,12 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     // Validation removed per new front-end only requirements
 
     try {
-      const userData = {
-        name: formData.name,
-        mobile: formData.mobile,
-        role: 'student' as const,
-        password: formData.password,
-        district: formData.district,
-        college: formData.college,
-        ktuRegistrationNumber: formData.ktuRegistrationNumber,
-        email: formData.email
-      };
-
-      const success = await onRegister(userData);
-      if (!success && !externalError) {
-        setError('Mobile number already exists');
-      }
-    } catch (err) {
+    } catch (err: any) {
       if (!externalError) {
-        setError('Registration failed. Please try again.');
+        setError(err.message as string);
       }
     }
   };

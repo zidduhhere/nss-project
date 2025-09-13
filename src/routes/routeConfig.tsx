@@ -26,7 +26,7 @@ export interface AppRoute {
     path: string;
     label?: string;        // For navbar
     nav?: boolean;
-    dashboard?: boolean;    // Should appear in the dashboard
+
     protected?: boolean;   // Requires auth
     roles?: Array<'student' | 'unit'>; // Allowed roles
     component: ComponentType<any>;
@@ -49,15 +49,15 @@ export const appRoutes: AppRoute[] = [
     { path: '/login/faculty', component: () => <Navigate to="/login/unit" replace /> },
     { path: '/register', component: RegisterView },
     // Dashboards now unprotected in front-end only mode
-    { path: '/dashboard/student', component: StudentDashboard },
-    { path: '/dashboard/student/profile', component: StudentProfile },
-    { path: '/dashboard/student/certificates', component: CertificateSubmission },
-    { path: '/dashboard/student/submit', component: ActivitySubmissionPage },
-    { path: '/dashboard/unit', component: UnitDashboard },
-    { path: '/dashboard/unit/profile', component: UnitProfile },
-    { path: '/dashboard/unit/volunteer', component: UnitVolunteers },
-    { path: '/dashboard/unit/submissions', component: UnitSubmissions },
-    { path: '/dashboard/unit/activity', component: UnitActivity },
+    { path: '/dashboard/student', component: StudentDashboard, protected: true, roles: ['student'] },
+    { path: '/dashboard/student/profile', component: StudentProfile, protected: true, roles: ['student'] },
+    { path: '/dashboard/student/certificates', component: CertificateSubmission, protected: true, roles: ['student'] },
+    { path: '/dashboard/student/submit', component: ActivitySubmissionPage, protected: true, roles: ['student'] },
+    { path: '/dashboard/unit', component: UnitDashboard, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/profile', component: UnitProfile, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/volunteer', component: UnitVolunteers, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/submissions', component: UnitSubmissions, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/activity', component: UnitActivity, protected: true, roles: ['unit'] },
     // Legacy redirect
     { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
 ];
