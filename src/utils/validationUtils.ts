@@ -96,3 +96,53 @@ export const validateNumber = (
 
   return { isValid: true };
 };
+
+export function validateLoginForm(
+  email: string,
+  password: string
+): ValidationResult {
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.isValid) return emailValidation;
+
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.isValid) return passwordValidation;
+  return { isValid: true };
+}
+
+export function validateRegisterForm(data: {
+  name: string;
+  mobile: string;
+  password: string;
+  confirmPassword: string;
+  district: string;
+  college: string;
+  ktuRegistrationNumber: string;
+  email: string;
+}): ValidationResult {
+  const nameValidation = validateRequired(data.name, "Name");
+  if (!nameValidation.isValid) return nameValidation;
+
+  const mobileValidation = validateMobile(data.mobile);
+  if (!mobileValidation.isValid) return mobileValidation;
+
+  const passwordValidation = validatePassword(data.password);
+  if (!passwordValidation.isValid) return passwordValidation;
+
+  if (data.password !== data.confirmPassword) {
+    return { isValid: false, error: "Passwords do not match" };
+  }
+
+  const districtValidation = validateRequired(data.district, "District");
+  if (!districtValidation.isValid) return districtValidation;
+
+  const collegeValidation = validateRequired(data.college, "College");
+  if (!collegeValidation.isValid) return collegeValidation;
+
+  const ktuIdValidation = validateKtuId(data.ktuRegistrationNumber);
+  if (!ktuIdValidation.isValid) return ktuIdValidation;
+
+  const emailValidation = validateEmail(data.email);
+  if (!emailValidation.isValid) return emailValidation;
+
+  return { isValid: true };
+}

@@ -5,13 +5,13 @@ import images from '@/assets/images';
 
 export default function RegisterRightSide() {
     return (
-        <div className="flex flex-col h-screen bg-gradient-nss relative overflow-hidden">
+        <div className="flex flex-col h-full bg-gradient-nss relative overflow-hidden">
             {/* Logo and NSS APJKTU side by side */}
             <div className='flex items-center space-x-2 md:space-x-4 absolute top-4 md:top-8 left-4 md:left-8 z-10'>
                 <img
                     src={images.logo}
                     alt="Rudhirasena Logo"
-                    className="h-16 w-16 md:h-24 lg:h-32 md:w-24 lg:w-32"
+                    className="h-16 w-16 md:h-20 lg:h-24 md:w-20 lg:w-24"
                 />
                 <h1 className="text-white font-isans text-sm md:text-base lg:text-lg font-medium">
                     NSS APJKTU
@@ -19,8 +19,8 @@ export default function RegisterRightSide() {
             </div>
 
             {/* NSS Cards Grid - with proper spacing from top */}
-            <div className="flex-1 flex items-center justify-center px-4 md:px-8 lg:px-10 pt-24 md:pt-32 lg:pt-40 pb-20">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-4 w-full max-w-2xl">
+            <div className="flex-1 flex items-center justify-center px-4 md:px-8 lg:px-10 pt-20 md:pt-24 lg:pt-28 pb-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-5 w-full max-w-2xl">
                     {nssCards.map((card, index) => (
                         <GlassCard
                             key={index}

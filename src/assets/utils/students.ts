@@ -3,7 +3,7 @@ export interface Student {
   name: string;
   email: string;
   phoneNumber: string;
-  ktuId: string;
+  ktuId?: string;
   semester: number;
   course: string;
   college?: string;

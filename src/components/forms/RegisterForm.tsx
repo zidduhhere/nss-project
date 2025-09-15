@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import { TextField, Button } from '../ui';
 import StudentInfo from './StudentInfo';
-// import { NAVIGATION_TRANSITION_DELAY } from '@/config/constants'; // no longer needed after NavTransitionLink abstraction
 import NavTransitionLink from '../common/NavTransitionLink';
+import LoadingSpinner from '../common/LoadingSpinner';
+import ErrorMessage from '../common/ErrorMessage';
+import Student from '@/models/student';
+import { validateRegisterForm } from '@/utils/validationUtils';
+
 interface RegisterFormProps {
-  onRegister: (userData: any) => Promise<boolean>;
+  onRegister: (userData: Student, password: string) => Promise<boolean>;
   isLoading: boolean;
   error: string | null;
+  onErrorClear?: () => void;  // New prop for clearing errors
 }
 
-export default function RegisterForm({ onRegister, isLoading: externalLoading, error: externalError }: RegisterFormProps) {
+export default function RegisterForm({ onRegister, isLoading, error: externalError, onErrorClear }: RegisterFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -23,13 +28,6 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
-
-  // Navigation loading handled internally by NavTransitionLink
-
-  // Use external loading/error states or fallback to internal ones
-  const currentLoading = externalLoading;
-  const currentError = externalError || error;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -41,16 +39,37 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    // Validation removed per new front-end only requirements
 
-    try {
-    } catch (err: any) {
-      if (!externalError) {
-        setError(err.message as string);
-      }
-    }
-  };
+    //Add validation logic here
+    const { isValid, error } = validateRegisterForm({
+      name: formData.name,
+      mobile: formData.mobile,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+      district: formData.district,
+      college: formData.college,
+      ktuRegistrationNumber: formData.ktuRegistrationNumber,
+      email: formData.email
+    });
+
+    if (isValid) {
+
+
+      // Create Student object from form data
+      const student: Student = {
+        id: '',
+        name: formData.name,
+        email: formData.email,
+        mobile_number: formData.mobile,
+        ktu_id: formData.ktuRegistrationNumber,
+        college_id: formData.college
+      };
+
+      // Use the onRegister prop from parent component
+      await onRegister(student, formData.password);
+    };
+
+  }
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -66,6 +85,23 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
         </h2>
         <p className="text-nss-600 text-lg">Join the NSS community today</p>
       </div>
+
+      {isLoading && (
+        <div className="mb-6 flex justify-center">
+          <LoadingSpinner size="md" message="Processing your request..." />
+        </div>
+      )}
+
+      {externalError && (
+        <div className="mx-6 mb-6">
+          <ErrorMessage
+            message={externalError}
+            type="error"
+            onClose={onErrorClear}
+          />
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6 mx-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField
@@ -76,6 +112,7 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             value={formData.name}
             onChange={handleChange}
             placeholder="Enter your full name"
+            required
           />
 
           <TextField
@@ -86,6 +123,7 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             value={formData.mobile}
             onChange={handleChange}
             placeholder="Enter your mobile number"
+            required
           />
         </div>
 
@@ -111,6 +149,7 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             showPasswordToggle
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
+            required
           />
 
           <TextField
@@ -124,20 +163,15 @@ export default function RegisterForm({ onRegister, isLoading: externalLoading, e
             showPasswordToggle
             showPassword={showConfirmPassword}
             onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+            required
           />
         </div>
-
-        {currentError && (
-          <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-xl text-sm font-medium">
-            {currentError}
-          </div>
-        )}
 
         <div className='space-y-2'></div>
         <Button
           type="submit"
-          disabled={currentLoading}
-          isLoading={currentLoading}
+          disabled={isLoading}
+          isLoading={isLoading}
           loadingText="Creating Account..."
           size="md"
           variant="primary"

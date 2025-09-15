@@ -1,63 +1,83 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { BaseUser } from '../base/types';
-import { getJSON, setJSON } from '../base/storage';
+import Student from "@/models/student";
+import { supabase } from "@/services/supabase";
+import { useContext, createContext, useEffect, useState } from "react";
+import { student_college_id, student_email, student_ktu_id, student_mobile, student_name } from "@/models/field";
 
-interface StudentAuthContextValue {
-    student: BaseUser | null;
-    login: (email: string, password: string) => Promise<boolean>;
-    register: (data: Omit<BaseUser, 'id' | 'role'> & { password: string }) => Promise<boolean>;
-    logout: () => void;
+
+const StudentAuthContext = createContext<undefined | any>(undefined);
+
+export const StudentAuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [session, setSession] = useState<undefined>(undefined);
+
+    //const sign up function
+
+    const signUpUser = async (student: Student, password: string) => {
+        try {
+
+            // Create the user in supabase auth
+            const { data, error } = await supabase.auth.signUp({
+                email: student.email,
+                password: password,
+            });
+
+            console.log('Sign-up data:', data);
+
+            if (error) {
+                console.log('Error signing up:', error);
+                return { success: false, error };
+
+            }
+
+            const result = await supabase.from('students').insert([
+                {
+
+                    [student_name]: student.name,
+                    [student_email]: student.email,
+                    [student_mobile]: student.mobile_number,
+                    [student_ktu_id]: student.ktu_id,
+                    [student_college_id]: student.college_id
+                }
+
+            ])
+            console.log('Student record created:', result);
+
+            return { success: true, error: null };
+        }
+        catch (error) {
+            console.log('Error creating student record:', error);
+        }
+        return { success: true, error: null };
+
+    }
+
+    const signInUser = async (email: string, password: string) => {
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                console.log('Error signing in:', error);
+                return { success: false, error };
+            }
+
+            console.log('Sign-in data:', data);
+            return { success: true, data };
+        } catch (error) {
+            console.log('Error during sign-in:', error);
+            return { success: false, error };
+        }
+    }
+
+    return <StudentAuthContext.Provider value={{ session, signUpUser, signInUser }}>{children}</StudentAuthContext.Provider>;
 }
 
-const StudentAuthContext = createContext<StudentAuthContextValue | undefined>(undefined);
 
-const STUDENT_KEY = 'nss_user_student';
-const USERS_KEY = 'nss_users';
-
-export function StudentAuthProvider({ children }: { children: ReactNode }) {
-    const [student, setStudent] = useState<BaseUser | null>(null);
-
-    useEffect(() => {
-        const saved = getJSON<BaseUser>(STUDENT_KEY);
-        if (saved && saved.role === 'student') setStudent(saved);
-    }, []);
-
-    const login = async (email: string, password: string) => {
-        const users = getJSON<any[]>(USERS_KEY) || [];
-        const found = users.find(u => u.email === email && u.password === password && u.role === 'student');
-        if (!found) return false;
-        const { password: _pw, ...userSansPw } = found;
-        setStudent(userSansPw);
-        setJSON(STUDENT_KEY, userSansPw);
-        return true;
-    };
-
-    const register = async (data: Omit<BaseUser, 'id' | 'role'> & { password: string }) => {
-        const users = getJSON<any[]>(USERS_KEY) || [];
-        if (users.some(u => u.email === data.email)) return false;
-        const newUser = { ...data, id: Date.now().toString(), role: 'student' as const };
-        users.push(newUser);
-        setJSON(USERS_KEY, users);
-        const { password: _pw, ...userSansPw } = newUser;
-        setStudent(userSansPw);
-        setJSON(STUDENT_KEY, userSansPw);
-        return true;
-    };
-
-    const logout = () => {
-        setStudent(null);
-        localStorage.removeItem(STUDENT_KEY);
-    };
-
-    return (
-        <StudentAuthContext.Provider value={{ student, login, register, logout }}>
-            {children}
-        </StudentAuthContext.Provider>
-    );
-}
-
-export function useStudentAuth() {
-    const ctx = useContext(StudentAuthContext);
-    if (!ctx) throw new Error('useStudentAuth must be used within StudentAuthProvider');
-    return ctx;
+export function UseStudentAuth() {
+    const context = useContext(StudentAuthContext);
+    if (!context) {
+        throw new Error("useStudentAuth must be used within a StudentAuthProvider");
+    }
+    return context;
 }

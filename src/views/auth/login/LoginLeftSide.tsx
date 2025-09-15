@@ -1,29 +1,57 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 import { TextField, Button } from '@/components/ui';
 import { useState, } from 'react';
+import ErrorMessage from '@/components/common/ErrorMessage';
+import { validateLoginForm } from '@/utils/validationUtils';
+import { UseStudentAuth } from '@/context/student/StudentAuthContext';
 
 export default function LoginLeftSide() {
     const navigate = useNavigate();
-    const { signIn } = useAuth();
-    const [ktuId, setKtuId] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | any>("");
+    const { signInUser } = UseStudentAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // No validation / backend – instant demo login
-        await signIn(ktuId, password);
+        //add validation and authentication logic here
+
+        //validation logic
+        const { isValid, error } = validateLoginForm(email, password);
+
+        if (!isValid) {
+            setErrorMessage(error);
+            return;
+        }
+
+        setErrorMessage('');
+
+        const result = await signInUser(email, password);
+        if (!result.success) {
+            setErrorMessage(result.error?.message || 'Login failed');
+            return;
+        }
+
+        //authentication logic
         navigate('/dashboard/student');
+
     };
 
     return (
         <div className="flex items-center justify-center w-full p-8">
             <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
                 <div className="space-y-4">
+                    {errorMessage !== '' && (
+                        <ErrorMessage
+                            message={errorMessage}
+                            type="error"
+                            onClose={() => setErrorMessage('')}
+                        />
+                    )}
                     <TextField
-                        label="KTU ID / Email"
-                        value={ktuId}
-                        onChange={(e) => setKtuId(e.target.value)}
+                        label="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your KTU ID / email"
                         name="identifier"
                         type="text"

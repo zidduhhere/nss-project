@@ -17,13 +17,13 @@ export default function RegisterView() {
     }, []);
 
     return (
-        <div className="max-h-screen bg-gray-50 md:w-screen flex items-center justify-center">
-            <div className="grid lg:grid-cols-2 w-full max-w-screen">
+        <div className="min-h-screen bg-gray-50 md:w-screen flex items-center justify-center">
+            <div className="grid lg:grid-cols-2 w-full h-screen max-w-screen">
                 {/* Left Side - Register Form */}
                 <RegisterLeftSide />
 
                 {!isMobile && (
-                    <div className="">
+                    <div className="h-full">
                         <RegisterRightSide />
                     </div>
                 )}

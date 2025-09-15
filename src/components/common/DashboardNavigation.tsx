@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
-import { useMasterAuth } from '../../context/MasterAuthContext';
+
 import { UnitInfoCard } from './UnitInfoCard';
 
 interface DashboardNavigationProps {
@@ -9,7 +9,6 @@ interface DashboardNavigationProps {
 
 const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
     const navigate = useNavigate();
-    const { logout } = useMasterAuth();
 
     // Navigation items based on mode
     const getNavItems = () => {
@@ -30,7 +29,6 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
     };
 
     const handleLogout = () => {
-        logout();
         navigate('/login', { replace: true });
     };
 
