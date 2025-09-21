@@ -7,6 +7,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     showPasswordToggle?: boolean;
     showPassword?: boolean;
     onTogglePassword?: () => void;
+    required?: boolean;
 }
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -18,6 +19,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             showPassword = false,
             onTogglePassword,
             className = '',
+            required = false,
             ...props
         },
         ref
@@ -32,14 +34,16 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                 {label && (
                     <label className={labelStyles}>
                         {label}
+                        {required && <span className="text-red-500"> *</span>}
                     </label>
                 )}
 
                 <div className="relative">
                     <input
                         ref={ref}
-                        className={inputClasses}
                         {...props}
+                        type={props.type === 'password' && !showPassword ? 'password' : props.type === 'password' ? 'text' : props.type}
+                        className={inputClasses}
                     />
 
                     {showPasswordToggle && onTogglePassword && (

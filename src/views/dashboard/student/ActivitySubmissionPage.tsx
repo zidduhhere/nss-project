@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { ArrowLeft, Droplets, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DashboardNavigation from '@/components/common/DashboardNavigation';
-import BloodDonationSubmission from '@/components/student/BloodDonationSubmission';
-import TreeTaggingSubmission from '@/components/student/TreeTaggingSubmission';
+import BloodDonationSubmission from '@/components/forms/BloodDonationSubmission';
+import TreeTaggingSubmission from '@/components/forms/TreeTaggingSubmission';
 
 type SubmissionType = 'blood-donation' | 'tree-tagging';
 
@@ -61,8 +61,8 @@ const ActivitySubmissionPage = () => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex-1 flex items-center justify-center p-4 rounded-lg transition-all duration-200 ${isActive
-                                            ? `${tab.bgColor} ${tab.borderColor} border-2 ${tab.color}`
-                                            : 'text-gray-600 hover:bg-gray-50 border-2 border-transparent'
+                                        ? `${tab.bgColor} ${tab.borderColor} border-2 ${tab.color}`
+                                        : 'text-gray-600 hover:bg-gray-50 border-2 border-transparent'
                                         }`}
                                 >
                                     <Icon className={`w-5 h-5 mr-3 ${isActive ? tab.color : 'text-gray-400'}`} />

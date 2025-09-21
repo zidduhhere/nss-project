@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 
 export default function awaitUnitLoginLeftSide() {
     const navigate = useNavigate();
-    const { signIn } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await signIn(email, password);
         navigate('/dashboard/unit');
     };
 

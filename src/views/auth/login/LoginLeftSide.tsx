@@ -2,50 +2,34 @@ import { useNavigate } from 'react-router-dom';
 import { TextField, Button } from '@/components/ui';
 import { useState, } from 'react';
 import ErrorMessage from '@/components/common/ErrorMessage';
-import { validateLoginForm } from '@/utils/validationUtils';
-import { UseStudentAuth } from '@/context/student/StudentAuthContext';
+import { useLogin } from '@/hooks/login_hook';
+
+
 
 export default function LoginLeftSide() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState<string | any>("");
-    const { signInUser } = UseStudentAuth();
+
+
+    const { login, isLoading, errorMessage, clearError } = useLogin();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        //add validation and authentication logic here
+        const success = await login({ email, password });
+        if (success) {
 
-        //validation logic
-        const { isValid, error } = validateLoginForm(email, password);
-
-        if (!isValid) {
-            setErrorMessage(error);
-            return;
         }
-
-        setErrorMessage('');
-
-        const result = await signInUser(email, password);
-        if (!result.success) {
-            setErrorMessage(result.error?.message || 'Login failed');
-            return;
-        }
-
-        //authentication logic
-        navigate('/dashboard/student');
-
     };
-
     return (
         <div className="flex items-center justify-center w-full p-8">
             <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
                 <div className="space-y-4">
-                    {errorMessage !== '' && (
+                    {errorMessage !== null && (
                         <ErrorMessage
                             message={errorMessage}
                             type="error"
-                            onClose={() => setErrorMessage('')}
+                            onClose={() => clearError()}
                         />
                     )}
                     <TextField
@@ -67,7 +51,12 @@ export default function LoginLeftSide() {
                         showPassword={false}
                     />
                 </div>
-                <Button type="submit" variant="primary" size="md">
+                <Button type="submit"
+                    variant="primary"
+                    size="md"
+                    disabled={isLoading}
+                    isLoading={isLoading}
+                >
                     Sign In
                 </Button>
                 <div className="text-center space-y-3 pt-2">

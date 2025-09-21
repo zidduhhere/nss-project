@@ -1,6 +1,6 @@
 import { GlassCard } from '../../../components/ui';
 import { nssCards } from '../../../utils/CardDetails';
-import HyphenLogo from '../../../utils/HyphenLogo';
+import HyphenLogo from '../../../components/ui/HyphenLogo';
 import images from '@/assets/images';
 
 export default function RegisterRightSide() {

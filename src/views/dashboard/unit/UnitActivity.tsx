@@ -1,8 +1,5 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { UnitInfoCard } from '../../../components/common';
-import { useMasterAuth } from '../../../context/MasterAuthContext';
 import { Calendar, Users, MapPin, Clock, Plus, Edit, Trash2, Eye } from 'lucide-react';
-import { Button } from '../../../components/ui';
 
 interface Activity {
     id: string;
@@ -78,7 +75,6 @@ interface UnitActivityProps {
 }
 
 export default function UnitActivity({ }: UnitActivityProps) {
-    const { } = useMasterAuth();
 
     const getStatusBadge = (status: string) => {
         const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";

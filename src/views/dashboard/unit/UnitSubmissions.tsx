@@ -1,7 +1,6 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
 import { UnitInfoCard } from '../../../components/common';
 import { Table } from '../../../components/ui';
-import { useMasterAuth } from '../../../context/MasterAuthContext';
 import { FileText, Download, Eye, CheckCircle, XCircle, Clock, Filter, Search } from 'lucide-react';
 
 interface Submission {
@@ -73,7 +72,7 @@ interface UnitSubmissionsProps {
 }
 
 export default function UnitSubmissions({ }: UnitSubmissionsProps) {
-    const { } = useMasterAuth();
+
 
     const getStatusIcon = (status: string) => {
         switch (status) {

@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle, XCircle, Info } from 'lucide-react';
 
 interface ErrorMessageProps {
-    message: string;
+    message: string | null;
     type?: 'error' | 'success' | 'warning' | 'info';
     onClose?: () => void;
 }
@@ -43,7 +43,7 @@ export default function ErrorMessage({ message, type = 'error', onClose }: Error
                     <Icon className={`h-5 w-5 ${iconColor}`} />
                 </div>
                 <div className="ml-3 flex-1">
-                    <p className={`text-sm font-medium ${textColor}`}>{message}</p>
+                    {message == null ? <></> : <p className={`text-sm font-medium ${textColor}`}>{message}</p>}
                 </div>
                 {onClose && (
                     <div className="ml-auto pl-3">

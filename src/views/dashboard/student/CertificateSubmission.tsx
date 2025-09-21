@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { ArrowLeft, Droplets, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DashboardNavigation from '@/components/common/DashboardNavigation';
-import BloodDonationSubmission from '@/components/student/BloodDonationSubmission';
-import TreeTaggingSubmission from '@/components/student/TreeTaggingSubmission';
+import BloodDonationSubmission from '@/components/forms/BloodDonationSubmission';
+import TreeTaggingSubmission from '@/components/forms/TreeTaggingSubmission';
 
 type SubmissionType = 'blood-donation' | 'tree-tagging' | null;
 

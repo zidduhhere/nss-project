@@ -1,8 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
 
-import { UnitInfoCard } from './UnitInfoCard';
-
 interface DashboardNavigationProps {
     mode: 'student' | 'unit';
 }

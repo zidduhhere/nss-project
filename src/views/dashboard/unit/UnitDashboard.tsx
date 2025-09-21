@@ -1,6 +1,5 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
 import { Table } from '../../../components/ui';
-import { useMasterAuth } from '../../../context/MasterAuthContext';
 import { demoStudents, Student } from '@/assets/utils/students';
 import { Users, Mail, Phone, GraduationCap, Calendar, BookOpen } from 'lucide-react';
 
@@ -9,7 +8,9 @@ interface UnitDashboardProps {
 }
 
 export default function UnitDashboard({ }: UnitDashboardProps) {
-    const { } = useMasterAuth();
+
+
+
 
     const studentColumns = [
         {
@@ -81,6 +82,11 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                     <span className="text-gray-600">{value}</span>
                 </div>
             )
+        },
+
+        {
+            key: 'admission year'
+
         }
     ];
 

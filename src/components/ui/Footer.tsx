@@ -1,5 +1,5 @@
 import React from 'react';
-import HyphenLogo from '@/utils/HyphenLogo';
+import HyphenLogo from '@/components/ui/HyphenLogo';
 
 export const Footer: React.FC = () => (
     <footer className="bg-nss-600 text-white py-10 mt-0 border-t border-nss-600/30">
