@@ -2,23 +2,58 @@ import { useNavigate } from 'react-router-dom';
 import { TextField, Button } from '@/components/ui';
 import { useState, } from 'react';
 import ErrorMessage from '@/components/common/ErrorMessage';
-import { useLogin } from '@/hooks/login_hook';
-
-
+import z from 'zod';
+import { UseAuthContext } from '@/context/AuthContext';
 
 export default function LoginLeftSide() {
+
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const clearError = () => setErrorMessage(null);
+    const { signInUser } = UseAuthContext();
 
 
-    const { login, isLoading, errorMessage, clearError } = useLogin();
+    const loginSchema = z.object({
+        email: z.email("Invalid email address"),
+        password: z.string().min(6, "Password must be at least 6 characters long"),
+    });
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const success = await login({ email, password });
-        if (success) {
+        try {
+            setIsLoading(true);
+            setErrorMessage(null);
 
+            // Validate input data
+            loginSchema.parse({ email, password });
+
+            // Call the authentication function
+            const result = await signInUser(email, password);
+            console.log(result);
+            // Navigate based on the user role
+            if (result.role === 'student') {
+                navigate('/dashboard/student');
+            } else if (result.role === 'unit') {
+                navigate('/dashboard/unit');
+            } else if (result.role === 'admin') {
+                navigate('/dashboard/admin');
+            }
+        }
+        catch (error) {
+            setIsLoading(false);
+            if (error instanceof z.ZodError) {
+                setErrorMessage(error.message);
+            } else if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage("An unexpected error occurred. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
     return (

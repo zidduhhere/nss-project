@@ -1,54 +1,67 @@
 import { FormFields } from "@/types/StudentFormSchema";
 import { supabase } from "@/services/supabase";
-import { User, Session } from "@supabase/supabase-js";
-import { useContext, useState, createContext, PropsWithChildren } from "react";
+import { AuthError, Session } from "@supabase/supabase-js";
+import { useContext, useState, createContext, PropsWithChildren, useEffect } from "react";
+import { AuthContextType, evaluateRole, RoleResult } from "./authContextTypes";
 
-
-type AuthReturnType = {
-    user: User | null;
-    session: Session | null;
-}
-
-type AuthContextType = {
-    session?: Session | null;
-    signUpUser: (student: FormFields) => Promise<AuthReturnType>;
-    signInUser: (email: string, password: string) => Promise<{ success: boolean; error?: string | null }>;
-    logoutUser: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 type AuthProviderProps = PropsWithChildren<{}>;
+
+
+
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const [session, setSession] = useState<Session | null>(null);
+    const [role, setRole] = useState<RoleResult | null>(null);
+    const [loading, setLoading] = useState(false);
 
-    // //
-    // supabase.auth.onAuthStateChange((event, session) => {
-    //     if (session) {
 
-    //         setSession(session);
-    //     }
-    // });
+    useEffect(() => {
+        const fetchSessionAndSetRole = async () => {
+            const { data } = await supabase.auth.getSession();
+            if (data.session) {
+                setSession(data.session);
+                const roleName = (data.session.user?.app_metadata.role) as string;
+                if (!roleName) throw new Error('Role evaluation failed');
+                const tempRole = evaluateRole(roleName, data.session.user.id);
+                console.log("Fetched session", data.session);
+                setRole(tempRole);
+            }
+        };
+        try {
+            fetchSessionAndSetRole();
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_OUT') {
+                    setRole(null);
+                    console.log("User signed out, clearing session and role");
+                    setSession(null);
+                }
+                setSession(session);
 
-    // useEffect(() => {
-    //     const fetchSession = async () => {
-    //         const { data } = await supabase.auth.getSession();
-    //         console.log('Initial session data:', data);
-    //         setSession(data.session);
-    //     };
-    //     fetchSession();
-    // }, []);
+
+            });
+        }
+        catch (e) {
+            setLoading(false);
+            throw e;
+
+        }
+    }, []);
+
+
+
 
     const signUpUser = async (student: FormFields) => {
+
         try {
             console.log('Signing up user:', student);
-            const { data } = await supabase.auth.signUp(
+            setLoading(true);
+            const { data, error } = await supabase.auth.signUp(
                 {
                     email: student.email,
                     password: student.password,
-
                     options: {
                         data: {
                             display_name: student.fullName,
@@ -59,39 +72,98 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                             email: student.email,
                         }
                     }
-
                 });
 
-            return data;
+            if (error) {
 
+                throw error as AuthError;
+            }
+
+            setRole({ role: 'student' } as const);
+            if (!data.session) {
+                throw "No session returned after sign-up, check the credentials"
+            }
 
         } catch (error) {
             console.error('Sign-up error:', error);
             throw error;
         }
+        finally {
+            setLoading(false);
+        }
 
 
     }
 
-    const signInUser = async (email: string, password: string) => {
+    async function signInUser(email: string, password: string): Promise<RoleResult> {
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+            setLoading(true);
+            const { data } = await supabase.auth.signInWithPassword({ email, password });
 
-            console.log('Sign-in data:', data, 'Error:', error, 'Session:', data.session, "token:", data.session?.access_token);
+            //User ID is extracted from the session object.
+            const userId = data.session?.user.id;
 
-            return { success: !!data.session, error: error?.message || null };
-        } catch (error) {
-            throw error;
+            //Check if userId is null or undefined and throw an error if it is.
+            if (!userId) {
+                throw new Error('Authentication failed. No user ID found.');
+            }
+
+            //The session is set which is accessible to the entire app via context.
+            setSession(data.session);
+
+            //Invoke the serverless function to ensure the role claim is set.
+            await supabase.functions.invoke('ensure-role-claim', {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${data.session?.access_token}` }
+            })
+            //Refresh the session to get the updated JWT with role claim.
+            const newRes = await supabase.auth.refreshSession();
+
+            // If session refresh failed, sign out and throw error
+            if (newRes.error || !newRes.data.session) {
+                await supabase.auth.signOut();
+                throw new Error('User role not found. Contact admin.');
+            }
+
+            setSession(newRes.data.session);
+
+            //Extract the role from the JWT claims in the session.
+            //Assumes the role is stored in app_metadata.role
+            const roleName = (newRes.data.user?.app_metadata.role) as string;
+
+            //Evaluates the role and returns the appropriate RoleResult object.
+            const role = evaluateRole(roleName, newRes);
+
+
+            setRole(role);
+            if (!role) throw new Error('Role evaluation failed');
+
+            return role;
+
+        }
+        catch (e) {
+            console.error('Sign-in error:', e);
+            throw e;
+        }
+        finally {
+            setLoading(false);
         }
     }
 
-    const logoutUser = () => {
-        supabase.auth.signOut()
+    const logoutUser = async (): Promise<void> => {
+        try {
+            setLoading(true);
+            await supabase.auth.signOut();
+            setSession(null);
+        } catch (error) {
+            console.error('Logout error:', error);
+            throw error;
+        }
+        finally {
+            setLoading(false);
+        }
     }
-    return <AuthContext.Provider value={{ session, signUpUser, signInUser, logoutUser }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ session, signUpUser, signInUser, logoutUser, role, loading }}>{children}</AuthContext.Provider>;
 }
 
 

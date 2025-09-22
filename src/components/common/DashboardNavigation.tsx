@@ -1,12 +1,13 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
-
+import { UseAuthContext } from '@/context/AuthContext';
 interface DashboardNavigationProps {
     mode: 'student' | 'unit';
 }
 
 const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
     const navigate = useNavigate();
+    const { logoutUser } = UseAuthContext();
 
     // Navigation items based on mode
     const getNavItems = () => {
@@ -26,7 +27,8 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logoutUser();
         navigate('/login', { replace: true });
     };
 

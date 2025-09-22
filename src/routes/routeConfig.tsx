@@ -55,7 +55,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/student/submit', component: ActivitySubmissionPage, protected: true, roles: ['student'] },
     { path: '/dashboard/unit', component: UnitDashboard, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/profile', component: UnitProfile, protected: true, roles: ['unit'] },
-    { path: '/dashboard/unit/volunteer', component: UnitVolunteers, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/volunteer', component: UnitVolunteers },
     { path: '/dashboard/unit/submissions', component: UnitSubmissions, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/activity', component: UnitActivity, protected: true, roles: ['unit'] },
     // Legacy redirect
