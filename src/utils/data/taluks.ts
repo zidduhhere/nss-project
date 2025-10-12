@@ -1,4 +1,3 @@
-import z from 'zod';
 
 const taluks: Record<string, string[]> = {
   Thiruvananthapuram: [
@@ -1564,32 +1563,38 @@ const villagesByDistrictAndTaluk: Record<string, Record<string, string[]>> = {
 };
 
 export const getTaluksByDistrict = (district: string): string[] => {
-  return taluks[district];
+  return taluks[district] || [];
 };
 
 export const getAllDistricts = (): string[] => {
-  return Object.keys(taluks);
+  return [
+  "Thiruvananthapuram",
+  "Kollam",
+  "Pathanamthitta",
+  "Alappuzha",
+  "Kottayam",
+  "Idukki",
+  "Ernakulam",
+  "Thrissur",
+  "Palakkad",
+  "Malappuram",
+  "Kozhikode",
+  "Wayanad",
+  "Kannur",
+  "Kasargode",
+  ]
 };
-
-
-
-
 
 
 export const getVillagesByTaluk = (
   district: string,
   taluk: string
 ): string[] => {
-  // Handle case differences in taluk names
-  const normalizedTaluk = Object.keys(
-    villagesByDistrictAndTaluk[district] || {}
-  ).find((t) => t.toLowerCase() === taluk.toLowerCase());
-
-  if (normalizedTaluk) {
-    return villagesByDistrictAndTaluk[district][normalizedTaluk] || [];
+  if (!district || !taluk) {
+    console.error("District and Taluk must be provided");
+    return [];
   }
-  return [];
+  const districtData = villagesByDistrictAndTaluk[district]?.[taluk.toUpperCase()];
 
-
-
+  return districtData || [];
 };

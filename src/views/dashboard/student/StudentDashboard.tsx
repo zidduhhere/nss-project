@@ -1,7 +1,5 @@
 import Footer from '@/components/ui/Footer';
-import { CertificatesSection, ActivitiesSection, DashboardHeader, StatsSection } from './sections';
-import { mockCertificates, mockActivities } from './sections/mockData';
-
+import DashboardHeader from './sections/DashboardHeader';
 interface StudentDashboardProps {
     onLogout: () => void;
 }
@@ -13,18 +11,15 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
 
             {/* Main Content */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Section 0: Stats Overview */}
-                <StatsSection certificates={mockCertificates} />
-
-                {/* Section 1: Certificates Grid */}
-                <CertificatesSection certificates={mockCertificates} />
-
-                {/* Section 2: Activities List */}
-                <ActivitiesSection activities={mockActivities} />
+                <div className='flex justify-center items-center'>
+                    <h1>Dashboard feature coming soon</h1>
+                </div>
             </div>
 
             {/* Section 3: Footer */}
-            <Footer />
+            <div className='min-w-full absolute bottom-0 '>
+                <Footer />
+            </div>
         </div>
     );
 }

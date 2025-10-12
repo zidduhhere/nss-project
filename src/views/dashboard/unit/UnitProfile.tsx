@@ -1,8 +1,7 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
 import { UnitInfoCard } from '../../../components/common';
-import { useMasterAuth } from '../../../context/MasterAuthContext';
 import { TextField, TextArea, Button } from '../../../components/ui';
-import { User, Mail, Phone, MapPin, Calendar, Building, Users } from 'lucide-react';
+import { Calendar, Building, Users } from 'lucide-react';
 import { useState } from 'react';
 
 interface UnitProfileProps {
@@ -10,7 +9,6 @@ interface UnitProfileProps {
 }
 
 export default function UnitProfile({ }: UnitProfileProps) {
-    const { } = useMasterAuth();
 
     const [isEditing, setIsEditing] = useState(false);
     const [profileData, setProfileData] = useState({

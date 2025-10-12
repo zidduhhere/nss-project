@@ -6,11 +6,24 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     error?: string;
     showPasswordToggle?: boolean;
     showPassword?: boolean;
+    isDescriptive?: boolean;
     onTogglePassword?: () => void;
     required?: boolean;
 }
 
-const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    label?: string;
+    error?: string;
+    showPasswordToggle?: never;
+    showPassword?: never;
+    isDescriptive: true;
+    onTogglePassword?: never;
+    required?: boolean;
+}
+
+type CombinedProps = TextFieldProps | TextAreaProps;
+
+const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, CombinedProps>(
     (
         {
             label,
@@ -18,16 +31,19 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             showPasswordToggle = false,
             showPassword = false,
             onTogglePassword,
+            isDescriptive = false,
             className = '',
             required = false,
             ...props
         },
         ref
     ) => {
-        const inputStyles = 'w-full px-4 py-4 bg-white/80 border focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500';
+        const inputStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500';
+        const textareaStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500 h-32 resize-none align-top placeholder:align-top';
         const labelStyles = 'block text-sm font-medium font-isans text-black mb-2';
 
         const inputClasses = `${inputStyles} ${className} ${showPasswordToggle ? 'pr-12' : ''}`;
+        const textareaClasses = `${textareaStyles} ${className}`;
 
         return (
             <div>
@@ -39,12 +55,27 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                 )}
 
                 <div className="relative">
-                    <input
-                        ref={ref}
-                        {...props}
-                        type={props.type === 'password' && !showPassword ? 'password' : props.type === 'password' ? 'text' : props.type}
-                        className={inputClasses}
-                    />
+                    {isDescriptive ? (
+                        <textarea
+                            ref={ref as React.Ref<HTMLTextAreaElement>}
+                            {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+                            className={textareaClasses}
+                            style={{ verticalAlign: 'top' }}
+                        />
+                    ) : (
+                        <input
+                            ref={ref as React.Ref<HTMLInputElement>}
+                            {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+                            type={
+                                (props as React.InputHTMLAttributes<HTMLInputElement>).type === 'password' && !showPassword
+                                    ? 'password'
+                                    : (props as React.InputHTMLAttributes<HTMLInputElement>).type === 'password'
+                                        ? 'text'
+                                        : (props as React.InputHTMLAttributes<HTMLInputElement>).type
+                            }
+                            className={inputClasses}
+                        />
+                    )}
 
                     {showPasswordToggle && onTogglePassword && (
                         <button

@@ -15,43 +15,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const [session, setSession] = useState<Session | null>(null);
     const [role, setRole] = useState<RoleResult | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
         const fetchSessionAndSetRole = async () => {
-            const { data } = await supabase.auth.getSession();
-            if (data.session) {
-                setSession(data.session);
-                const roleName = (data.session.user?.app_metadata.role) as string;
-                if (!roleName) throw new Error('Role evaluation failed');
-                const tempRole = evaluateRole(roleName, data.session.user.id);
-                console.log("Fetched session", data.session);
-                setRole(tempRole);
+            setLoading(true); // Set loading to true at the start
+            try {
+                const { data } = await supabase.auth.getSession();
+                if (data.session) {
+                    setSession(data.session);
+                    const roleName = (data.session.user?.app_metadata.role) as string;
+                    if (roleName) {
+                        const tempRole = evaluateRole(roleName, data.session.user.id);
+                        setRole(tempRole);
+                    }
+
+                }
+
+                // Set up auth state change listener
+                const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+                    if (event === 'SIGNED_OUT') {
+                        setSession(null);
+                        setRole(null);
+                    } else if (event === 'SIGNED_IN' && session) {
+                        setSession(session);
+                        const roleName = session.user?.app_metadata.role as string;
+                        if (roleName) {
+                            const tempRole = evaluateRole(roleName, session.user.id);
+                            setRole(tempRole);
+                        }
+                    }
+
+                });
+
+                // Return cleanup function
+                return () => {
+                    authListener.subscription.unsubscribe();
+                };
+            } catch (e) {
+                console.error("Error fetching session:", e);
+                // Handle error appropriately
+            } finally {
+                setLoading(false); // Set loading to false when done
             }
         };
-        try {
-            fetchSessionAndSetRole();
-            supabase.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_OUT') {
-                    setRole(null);
-                    console.log("User signed out, clearing session and role");
-                    setSession(null);
-                }
-                setSession(session);
-
-
-            });
-        }
-        catch (e) {
-            setLoading(false);
-            throw e;
-
-        }
+        fetchSessionAndSetRole();
     }, []);
-
-
-
 
     const signUpUser = async (student: FormFields) => {
 
@@ -130,6 +140,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             //Extract the role from the JWT claims in the session.
             //Assumes the role is stored in app_metadata.role
             const roleName = (newRes.data.user?.app_metadata.role) as string;
+
+            console.log("User role from JWT:", roleName);
 
             //Evaluates the role and returns the appropriate RoleResult object.
             const role = evaluateRole(roleName, newRes);

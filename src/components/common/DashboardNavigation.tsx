@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
 import { UseAuthContext } from '@/context/AuthContext';
+import images from '@/assets/images';
 interface DashboardNavigationProps {
     mode: 'student' | 'unit';
 }
@@ -14,6 +15,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
         if (mode === 'student') {
             return [
                 { name: 'Dashboard', path: '/dashboard/student' },
+                { name: 'Volunteer Registration', path: '/dashboard/student/volunteer-registration' },
                 { name: 'Submit Certificate', path: '/dashboard/student/certificates' },
             ];
         } else {
@@ -46,8 +48,9 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
 
     return (
         <nav className="bg-transparent py-4">
+            <img src={images.logo} width={60} height={60} className='absolute top-4 left-2' />
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-6">
-                <div className="flex items-center justify-between bg-black border border-white/10 rounded-2xl px-2 py-2">
+                <div className="flex  items-center justify-between bg-black border border-white/10 rounded-2xl px-2 py-2">
 
                     {/* Navigation Links */}
                     <div className=" flex  items-center gap-1 justify-end">

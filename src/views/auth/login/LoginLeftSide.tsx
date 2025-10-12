@@ -4,7 +4,7 @@ import { useState, } from 'react';
 import ErrorMessage from '@/components/common/ErrorMessage';
 import z from 'zod';
 import { UseAuthContext } from '@/context/AuthContext';
-
+import { loginSchema } from '@/types/LoginSchema';
 export default function LoginLeftSide() {
 
     const navigate = useNavigate();
@@ -13,25 +13,19 @@ export default function LoginLeftSide() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clearError = () => setErrorMessage(null);
-    const { signInUser } = UseAuthContext();
+    const { signInUser, logoutUser } = UseAuthContext();
 
 
-    const loginSchema = z.object({
-        email: z.email("Invalid email address"),
-        password: z.string().min(6, "Password must be at least 6 characters long"),
-    });
 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            setIsLoading(true);
             setErrorMessage(null);
-
-            // Validate input data
-            loginSchema.parse({ email, password });
+            await loginSchema.parseAsync({ email, password });
 
             // Call the authentication function
+            setIsLoading(true);
             const result = await signInUser(email, password);
             console.log(result);
             // Navigate based on the user role
@@ -44,9 +38,8 @@ export default function LoginLeftSide() {
             }
         }
         catch (error) {
-            setIsLoading(false);
             if (error instanceof z.ZodError) {
-                setErrorMessage(error.message);
+                setErrorMessage(error.issues.map(issue => issue.message).join(', '));
             } else if (error instanceof Error) {
                 setErrorMessage(error.message);
             } else {

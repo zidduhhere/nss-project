@@ -1,3 +1,4 @@
+import VolunteerRegistrationPage from '@/views/dashboard/student/VolunteerRegistrationPage';
 import { lazy, ComponentType } from 'react';
 import { Navigate } from 'react-router-dom';
 // Lazy-loaded route components
@@ -21,6 +22,9 @@ const UnitVolunteers = lazy(() => import('@/views/dashboard/unit/UnitVolunteers'
 const UnitSubmissions = lazy(() => import('@/views/dashboard/unit/UnitSubmissions'));
 const UnitActivity = lazy(() => import('@/views/dashboard/unit/UnitActivity'));
 const NotFoundView = lazy(() => import('../views/miscellaneous/not-found/NotFoundView'));
+const UnauthorizedView = lazy(() => import('../views/miscellaneous/unauthorized/UnauthorizedView'));
+const AdminLoginView = lazy(() => import('@/views/auth/admin/AdminLogin'));
+
 
 export interface AppRoute {
     path: string;
@@ -38,11 +42,12 @@ export const appRoutes: AppRoute[] = [
     { path: '/', component: () => <Navigate to="/home" replace /> },
     { path: '/home', label: 'Home', nav: true, component: HomePage },
     { path: '/about', label: 'About Us', nav: true, component: AboutView },
-    { path: '/blood-donation', label: 'Blood Donation', nav: true, component: BloodDonationView },
-    { path: '/tree-tag', label: 'Tree Tag', nav: true, component: TreeTagView },
+    { path: '/blood-donation', label: 'Rudhirasena', nav: true, component: BloodDonationView },
+    { path: '/tree-tag', label: 'NRPF', nav: true, component: TreeTagView },
     { path: '/blog', label: 'Blog', component: BlogView },
     { path: '/website-team', label: 'Website Team', component: WebsiteTeamView },
     { path: '/contact', label: 'Contact Us', component: ContactView },
+    { path: '/unauthorized', component: UnauthorizedView },
     { path: '/login', component: LoginView },
     { path: '/login/unit', component: UnitLoginView },
     // Legacy redirect
@@ -53,6 +58,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/student/profile', component: StudentProfile, protected: true, roles: ['student'] },
     { path: '/dashboard/student/certificates', component: CertificateSubmission, protected: true, roles: ['student'] },
     { path: '/dashboard/student/submit', component: ActivitySubmissionPage, protected: true, roles: ['student'] },
+    { path: '/dashboard/student/volunteer-registration', component: VolunteerRegistrationPage, protected: true, roles: ['student'] },
     { path: '/dashboard/unit', component: UnitDashboard, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/profile', component: UnitProfile, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/volunteer', component: UnitVolunteers },
@@ -60,6 +66,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/unit/activity', component: UnitActivity, protected: true, roles: ['unit'] },
     // Legacy redirect
     { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
+    { path: '/adminloginissecure/adminlogin', label: 'Admin Login', nav: false, component: AdminLoginView }
 ];
 
 export const notFoundRoute: AppRoute = { path: '*', component: NotFoundView };

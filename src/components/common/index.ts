@@ -5,3 +5,4 @@ export { default as LoadingSpinner } from "./LoadingSpinner"; // Assuming StatCa
 export { default as ImagePreviewFileUpload } from "./ImagePreviewFileUpload";
 export { Placeholder } from "./Placeholder";
 export { UnitInfoCard } from "./UnitInfoCard";
+export { VolunteerDetailsOverlay } from "./VolunteerDetailsOverlay";
