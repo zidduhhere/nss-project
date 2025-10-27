@@ -21,7 +21,7 @@ const FilledButton = forwardRef<HTMLButtonElement, FilledButtonProps>(
         },
         ref
     ) => {
-        const baseStyles = 'font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
+        const baseStyles = 'font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed justify-center items-center';
 
         const sizeStyles = {
             sm: 'px-4 py-2 text-sm rounded-full',
@@ -30,7 +30,7 @@ const FilledButton = forwardRef<HTMLButtonElement, FilledButtonProps>(
         };
 
         const variantStyles: Record<string, string> = {
-            primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+            primary: 'bg-primary-600 hover:bg-primary-700 text-white',
             secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
             lightNss: 'bg-nss-100 text-nss-700 hover:bg-nss-200 border border-nss-200'
         };

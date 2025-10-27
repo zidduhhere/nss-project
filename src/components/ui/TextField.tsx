@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { FieldError } from 'react-hook-form';
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
-    error?: string;
+    error?: FieldError | null;
     showPasswordToggle?: boolean;
     showPassword?: boolean;
     isDescriptive?: boolean;
@@ -13,7 +14,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label?: string;
-    error?: string;
+    error?: FieldError | null;
     showPasswordToggle?: never;
     showPassword?: never;
     isDescriptive: true;
@@ -38,8 +39,8 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, CombinedPro
         },
         ref
     ) => {
-        const inputStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500';
-        const textareaStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-lg transition-all duration-200 placeholder-gray-500 h-32 resize-none align-top placeholder:align-top';
+        const inputStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-full transition-all duration-200 placeholder-gray-500';
+        const textareaStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-full transition-all duration-200 placeholder-gray-500 h-32 resize-none align-top placeholder:align-top';
         const labelStyles = 'block text-sm font-medium font-isans text-black mb-2';
 
         const inputClasses = `${inputStyles} ${className} ${showPasswordToggle ? 'pr-12' : ''}`;
@@ -91,7 +92,7 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, CombinedPro
                 {error && (
                     <div className="mt-2 text-sm bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center space-x-2">
                         <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0"></div>
-                        <span>{error}</span>
+                        <span>{error.message}</span>
                     </div>
                 )}
             </div>

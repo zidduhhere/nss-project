@@ -37,7 +37,7 @@ export default function RegisterForm() {
 
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full font-isans max-w-2xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="mx-auto h-24 w-24 p-[3px] bg-gradient-to-r from-nss-400 to-nss-600 rounded-full mb-8">
@@ -73,7 +73,7 @@ export default function RegisterForm() {
             {...register("fullName")}
             label="Full Name"
             type="text"
-            error={errors.fullName?.message}
+            error={errors.fullName}
             placeholder="Enter your full name"
             required
 
@@ -83,7 +83,7 @@ export default function RegisterForm() {
             {...register("mobileNumber")}
             label="Mobile Number"
             type="tel"
-            error={errors.mobileNumber?.message}
+            error={errors.mobileNumber}
             placeholder="Enter your mobile number"
             required
           />
@@ -103,7 +103,7 @@ export default function RegisterForm() {
             placeholder="Enter your password"
             showPasswordToggle
             showPassword={showPassword}
-            error={errors.password?.message}
+            error={errors.password}
             onTogglePassword={() => setShowPassword(!showPassword)}
             required
           />
@@ -114,7 +114,7 @@ export default function RegisterForm() {
             type='password'
             placeholder="Confirm your password"
             showPasswordToggle
-            error={errors.confirmPassword?.message}
+            error={errors.confirmPassword}
             required
           />
         </div>
@@ -143,6 +143,19 @@ export default function RegisterForm() {
             textColorClass="font-bold font-isans text-nss-700 hover:text-nss-800 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-nss-500/40"
           >
             Sign in here
+          </NavTransitionLink>
+        </div>
+
+        <div className='text-nss-600 text-md'>
+          <NavTransitionLink
+            to="/home"
+            showInlineSpinner
+            showOverlaySpinner
+
+            ariaLabel="Navigate to home page"
+            textColorClass=" font-isans text-nss-700 hover:text-nss-800 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-nss-500/40"
+          >
+            Back to Home
           </NavTransitionLink>
         </div>
       </div>

@@ -43,7 +43,7 @@ export const HeroSection: React.FC = () => {
                     <HeroInfoBadge
                         className="absolute -top-4 -left-4"
                         icon={<Heart className="h-6 w-6 text-white" />}
-                        title="Blood Donation"
+                        title="Rudhirasena"
                         subtitle="Save Lives"
                         iconBackground="bg-red-500"
                         titleColor="text-gray-900"
@@ -53,7 +53,7 @@ export const HeroSection: React.FC = () => {
                     <HeroInfoBadge
                         className="absolute -bottom-4 -right-4"
                         icon={<TreePine className="h-6 w-6 text-white" />}
-                        title="Tree Tagging"
+                        title="NRPF"
                         subtitle="Go Green"
                         iconBackground="bg-green-500"
                         titleColor="text-gray-900"

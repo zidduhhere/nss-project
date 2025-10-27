@@ -19,32 +19,9 @@ import TextField from '@/components/ui/TextField';
 import TextArea from '@/components/ui/TextArea';
 import ProfilePlaceholder from '@/components/ui/ProfilePlaceholder';
 import Footer from '@/components/ui/Footer';
+import type { Achievement, StudentProfile } from '@/context/userContextTypes';
 
-interface StudentProfile {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    college: string;
-    course: string;
-    year: string;
-    rollNumber: string;
-    address: string;
-    dateOfBirth: string;
-    bloodGroup: string;
-    bio: string;
-    profileImage?: string;
-    joinedDate: string;
-}
 
-interface Achievement {
-    id: string;
-    type: 'Blood Donation' | 'Tree Plantation' | 'Community Service' | 'Environmental';
-    title: string;
-    date: string;
-    status: 'approved' | 'pending' | 'rejected';
-    points: number;
-}
 
 const statusConfig = {
     pending: { icon: Clock, color: 'text-yellow-600', bg: 'bg-yellow-100', text: 'Pending' },
@@ -141,7 +118,7 @@ const StudentProfile = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="font-isans min-h-screen bg-gray-50">
             <DashboardNavigation mode="student" />
 
             <div className="container mx-auto px-4 py-8">
@@ -154,9 +131,9 @@ const StudentProfile = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Profile Card */}
                     <div className="lg:col-span-2">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="bg-white rounded-xl shadow-sm  overflow-hidden">
                             {/* Profile Header */}
-                            <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-8">
+                            <div className="bg-primary-500 px-6 py-8">
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-center space-x-4">
                                         <div className="relative">
@@ -185,7 +162,7 @@ const StudentProfile = () => {
                                         {!isEditing ? (
                                             <Button
                                                 onClick={() => setIsEditing(true)}
-                                                className="bg-white text-blue-600 hover:bg-blue-50 border border-white"
+                                                className="flex flex-row justify-center items-center hover:border  hover:border-white "
                                             >
                                                 <Edit2 className="w-4 h-4 mr-2" />
                                                 Edit Profile
@@ -194,14 +171,14 @@ const StudentProfile = () => {
                                             <div className="flex space-x-2">
                                                 <Button
                                                     onClick={handleSave}
-                                                    className="bg-green-500 hover:bg-green-600 text-white"
+                                                    className="bg-green-500 hover:bg-green-600 text-white flex flex-row items-center justify-center"
                                                 >
                                                     <Save className="w-4 h-4 mr-2" />
                                                     Save
                                                 </Button>
                                                 <Button
                                                     onClick={handleCancel}
-                                                    className="bg-white text-gray-600 hover:bg-gray-50 border border-white"
+                                                    className="bg-white text-gray-600 hover:bg-gray-50 border border-white flex flex-row items-center justify-center"
                                                 >
                                                     <X className="w-4 h-4 mr-2" />
                                                     Cancel

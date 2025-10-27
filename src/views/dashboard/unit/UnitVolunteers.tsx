@@ -1,6 +1,6 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
 import { VolunteerDetailsOverlay } from '../../../components/common';
-import { Table } from '../../../components/ui';
+import { FilledButton, Table } from '../../../components/ui';
 import { demoVolunteers, Volunteer } from '@/assets/utils/volunteers';
 import { Filter, Search, Download } from 'lucide-react';
 import { useState } from 'react';
@@ -71,10 +71,16 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                                 <Filter className="h-4 w-4" />
                                 <span>Filter</span>
                             </button>
-                            <button className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <FilledButton
+                                variant='primary'
+                                size='md'
+                                className='flex flex-row justify-center items-center gap-2'
+                            >
+
                                 <Download className="h-4 w-4" />
                                 <span>Export</span>
-                            </button>
+
+                            </FilledButton>
                         </div>
                     </div>
                 </div>

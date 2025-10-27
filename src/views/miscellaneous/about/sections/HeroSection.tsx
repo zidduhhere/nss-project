@@ -43,7 +43,7 @@ export const AboutHeroSection = () => (
                     icon={<Users className="h-6 w-6 text-white" />}
                     title="Community Impact"
                     subtitle="Building better tomorrow"
-                    iconBackground="bg-blue-500"
+                    iconBackground="bg-primary-500"
                     titleColor="text-gray-900"
                     subtitleColor="text-gray-700"
                     iconBackgroundRadius="rounded-lg"
@@ -53,7 +53,7 @@ export const AboutHeroSection = () => (
                     icon={<Target className="h-6 w-6 text-white" />}
                     title="Our Vision"
                     subtitle="Transforming communities"
-                    iconBackground="bg-purple-500"
+                    iconBackground="bg-primary-800"
                     titleColor="text-gray-900"
                     subtitleColor="text-gray-700"
                     iconBackgroundRadius="rounded-lg"

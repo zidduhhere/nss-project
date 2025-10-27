@@ -86,7 +86,7 @@ export default function StudentInfo({ register, errors }: StudentInfoProps) {
                     label="KTU Roll Number"
                     type="text"
                     placeholder="Enter KTU registration number"
-                    error={errors.ktuRollNumber?.message}
+                    error={errors.ktuRollNumber}
                     className="bg-white"
 
                 />
@@ -99,7 +99,7 @@ export default function StudentInfo({ register, errors }: StudentInfoProps) {
                     type="email"
                     placeholder="Enter your email address"
                     className="bg-white"
-                    error={errors.email?.message}
+                    error={errors.email}
                     required
                 />
             </div>
