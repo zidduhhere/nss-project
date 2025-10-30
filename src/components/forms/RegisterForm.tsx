@@ -10,6 +10,9 @@ import { FormFields, FormSchema } from '@/types/StudentFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { UseAuthContext } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import SuccessModal from '../common/successModal';
+
 
 export default function RegisterForm() {
 
@@ -19,7 +22,9 @@ export default function RegisterForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [externalError, setExternalError] = useState<string | false>(false);
-  const { signUpUser } = UseAuthContext();
+  const { signUpUser, session } = UseAuthContext();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
@@ -27,6 +32,15 @@ export default function RegisterForm() {
       console.log("Logged In")
       const result = await signUpUser(data)
       console.log(result);
+      // Handle successful registration (e.g., show success message, redirect)
+      if (session?.user) {
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(false);
+
+          navigate('/dashboard/student');
+        }, 1000);
+      }
     }
     catch (error: any) {
       console.error(error);
@@ -38,6 +52,13 @@ export default function RegisterForm() {
 
   return (
     <div className="w-full font-isans max-w-2xl mx-auto">
+
+
+      {
+        showSuccessModal && <SuccessModal
+          title='Success'
+          message="Account created successfully!" />
+      }
       {/* Header */}
       <div className="text-center mb-8">
         <div className="mx-auto h-24 w-24 p-[3px] bg-gradient-to-r from-nss-400 to-nss-600 rounded-full mb-8">

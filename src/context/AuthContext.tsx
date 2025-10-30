@@ -1,6 +1,6 @@
 import { FormFields } from "@/types/StudentFormSchema";
 import { supabase } from "@/services/supabase";
-import { AuthError, Session } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { useContext, useState, createContext, PropsWithChildren, useEffect } from "react";
 import { AuthContextType, evaluateRole, RoleResult } from "./authContextTypes";
 
@@ -84,9 +84,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     }
                 });
 
+            setSession(data.session || null);
+
             if (error) {
 
-                throw error as AuthError;
+                throw error;
             }
 
             setRole({ role: 'student' } as const);

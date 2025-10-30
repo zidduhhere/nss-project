@@ -11,7 +11,7 @@ export default function RegisterRightSide() {
                 <img
                     src={images.logo}
                     alt="Rudhirasena Logo"
-                    className="h-16 w-16 md:h-20 lg:h-24 md:w-20 lg:w-24"
+                    className='size-14'
                 />
                 <h1 className="text-white font-isans text-sm md:text-base lg:text-lg font-medium">
                     NSS APJKTU
