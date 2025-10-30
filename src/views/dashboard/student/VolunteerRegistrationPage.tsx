@@ -19,7 +19,7 @@ import { useVolunteerRegistration } from "@/hooks/useVolunteerRegistration";
 import { logVolunteerData } from "@/utils/mockData/volunteerMockData";
 import { useState } from "react";
 import ErrorPop from "@/components/common/ErrorPop";
-import SuccessModal from "@/components/common/successModal";
+import SuccessModal from "@/components/common/SuccessModal";
 
 const VolunteerRegistrationPage = () => {
     const currentYear: string = new Date().getFullYear().toString();
