@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { UseAuthContext } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import SuccessModal from '../common/successModal';
+import SuccessModal from '../common/SuccessModal';
 
 
 export default function RegisterForm() {
