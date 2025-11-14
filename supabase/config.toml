@@ -344,3 +344,15 @@ entrypoint = "./functions/hello-world/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/hello-world/*.html" ]
+
+[functions.create-unit-account]
+enabled = true
+verify_jwt = false
+import_map = "./functions/create-unit-account/deno.json"
+entrypoint = "./functions/create-unit-account/index.ts"
+
+[functions.ensure-role-claim]
+enabled = true
+verify_jwt = false
+import_map = "./functions/ensure-role-claim/deno.json"
+entrypoint = "./functions/ensure-role-claim/index.ts"
