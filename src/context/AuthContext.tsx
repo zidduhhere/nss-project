@@ -1,5 +1,5 @@
 import { FormFields } from "@/types/StudentFormSchema";
-import { supabase } from "@/services/supabase";
+import supabase from "@/services/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useContext, useState, createContext, PropsWithChildren, useEffect } from "react";
 import { AuthContextType, evaluateRole, RoleResult } from "./authContextTypes";
@@ -75,11 +75,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     options: {
                         data: {
                             display_name: student.fullName,
-                            ktu_id: student.ktuRollNumber,
-                            college_id: student.college,
-                            mobile_number: student.mobileNumber,
+                            mobile_number: student.mobile_number,
+                            ktu_id: student.ktu_id,
+                            college: student.college,
                             name: student.fullName,
-                            email: student.email,
                         }
                     }
                 });
@@ -123,11 +122,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             //The session is set which is accessible to the entire app via context.
             setSession(data.session);
 
-            //Invoke the serverless function to ensure the role claim is set.
-            await supabase.functions.invoke('ensure-role-claim', {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${data.session?.access_token}` }
-            })
             //Refresh the session to get the updated JWT with role claim.
             const newRes = await supabase.auth.refreshSession();
 
@@ -141,15 +135,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             //Extract the role from the JWT claims in the session.
             //Assumes the role is stored in app_metadata.role
-            const roleName = (newRes.data.user?.app_metadata.role) as string;
+            const { data: role } = await supabase
+                        .from("current_user_role")
+                        .select("role, unit_uuid")
+                        .single(); 
 
-            console.log("User role from JWT:", roleName);
+            console.log("User role from JWT:", role);
 
-            //Evaluates the role and returns the appropriate RoleResult object.
-            const role = evaluateRole(roleName, newRes);
-
-
-            setRole(role);
+            
+            //assign the role to the state variable by checking the unit condition
+            if(role?.role === 'unit' && role.unit_uuid) {
+                setRole({ role: 'unit', unit_uuid: role.unit_uuid } as const);
+            }
+            else {
+                setRole(role);
+            }
+            
             if (!role) throw new Error('Role evaluation failed');
 
             return role;
@@ -164,6 +165,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     }
 
+    //This function handles logout for the user
     const logoutUser = async (): Promise<void> => {
         try {
             setLoading(true);

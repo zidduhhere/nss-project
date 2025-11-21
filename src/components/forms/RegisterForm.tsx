@@ -101,10 +101,10 @@ export default function RegisterForm() {
           />
 
           <TextField
-            {...register("mobileNumber")}
+            {...register("mobile_number")}
             label="Mobile Number"
             type="tel"
-            error={errors.mobileNumber}
+            error={errors.mobile_number}
             placeholder="Enter your mobile number"
             required
           />
@@ -130,12 +130,12 @@ export default function RegisterForm() {
           />
 
           <TextField
-            {...register("confirmPassword")}
+            {...register("confirm_password")}
             label="Confirm Password"
             type='password'
             placeholder="Confirm your password"
             showPasswordToggle
-            error={errors.confirmPassword}
+            error={errors.confirm_password}
             required
           />
         </div>

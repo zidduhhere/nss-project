@@ -1,5 +1,5 @@
 import { VolunteerFormFields } from "@/types/VolunteerFormSchema";
-import { supabase } from "./supabase"; // ✅ Changed to use lib/supabase
+import supabase from "@/services/supabase";
 
 /**
  * Volunteer Service - Handles all volunteer-related Supabase operations
