@@ -1,6 +1,6 @@
 # NSS Portal
 
-A modern web application for the National Service Scheme (NSS) built with React, TypeScript, and Tailwind CSS.
+A comprehensive web application for the National Service Scheme (NSS) built with React, TypeScript, Tailwind CSS, and Supabase.
 
 ## 🏗️ Project Structure
 
@@ -8,178 +8,389 @@ A modern web application for the National Service Scheme (NSS) built with React,
 nss-project/
 ├── src/
 │   ├── components/          # Reusable UI components
-│   │   ├── auth/           # Authentication components
-│   │   │   ├── LoginForm.tsx
-│   │   │   ├── RegisterForm.tsx
-│   │   │   └── StudentInfo.tsx
-│   │   ├── faculty/        # Faculty-specific components
-│   │   │   └── FacultyDashboard.tsx
-│   │   ├── student/        # Student-specific components
+│   │   ├── common/         # Shared components
+│   │   │   ├── DashboardNavigation.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── ErrorMessage.tsx
+│   │   │   ├── ErrorPop.tsx
+│   │   │   ├── GlobalLoader.tsx
+│   │   │   ├── ImagePreviewFileUpload.tsx
+│   │   │   ├── Layout.tsx
+│   │   │   ├── LoadingSpinner.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── NavTransitionLink.tsx
+│   │   │   ├── Placeholder.tsx
+│   │   │   ├── SuccessModal.tsx
+│   │   │   ├── UnitInfoCard.tsx
+│   │   │   └── VolunteerDetailsOverlay.tsx
+│   │   ├── forms/          # Form components
 │   │   │   ├── BloodDonationForm.tsx
-│   │   │   ├── StudentDashboard.tsx
-│   │   │   └── TreeTaggingForm.tsx
-│   │   └── Layout.tsx      # Main layout component
+│   │   │   ├── BloodDonationSubmission.tsx
+│   │   │   ├── RegisterForm.tsx
+│   │   │   ├── StudentInfo.tsx
+│   │   │   ├── TreeTaggingForm.tsx
+│   │   │   └── TreeTaggingSubmission.tsx
+│   │   └── ui/             # UI primitives
+│   │       ├── Button.tsx
+│   │       ├── Dropdown.tsx
+│   │       ├── FileUpload.tsx
+│   │       ├── FilledButton.tsx
+│   │       ├── FinalCTA.tsx
+│   │       ├── FlowDiagram.tsx
+│   │       ├── Footer.tsx
+│   │       ├── GlassCard.tsx
+│   │       ├── HeroButton.tsx
+│   │       ├── HeroInfoBadge.tsx
+│   │       ├── HyphenLogo.tsx
+│   │       ├── ListTileCardWithIcon.tsx
+│   │       ├── OutlinedButton.tsx
+│   │       ├── ProfilePlaceholder.tsx
+│   │       ├── StatCard.tsx
+│   │       ├── StatSectionWrapper.tsx
+│   │       ├── Table.tsx
+│   │       ├── TextArea.tsx
+│   │       └── TextField.tsx
 │   │
-│   ├── views/              # Page-level components
-│   │   ├── auth/           # Authentication views
-│   │   │   ├── login/      # Login page variants
-│   │   │   │   ├── desktop/
-│   │   │   │   └── mobile/
-│   │   │   ├── register/   # Registration page variants
-│   │   │   │   ├── desktop/
-│   │   │   │   └── mobile/
-│   │   │   ├── LoginView.tsx
-│   │   │   ├── RegisterView.tsx
-│   │   │   ├── LoginLeftSide.tsx
-│   │   │   ├── LoginRightSide.tsx
-│   │   │   ├── RegisterLeftSide.tsx
-│   │   │   └── RegisterRightSide.tsx
-│   │   ├── common/         # Shared view components
-│   │   │   └── index.ts
-│   │   ├── faculty/        # Faculty dashboard views
-│   │   └── student/        # Student dashboard views
+│   ├── views/              # Page-level views
+│   │   ├── auth/           # Authentication pages
+│   │   │   ├── LoginPage.tsx
+│   │   │   └── RegisterPage.tsx
+│   │   ├── contact/        # Contact pages
+│   │   │   └── ContactPage.tsx
+│   │   ├── dashboard/      # Role-specific dashboards
+│   │   │   ├── admin/      # Admin dashboard views
+│   │   │   │   ├── AdminDashboard.tsx
+│   │   │   │   ├── AdminProfile.tsx
+│   │   │   │   ├── AdminUnits.tsx
+│   │   │   │   └── AdminVolunteers.tsx
+│   │   │   ├── student/    # Student dashboard views
+│   │   │   │   ├── ProfilePage.tsx
+│   │   │   │   ├── StudentDashboard.tsx
+│   │   │   │   └── StudentProfile.tsx
+│   │   │   └── unit/       # Unit coordinator dashboards
+│   │   │       ├── UnitDashboard.tsx
+│   │   │       ├── UnitProfile.tsx
+│   │   │       ├── UnitSubmissions.tsx
+│   │   │       └── UnitVolunteers.tsx
+│   │   └── miscellaneous/  # Public pages
+│   │       ├── AboutPage.tsx
+│   │       ├── HomePage.tsx
+│   │       └── NotFoundPage.tsx
 │   │
-│   ├── utils/              # Utility functions and reusable components
-│   │   ├── CardDetails.ts  # NSS card data and interfaces
-│   │   └── HyphenLogo.tsx  # Hyphen attribution component
-│   │
-│   ├── assets/             # Static assets
-│   │   ├── images/         # Image files
-│   │   └── fonts/          # Font files
+│   ├── services/           # Backend service layer (Supabase)
+│   │   ├── supabase.ts     # Supabase client configuration
+│   │   ├── adminService.ts # Admin operations
+│   │   ├── profileService.ts # User profile operations
+│   │   ├── volunteerService.ts # Volunteer registration
+│   │   ├── unitProfileService.ts # Unit profile management
+│   │   └── unitVolunteerService.ts # Unit volunteer operations
 │   │
 │   ├── context/            # React context providers
-│   │   └── AppContext.tsx  # Global application state
+│   │   ├── AuthContext.tsx # Authentication state management
+│   │   ├── authContextTypes.ts
+│   │   ├── UserDataContext.tsx # User data management
+│   │   └── userContextTypes.ts
 │   │
-│   ├── models/             # TypeScript interfaces and types
-│   ├── services/           # API services and data fetching
-│   ├── viewmodels/         # Business logic layer
+│   ├── hooks/              # Custom React hooks
+│   │   ├── useVolunteerRegistration.ts
+│   │   └── useUnitProfile.ts
+│   │
+│   ├── types/              # TypeScript type definitions
+│   │   ├── AdminProfile.ts
+│   │   ├── CompleteProfile.ts
+│   │   ├── LoginSchema.ts
+│   │   ├── StudentFormSchema.ts
+│   │   ├── UnitProfile.ts
+│   │   ├── UserProfile.ts
+│   │   ├── UserWithDetails.ts
+│   │   ├── VolunteerFormSchema.ts
+│   │   └── VolunteerProfile.ts
+│   │
+│   ├── routes/             # Route configuration
+│   │   ├── ProtectedRoute.tsx
+│   │   └── routeConfig.tsx
+│   │
+│   ├── utils/              # Utility functions
+│   │   ├── CardDetails.ts
+│   │   ├── dateUtils.ts
+│   │   ├── fileUtils.ts
+│   │   ├── tableStructure.tsx
+│   │   ├── validationUtils.ts
+│   │   ├── data/           # Static data
+│   │   │   ├── college.ts
+│   │   │   └── collegeUnits.ts
+│   │   └── mockData/       # Mock data for development
+│   │
+│   ├── assets/             # Static assets
+│   │   ├── images/         # Images
+│   │   │   ├── backgrounds/
+│   │   │   ├── icons/
+│   │   │   ├── illustrations/
+│   │   │   └── logos/
+│   │   ├── fonts/          # Custom fonts
+│   │   └── utils/          # Asset utilities
+│   │       ├── students.ts
+│   │       └── volunteers.ts
+│   │
+│   ├── config/             # Configuration files
+│   │   └── uiConstants.ts
+│   │
+│   ├── handlers/           # Event handlers
+│   │   └── adminVolunteerHandlers.ts
+│   │
+│   ├── structures/         # Data structures
+│   │   └── tables/         # Table column definitions
+│   │       └── volunteerColumns.tsx
 │   │
 │   ├── App.tsx             # Main application component
-│   ├── main.tsx           # Application entry point
-│   └── index.css          # Global styles and Tailwind configuration
+│   ├── main.tsx            # Application entry point
+│   └── index.css           # Global styles and Tailwind
+│
+├── backend/                # Backend server (Express.js)
+│   ├── package.json
+│   └── server.js
+│
+├── supabase/               # Supabase configuration
+│   ├── config.toml
+│   └── custom/
+│       └── custom_schema.sql
+│
+├── docs/                   # Documentation
+│   ├── authentication.md
+│   └── SUPABASE_SETUP.md
 │
 ├── public/                 # Public assets
-├── package.json           # Project dependencies and scripts
-├── tailwind.config.js     # Tailwind CSS configuration
-├── vite.config.ts         # Vite configuration
-└── tsconfig.json          # TypeScript configuration
+├── package.json            # Dependencies and scripts
+├── tailwind.config.js      # Tailwind CSS configuration
+├── vite.config.ts          # Vite configuration
+└── tsconfig.json           # TypeScript configuration
 ```
+
+## 🚀 Features
+
+### Multi-Role System
+
+The application supports three distinct user roles:
+
+#### **Admin Dashboard**
+- System-wide statistics and analytics
+- Volunteer certification management (certify approved volunteers)
+- Unit management and oversight
+- Complete volunteer database access
+- Bulk operations and data export
+
+#### **Unit Coordinator Dashboard**
+- Unit-specific volunteer management
+- Approve/reject volunteer applications
+- View pending, approved, rejected, and certified volunteers
+- Unit profile management
+- Program Officer details editing
+- Submission tracking (blood donation, tree tagging)
+- Password reset functionality
+
+#### **Student Dashboard**
+- Profile management
+- Volunteer registration
+- Application status tracking (pending → approved → certified)
+- Activity submissions (blood donation, tree tagging)
+- Personal statistics and achievements
+
+### Volunteer Status Flow
+
+```
+pending → approved (by unit) → certified (by admin only)
+         ↓
+       rejected (by unit)
+```
+
+- **Pending**: New volunteer application
+- **Approved**: Unit coordinator approved
+- **Certified**: Admin certified (final status, cannot be modified by unit)
+- **Rejected**: Application rejected by unit
+
+### Authentication & Authorization
+
+- **Supabase Auth**: Secure authentication with email/password
+- **Role-based Access Control**: Protected routes based on user roles
+- **Context-based State**: AuthContext and UserDataContext
+- **Password Reset**: Email-based password recovery
+
+### Data Management
+
+- **Real-time Updates**: Supabase real-time subscriptions
+- **Optimistic UI Updates**: Instant feedback with automatic rollback on errors
+- **Error Handling**: Global error boundaries and user-friendly error messages
+- **Loading States**: Skeleton loaders and loading spinners
 
 ## 🎨 Design System
 
 ### Color Scheme
 
-The application uses a sophisticated color palette based on `#0F2027`, `#203A43`, and `#2C5364`:
+NSS-themed gradient color palette:
 
-- **Primary Colors**: NSS-themed gradient colors
-- **Glass UI**: Liquid glass components with backdrop blur effects
-- **Typography**: Instrument Sans font family
-- **Responsive**: Mobile-first design approach
+```css
+--nss-50: #f0f7fa;
+--nss-100: #d9ebf3;
+--nss-200: #b8d9e8;
+--nss-300: #8bbfd8;
+--nss-400: #579fc4;
+--nss-500: #3c7fa3;
+--nss-600: #2c5364;
+--nss-700: #203a43;
+--nss-800: #1a2f37;
+--nss-900: #0f2027;
+--nss-950: #081419;
+```
 
-### Global Components
+### UI Components
 
-Located in `/src/components/global/`:
+#### **Buttons**
+- **FilledButton**: Primary action buttons with loading states
+  - Variants: primary, secondary, lightNss
+- **OutlinedButton**: Secondary actions with border styling
+- **HeroButton**: Large call-to-action buttons for landing pages
 
-- **TextField**: Reusable input component with password toggle
-- **TextArea**: Multi-line text input component
-- **Dropdown**: Select dropdown with consistent styling
-- **Button**: Multiple variants (primary, secondary, ghost) with loading states
-- **GlassCard**: Liquid glass UI cards with icons and content
+#### **Cards**
+- **StatCard**: Statistics display with icons and gradients
+- **GlassCard**: Liquid glass UI cards with backdrop blur
+- **UnitInfoCard**: Compact unit information display
+- **ListTileCardWithIcon**: Feature cards with icons
 
-## 🚀 Features
+#### **Forms**
+- **TextField**: Input fields with validation
+- **TextArea**: Multi-line text input
+- **Dropdown**: Select dropdowns with custom styling
+- **FileUpload**: Image upload with preview
+- **ImagePreviewFileUpload**: Advanced file upload component
 
-### Authentication System
+#### **Tables**
+- Responsive data tables
+- Sortable columns
+- Action buttons per row
+- Volunteer details overlay
 
-- **Login/Register**: Separate forms for students and faculty
-- **Role-based**: Different interfaces for student and faculty users
-- **Responsive Design**: Adaptive layouts for mobile and desktop
-- **Glass UI**: Modern liquid glass design elements
+### Responsive Design
 
-### Student Features
-
-- **Registration**: Complete student information collection
-- **Dashboard**: Personalized student interface
-- **Forms**: Blood donation and tree tagging forms
-- **Profile Management**: Student-specific data handling
-
-### Faculty Features
-
-- **Dashboard**: Faculty-specific interface
-- **Management Tools**: Administrative capabilities
+- **Mobile-first**: Optimized for small screens
+- **Breakpoints**: sm, md, lg, xl, 2xl
+- **Adaptive Layouts**: Different layouts for mobile/tablet/desktop
+- **Touch-friendly**: Optimized touch targets
+- **Simple Animations**: Quick fade-in animations (0 → 10% → 100% opacity in 0.4s)
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18 with TypeScript
+- **Frontend Framework**: React 18 with TypeScript
 - **Styling**: Tailwind CSS with custom configuration
-- **Icons**: Lucide React icon library
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Icons**: Lucide React
 - **Build Tool**: Vite
 - **State Management**: React Context API
-- **Architecture**: MVVM pattern with separated concerns
+- **Form Handling**: React Hook Form + Zod validation
+- **Routing**: React Router DOM v6
+- **Date Handling**: Day.js
+- **Query Management**: TanStack React Query
 
-## 📱 Responsive Design
+## 📦 Key Services
 
-The application features a responsive design with:
+### unitProfileService
+- Get unit profile with college details
+- Update Program Officer information
+- Fetch unit statistics (total, approved, certified, pending, rejected)
+- Password reset for unit accounts
 
-- **Mobile-first approach**: Optimized for mobile devices
-- **Adaptive layouts**: Different layouts for mobile, tablet, and desktop
-- **Glass UI components**: Modern liquid glass design system
-- **Touch-friendly**: Optimized for touch interactions
+### unitVolunteerService
+- Get volunteers by unit
+- Update volunteer status (approve/reject/pending)
+- Bulk approve/reject operations
+- Volunteer statistics by semester
 
-## 🔧 Configuration
+### adminService
+- System-wide statistics
+- Volunteer certification (admin-only)
+- Unit management
+- Global volunteer operations
 
-### Color Configuration
+### volunteerService
+- Student volunteer registration
+- Profile updates
+- File uploads (photo, signature)
 
-Primary colors are configured in `tailwind.config.js` and `src/index.css`:
+## 🔒 Security Features
 
-```css
---nss-primary: #2c5364;
---nss-primary-dark: #203a43;
---nss-text: #0f2027;
+- **Row Level Security (RLS)**: Supabase policies for data access
+- **Protected Routes**: Route guards based on authentication
+- **Role-based Permissions**: Users can only access authorized features
+- **Secure File Upload**: Validated file types and sizes
+- **SQL Injection Prevention**: Parameterized queries via Supabase
+
+## 🔧 Development
+
+### Prerequisites
+```bash
+node >= 18.0.0
+npm >= 9.0.0
 ```
 
-### Global Styles
+### Installation
+```bash
+npm install
+```
 
-Custom CSS classes and utilities are defined in `src/index.css` with Tailwind layers.
+### Environment Variables
+Create a `.env.local` file:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## 📦 Component Architecture
+### Development Server
+```bash
+npm run dev
+```
 
-### Reusable Components
+### Build for Production
+```bash
+npm run build
+```
 
-- Global components for consistent UI elements
-- Modular card system with NSS-themed content
-- Responsive layout components
+### Preview Production Build
+```bash
+npm run preview
+```
 
-### View Structure
+## 📱 Responsive Breakpoints
 
-- Separated desktop and mobile views
-- Component composition for complex layouts
-- Shared utilities and common components
+- **Mobile**: < 640px
+- **Tablet**: 640px - 1024px
+- **Desktop**: > 1024px
 
-## 🎯 Development Guidelines
+## 🎯 Code Architecture
 
-1. **Component Organization**: Keep components focused and reusable
-2. **TypeScript**: Use proper typing for all components and props
-3. **Styling**: Follow the established design system and color scheme
-4. **Responsive**: Ensure mobile-first responsive design
-5. **Accessibility**: Include proper ARIA labels and semantic HTML
+### Service Layer Pattern
+All backend operations are abstracted into service files with:
+- Comprehensive JSDoc documentation
+- Error handling with user-friendly messages
+- Type-safe interfaces
+- Reusable functions
 
-## 🔄 State Management
+### Custom Hooks Pattern
+Complex logic is encapsulated in custom hooks:
+- `useUnitProfile`: Profile and stats management
+- `useVolunteerRegistration`: Registration workflow
 
-The application uses React Context API for:
+### Context Pattern
+Global state management:
+- `AuthContext`: Authentication state, login/logout
+- `UserDataContext`: User profile data
 
-- Authentication state
-- User role management
-- Global application settings
-- Form data persistence
+## 🔄 Migration Notes
 
-## 🔁 Migration Note (Faculty -> UNIT)
-
-- The role name "faculty" has been renamed to "unit" across the codebase.
-- Old routes continue to work via redirects:
-  - `/login/faculty` -> `/login/unit`
-  - `/dashboard/faculty` -> `/dashboard/unit`
-- LocalStorage migration: on first load, any existing `nss_user_faculty` entry is migrated to `nss_user_unit` and the old key is removed.
+### Faculty → Unit Renaming
+The role "faculty" has been renamed to "unit" throughout the codebase:
+- Old routes redirect automatically
+- LocalStorage keys migrated on first load
+- Database role updated to "unit"
 
 ---
 
-**Designed and developed by Hyphen**
+**Designed and developed for NSS Kerala**

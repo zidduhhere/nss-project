@@ -3,7 +3,7 @@ import { Placeholder } from '@/components/common/Placeholder';
 import { HeroInfoBadge } from '@/components/ui/HeroInfoBadge';
 
 export const TreeTagHeroSection = () => (
-    <section className="relative reveal-on-scroll">
+    <section className="relative fade-in">
         {/* Soft radial highlight without blend-mode to avoid top-left seam */}
         <div className="absolute bg-transparent " />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 items-center relative z-10">

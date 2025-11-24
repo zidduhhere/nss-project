@@ -24,6 +24,10 @@ const UnitActivity = lazy(() => import('@/views/dashboard/unit/UnitActivity'));
 const NotFoundView = lazy(() => import('../views/miscellaneous/not-found/NotFoundView'));
 const UnauthorizedView = lazy(() => import('../views/miscellaneous/unauthorized/UnauthorizedView'));
 const AdminLoginView = lazy(() => import('@/views/auth/admin/AdminLogin'));
+const AdminDashboard = lazy(() => import('@/views/dashboard/admin/AdminDashboard'));
+const AdminProfile = lazy(() => import('@/views/dashboard/admin/AdminProfile'));
+const AdminVolunteers = lazy(() => import('@/views/dashboard/admin/AdminVolunteers'));
+const AdminUsers = lazy(() => import('@/views/dashboard/admin/AdminUsers'));
 
 
 export interface AppRoute {
@@ -32,7 +36,7 @@ export interface AppRoute {
     nav?: boolean;
 
     protected?: boolean;   // Requires auth
-    roles?: Array<'student' | 'unit'>; // Allowed roles
+    roles?: Array<'student' | 'unit' | 'admin'>; // Allowed roles
     component: ComponentType<any>;
 }
 
@@ -53,7 +57,6 @@ export const appRoutes: AppRoute[] = [
     // Legacy redirect
     { path: '/login/faculty', component: () => <Navigate to="/login/unit" replace /> },
     { path: '/register', component: RegisterView },
-    // Dashboards now unprotected in front-end only mode
     { path: '/dashboard/student', component: StudentDashboard, protected: true, roles: ['student'] },
     { path: '/dashboard/student/profile', component: StudentProfile, protected: true, roles: ['student'] },
     { path: '/dashboard/student/certificates', component: CertificateSubmission, protected: true, roles: ['student'] },
@@ -66,7 +69,12 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/unit/activity', component: UnitActivity, protected: true, roles: ['unit'] },
     // Legacy redirect
     { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
-    { path: '/adminloginissecure/adminlogin', label: 'Admin Login', nav: false, component: AdminLoginView }
+    { path: '/adminlogin', label: 'Admin Login', nav: false, component: AdminLoginView },
+    { path: '/dashboard/admin', component: AdminDashboard, protected: true, roles: ['admin'] },
+    { path: '/dashboard/admin/profile', component: AdminProfile, protected: true, roles: ['admin'] },
+    { path: '/dashboard/admin/volunteers', component: AdminVolunteers, protected: true, roles: ['admin'] },
+    { path: '/dashboard/admin/users', component: AdminUsers, protected: true, roles: ['admin'] },
+    
 ];
 
 export const notFoundRoute: AppRoute = { path: '*', component: NotFoundView };

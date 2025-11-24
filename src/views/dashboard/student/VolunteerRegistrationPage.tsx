@@ -1,4 +1,4 @@
-import { Dropdown, FilledButton, TextField } from "@/components/ui";
+import { Dropdown, FilledButton, TextField, Footer } from "@/components/ui";
 import { DashboardHeader } from "./sections";
 import { unitListForDropDown } from "@/utils/data/collegeUnits";
 import { useForm } from "react-hook-form";
@@ -459,6 +459,9 @@ const VolunteerRegistrationPage = () => {
                         </form>
                     </div>
                 </div>
+            </div>
+            <div className="mt-16">
+                <Footer />
             </div>
         </div>
     );

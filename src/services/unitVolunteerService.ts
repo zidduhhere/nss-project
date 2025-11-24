@@ -1,5 +1,5 @@
 import supabase from "@/services/supabase";
-import { VolunteerProfile } from "./profileService";
+import { VolunteerProfile } from "@/types/VolunteerProfile";
 
 /**
  * Unit Volunteer Service - Handles volunteer management operations for unit coordinators
@@ -272,6 +272,7 @@ export const unitVolunteerService = {
       return {
         total: volunteers.length,
         approved: volunteers.filter((v) => v.status === "approved").length,
+        certified: volunteers.filter((v) => v.status === "certified").length,
         pending: volunteers.filter((v) => v.status === "pending").length,
         rejected: volunteers.filter((v) => v.status === "rejected").length,
         bySemester: volunteers.reduce((acc, v) => {

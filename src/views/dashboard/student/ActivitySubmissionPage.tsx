@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Droplets, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DashboardNavigation from '@/components/common/DashboardNavigation';
+import { Footer } from '@/components/ui';
 import BloodDonationSubmission from '@/components/forms/BloodDonationSubmission';
 import TreeTaggingSubmission from '@/components/forms/TreeTaggingSubmission';
 
@@ -90,6 +91,9 @@ const ActivitySubmissionPage = () => {
                         </div>
                     )}
                 </div>
+            </div>
+            <div className="mt-16">
+                <Footer />
             </div>
         </div>
     );

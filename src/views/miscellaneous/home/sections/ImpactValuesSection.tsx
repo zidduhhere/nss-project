@@ -8,7 +8,7 @@ export const ImpactValuesSection: React.FC = () => {
         { title: 'Student Growth', desc: 'Encourages leadership, empathy, and long-term civic engagement.' }
     ];
     return (
-        <section className="py-24 bg-gray-50 reveal-on-scroll">
+        <section className="py-24 bg-gray-50 fade-in">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-3 gap-10">
                     <div className="lg:col-span-1 space-y-6">

@@ -1,17 +1,39 @@
 import { Placeholder } from './Placeholder';
+import { useUnitProfile } from '@/hooks/useUnitProfile';
+import { UseAuthContext } from '@/context/AuthContext';
 
 interface UnitInfoCardProps {
     className?: string;
 }
 
 export const UnitInfoCard = ({ className = '' }: UnitInfoCardProps) => {
-    // Demo unit information
+    const { session } = UseAuthContext();
+    const unitId = session?.user?.id;
+    
+    const { profile, isLoading } = useUnitProfile(unitId || '');
+
+    // Use actual profile data or fallback to loading/default values
     const unitInfo = {
-        unitNumber: "NSS-309",
-        coordinatorName: "Dr. Rajesh Kumar",
-        coordinatorDesignation: "Program Coordinator",
-        college: "Government Engineering College"
+        unitNumber: profile?.unit_number || "Loading...",
+        coordinatorName: profile?.po_name || "Loading...",
+        coordinatorDesignation: profile?.po_designation || "Program Coordinator",
+        college: profile?.college_name || "Loading..."
     };
+
+    if (isLoading) {
+        return (
+            <div className={`md:h-18 bg-white rounded-xl shadow-sm border border-gray-200 p-2 ${className} animate-pulse`}>
+                <div className="flex items-start space-x-4">
+                    <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
+                    <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        <div className="h-3 bg-gray-200 rounded w-32"></div>
+                        <div className="h-3 bg-gray-200 rounded w-40"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={`md:h-18 bg-white rounded-xl shadow-sm border border-gray-200 p-2 ${className} hover:shadow-md transform transition-transform duration-300 hover:translate-y-1`}>

@@ -13,7 +13,7 @@ export const TreeTagWorkflowSection = () => {
     return (
         <FlowDiagram
             steps={steps}
-            className="py-28 bg-tree-50 reveal-on-scroll"
+            className="py-28 bg-tree-50 fade-in"
             heading="Tree Tagging Workflow"
             subheading="Transparent chain improves ecological accountability & long-term survivability."
             cardBgClass="bg-white"

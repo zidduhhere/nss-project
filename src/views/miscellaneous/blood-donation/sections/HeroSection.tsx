@@ -3,7 +3,7 @@ import { Placeholder } from '@/components/common/Placeholder';
 import { HeroInfoBadge } from '@/components/ui/HeroInfoBadge';
 
 export const BloodHeroSection = () => (
-    <section className="relative overflow-hidden reveal-on-scroll">
+    <section className="relative overflow-hidden fade-in">
         <div className="absolute pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 items-center relative z-10">
             <div className="space-y-8 text-white">

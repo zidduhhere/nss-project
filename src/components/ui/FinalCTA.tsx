@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const FinalCTA: React.FC = () => (
-    <section className="py-24 relative overflow-hidden reveal-on-scroll">
+    <section className="py-24 relative overflow-hidden fade-in">
         <div className="absolute inset-0 bg-gradient-to-br from-nss-600 via-nss-600 to-nss-700" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-isans font-semibold text-white mb-6">Be Part of the Impact</h2>

@@ -9,7 +9,7 @@ export const FeaturesSection: React.FC = () => {
         { icon: Award, title: 'Earn Points', description: 'Get recognition for your contributions with our point-based system.', color: 'bg-yellow-500' }
     ];
     return (
-        <section className="py-20 bg-gray-50 border-t border-gray-100 reveal-on-scroll">
+        <section className="py-20 bg-gray-50 border-t border-gray-100 fade-in">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-14">
                     <h2 className="text-3xl md:text-4xl font-isans font-semibold text-gray-900 mb-4">What You Can Do</h2>

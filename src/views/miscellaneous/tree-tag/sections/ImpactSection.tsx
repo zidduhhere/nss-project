@@ -1,7 +1,7 @@
 import { Sprout, ShieldCheck, Globe2, Recycle } from 'lucide-react';
 
 export const TreeTagImpactSection = () => (
-    <section id="impact" className="py-24 bg-white border-y border-nss-100 reveal-on-scroll">
+    <section id="impact" className="py-24 bg-white border-y border-nss-100 fade-in">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-3 gap-14">
             <div className="space-y-6 lg:col-span-1">
                 <h2 className="text-3xl font-semibold text-secondary-900">Why Tree Tagging Matters</h2>

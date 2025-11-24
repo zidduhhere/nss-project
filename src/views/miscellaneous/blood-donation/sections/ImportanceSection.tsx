@@ -9,7 +9,7 @@ export const BloodImportanceSection = () => {
         { icon: <Users className="h-6 w-6" />, title: 'Builds Community', description: 'Shared purpose strengthens social cohesion & leadership.' },
     ];
     return (
-        <section id="importance" className="py-24 bg-white border-y border-nss-100 reveal-on-scroll">
+        <section id="importance" className="py-24 bg-white border-y border-nss-100 fade-in">
             <div className="max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-3 gap-14">
                 <div className="space-y-6 lg:col-span-1">
                     <h2 className="text-3xl font-semibold text-secondary-900">Why Blood Donation Matters</h2>

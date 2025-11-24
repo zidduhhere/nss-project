@@ -1,11 +1,11 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
 import { VolunteerDetailsOverlay } from '../../../components/common';
-import { FilledButton, Table } from '../../../components/ui';
+import { FilledButton, Table, Footer } from '../../../components/ui';
 import { Filter, Search, Download, Loader2, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getVolunteerColumns } from '@/utils/tableStrucutre';
+import { getVolunteerColumns } from '@/structures/tables';
 import { useUnitVolunteerManagement } from '@/hooks/useUnitVolunteerManagement';
-import { VolunteerProfile } from '@/services/profileService';
+import { VolunteerProfile } from '@/types/VolunteerProfile';
 import SuccessModal from '@/components/common/SuccessModal';
 import ErrorPop from '@/components/common/ErrorPop';
 
@@ -93,25 +93,25 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                 />
             )}
 
-            <div className="space-y-6 px-6">
+            <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6">
                 {/* Filters and Search */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                        <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                            <div className="relative">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
+                            <div className="relative flex-1 sm:flex-none">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Search by name or KTU ID..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
                                 />
                             </div>
                             <select 
                                 value={courseFilter}
                                 onChange={(e) => setCourseFilter(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
                             >
                                 <option value="">All Courses</option>
                                 {uniqueCourses.map(course => (
@@ -121,7 +121,7 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                             <select 
                                 value={semesterFilter}
                                 onChange={(e) => setSemesterFilter(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
                             >
                                 <option value="">All Semesters</option>
                                 {uniqueSemesters.map(sem => (
@@ -129,10 +129,10 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                                 ))}
                             </select>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto">
                             <button
                                 // onClick={() => setIsFilterOpen(true)}
-                                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                className="flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex-1 sm:flex-none"
                             >
                                 <Filter className="h-4 w-4" />
                                 <span>Filter</span>
@@ -140,7 +140,7 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                             <FilledButton
                                 variant='primary'
                                 size='md'
-                                className='flex flex-row justify-center items-center gap-2'
+                                className='flex flex-row justify-center items-center gap-2 flex-1 sm:flex-none'
                             >
 
                                 <Download className="h-4 w-4" />
@@ -152,21 +152,21 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                 </div>
 
                 {/* Volunteers Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                        <div className="flex items-center justify-between">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900">NSS Volunteers Directory</h3>
-                                <p className="text-sm text-gray-600 mt-1">Complete list of registered volunteers in your unit</p>
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900">NSS Volunteers Directory</h3>
+                                <p className="text-xs sm:text-sm text-gray-600 mt-1">Complete list of registered volunteers in your unit</p>
                             </div>
-                            <div className="flex items-center space-x-3">
-                                <span className="text-sm text-gray-500">
+                            <div className="flex items-center space-x-3 w-full sm:w-auto">
+                                <span className="text-xs sm:text-sm text-gray-500">
                                     {volunteers.length} volunteer{volunteers.length !== 1 ? 's' : ''}
                                 </span>
                                 <button 
                                     onClick={refetch}
                                     disabled={isLoading}
-                                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-3 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Refreshing...' : 'Refresh'}
                                 </button>
@@ -210,6 +210,9 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                 isOpen={isOverlayOpen}
                 onClose={handleCloseOverlay}
             />
+            <div className="mt-16">
+                <Footer />
+            </div>
         </div>
     );
 }

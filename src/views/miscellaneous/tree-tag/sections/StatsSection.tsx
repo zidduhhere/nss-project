@@ -3,7 +3,7 @@ import { StatSectionWrapper } from "@/components/ui/StatSectionWrapper";
 
 
 export const TreeTagStatsSection = () => (
-    <StatSectionWrapper bgColor="bg-tree-50" paddingY="py-24" className="reveal-on-scroll">
+    <StatSectionWrapper bgColor="bg-tree-50" paddingY="py-24" className="fade-in">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
                 { label: 'Total Trees Tagged (Year)', value: '640', sub: '+22% YoY' },

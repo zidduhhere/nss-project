@@ -2,7 +2,7 @@ import React from 'react';
 
 export const HowItWorksSection: React.FC = () => {
     return (
-        <section className="py-24 bg-white reveal-on-scroll">
+        <section className="py-24 bg-white fade-in">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-14 items-start">
                     <div className="space-y-6">

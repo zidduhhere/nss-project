@@ -13,7 +13,7 @@ export const BloodFlowSection = () => {
     return (
         <FlowDiagram
             steps={steps}
-            className="py-28 bg-blood-50 reveal-on-scroll"
+            className="py-28 bg-blood-50 fade-in"
             heading="NSS Role Flow"
             subheading="A structured lifecycle that drives sustainable donor engagement and safe collection practices."
             cardBgClass="bg-white"

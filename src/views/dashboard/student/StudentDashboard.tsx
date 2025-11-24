@@ -17,7 +17,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
             </div>
 
             {/* Section 3: Footer */}
-            <div className='min-w-full absolute bottom-0 '>
+            <div className="mt-16">
                 <Footer />
             </div>
         </div>

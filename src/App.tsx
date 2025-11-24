@@ -50,7 +50,7 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <div className="font-sans antialiased">
+      <div className="font-isans antialiased">
         <AppContent />
       </div>
     </ErrorBoundary>

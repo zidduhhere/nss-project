@@ -3,7 +3,7 @@ import {
   unitVolunteerService,
   VolunteerFilters,
 } from "@/services/unitVolunteerService";
-import { VolunteerProfile } from "@/services/profileService";
+import { VolunteerProfile } from "@/types/VolunteerProfile";
 
 /**
  * Custom hook for managing volunteers in unit dashboard

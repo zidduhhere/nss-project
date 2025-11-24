@@ -12,7 +12,7 @@ export const BloodStatsSection = () => {
         <StatSectionWrapper
             bgColor="bg-blood-50"
             paddingY="py-24"
-            className="reveal-on-scroll"
+            className="fade-in"
         >
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {stats.map((s, i) => (

@@ -1,7 +1,7 @@
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export const ContactSection = () => (
-    <section className="py-24 bg-white reveal-on-scroll">
+    <section className="py-24 bg-white fade-in">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-16 items-start">
             <div className="space-y-10">
                 <div className="space-y-4">

@@ -11,7 +11,7 @@ export const CoreTeamCarouselSection: React.FC = () => {
     ];
 
     return (
-        <section className="py-32 bg-white reveal-on-scroll">
+        <section className="py-32 bg-white fade-in">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid gap-16 lg:grid-cols-12 items-center">
                     <CoreTeamLeft />

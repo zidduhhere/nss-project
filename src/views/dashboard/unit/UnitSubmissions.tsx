@@ -1,6 +1,6 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
 import { UnitInfoCard } from '../../../components/common';
-import { Table } from '../../../components/ui';
+import { Table, Footer } from '../../../components/ui';
 import { FileText, Download, Eye, CheckCircle, XCircle, Clock, Filter, Search } from 'lucide-react';
 
 interface Submission {
@@ -213,24 +213,24 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
     return (
         <div className="min-h-screen bg-gray-50">
             <DashboardNavigation mode="unit" />
-            <div className="space-y-6 px-6">
+            <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6">
                 {/* Header */}
-                <div className="flex items-end justify-end gap-6">
+                <div className="hidden lg:flex items-end justify-end gap-6">
                     {/* Unit Info Card */}
-                    <UnitInfoCard className="w-80 flex-shrink-0" />
+                    <UnitInfoCard className="w-full lg:w-80 flex-shrink-0" />
                 </div>
 
                 {/* Statistics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
                     {stats.map((stat, index) => (
-                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                                    <p className="text-xs sm:text-sm font-medium text-gray-600">{stat.label}</p>
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900">{stat.value}</p>
                                 </div>
-                                <div className={`h-12 w-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                                    <stat.icon className="h-6 w-6 text-white" />
+                                <div className={`h-10 w-10 sm:h-12 sm:w-12 ${stat.color} rounded-lg flex items-center justify-center`}>
+                                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                                 </div>
                             </div>
                         </div>
@@ -238,35 +238,35 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                        <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                            <div className="relative">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
+                            <div className="relative flex-1 sm:flex-none">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Search submissions..."
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
                                 />
                             </div>
-                            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto">
                                 <option value="">All Types</option>
                                 <option value="blood">Blood Donation</option>
                                 <option value="tree">Tree Tagging</option>
                             </select>
-                            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto">
                                 <option value="">All Status</option>
                                 <option value="pending">Pending</option>
                                 <option value="approved">Approved</option>
                                 <option value="rejected">Rejected</option>
                             </select>
                         </div>
-                        <div className="flex gap-2">
-                            <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex gap-2 w-full sm:w-auto">
+                            <button className="flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex-1 sm:flex-none">
                                 <Filter className="h-4 w-4" />
                                 <span>Filter</span>
                             </button>
-                            <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <button className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1 sm:flex-none">
                                 <Download className="h-4 w-4" />
                                 <span>Export</span>
                             </button>
@@ -275,13 +275,16 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
                 </div>
 
                 {/* Submissions Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Student Submissions</h3>
-                        <p className="text-sm text-gray-600 mt-1">Review and approve certificate submissions</p>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                    <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900">Student Submissions</h3>
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1">Review and approve certificate submissions</p>
                     </div>
                     <Table data={demoSubmissions} columns={submissionColumns} />
                 </div>
+            </div>
+            <div className="mt-16">
+                <Footer />
             </div>
         </div>
     );

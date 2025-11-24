@@ -1,6 +1,7 @@
 import { useCompleteProfile } from "@/hooks/useProfileService";
 import { LoadingSpinner } from "@/components/common";
 import { DashboardHeader } from "@/views/dashboard/student/sections";
+import { Footer } from "@/components/ui";
 
 const ProfilePage = () => {
   const {
@@ -283,7 +284,7 @@ const ProfilePage = () => {
                     Languages Known
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {volunteerProfile.languages_known.map((lang, index) => (
+                    {volunteerProfile.languages_known.map((lang: string, index: number) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
@@ -328,6 +329,9 @@ const ProfilePage = () => {
             </a>
           </div>
         )}
+      </div>
+      <div className="mt-16">
+        <Footer />
       </div>
     </div>
   );

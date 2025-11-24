@@ -16,7 +16,7 @@ const unitCoordinators: Coordinator[] = [
 ];
 
 export const CoordinatorsSection = () => (
-    <section className="py-24 bg-nss-50 reveal-on-scroll">
+    <section className="py-24 bg-nss-50 fade-in">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-20">
             <div>
                 <h2 className="text-3xl font-semibold text-secondary-900 mb-8">Regional Student Coordinators</h2>

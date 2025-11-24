@@ -5,7 +5,7 @@ import { UseAuthContext } from '@/context/AuthContext';
 import images from '@/assets/images';
 import { FilledButton, OutlinedButton } from '../ui';
 interface DashboardNavigationProps {
-    mode: 'student' | 'unit';
+    mode: 'student' | 'unit' | 'admin';
 }
 
 const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
@@ -20,6 +20,13 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                 { name: 'Dashboard', path: '/dashboard/student' },
                 { name: 'Volunteer Registration', path: '/dashboard/student/volunteer-registration' },
                 { name: 'Submit Certificate', path: '/dashboard/student/certificates' },
+            ];
+        } else if (mode === 'admin') {
+            return [
+                { name: 'Dashboard', path: '/dashboard/admin' },
+                { name: 'Volunteers', path: '/dashboard/admin/volunteers' },
+                { name: 'Users', path: '/dashboard/admin/users' },
+                { name: 'Reports', path: '/dashboard/admin/reports' },
             ];
         } else {
             return [
@@ -42,6 +49,8 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
     const handleProfile = () => {
         const profilePath = mode === 'student'
             ? '/dashboard/student/profile'
+            : mode === 'admin'
+            ? '/dashboard/admin/profile'
             : '/dashboard/unit/profile';
         navigate(profilePath);
     };
