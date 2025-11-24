@@ -147,7 +147,7 @@ const VolunteerRegistrationPage = () => {
                             <button
                                 type="button"
                                 onClick={fillMockData}
-                                className="px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
+                                className="px-3 sm:px-4 py-2 bg-nss-500 hover:bg-nss-600 text-white rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
                             >
                                 🔧 Fill Mock Data
                             </button>
@@ -455,8 +455,8 @@ const VolunteerRegistrationPage = () => {
                                     </label>
                                 </div>
                                 {errors.languagesKnown && (
-                                    <div className="mt-2 text-sm bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center space-x-2">
-                                        <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0"></div>
+                                    <div className="mt-2 text-sm bg-blood-50 border border-blood-200 text-blood-700 px-4 py-3 rounded-lg flex items-center space-x-2">
+                                        <div className="w-4 h-4 bg-blood-500 rounded-full flex-shrink-0"></div>
                                         <span>{errors.languagesKnown.message}</span>
                                     </div>
                                 )}

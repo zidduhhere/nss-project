@@ -77,11 +77,11 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'Approved':
-                return <CheckCircle className="h-4 w-4 text-green-500" />;
-            case 'Rejected':
-                return <XCircle className="h-4 w-4 text-red-500" />;
+                return <CheckCircle className="h-4 w-4 text-tree-500" />;
+            case 'rejected':
+                return <XCircle className="h-4 w-4 text-blood-500" />;
             default:
-                return <Clock className="h-4 w-4 text-yellow-500" />;
+                return <Clock className="h-4 w-4 text-nss-500" />;
         }
     };
 
@@ -89,11 +89,11 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
         const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
         switch (status) {
             case 'Approved':
-                return `${baseClasses} bg-green-100 text-green-800`;
-            case 'Rejected':
-                return `${baseClasses} bg-red-100 text-red-800`;
+                return `${baseClasses} bg-tree-100 text-tree-800`;
+            case 'rejected':
+                return `${baseClasses} bg-blood-100 text-blood-800`;
             default:
-                return `${baseClasses} bg-yellow-100 text-yellow-800`;
+                return `${baseClasses} bg-nss-100 text-nss-800`;
         }
     };
 
@@ -115,8 +115,8 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
             width: '15%',
             render: (value: string) => (
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${value === 'Blood Donation'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-green-100 text-green-800'
+                    ? 'bg-blood-100 text-blood-800'
+                    : 'bg-tree-100 text-tree-800'
                     }`}>
                     {value}
                 </span>
@@ -164,16 +164,16 @@ export default function UnitSubmissions({ }: UnitSubmissionsProps) {
                         <Eye className="h-3 w-3" />
                         <span>View</span>
                     </button>
-                    <button className="text-green-600 hover:text-green-800 text-sm font-medium flex items-center space-x-1">
+                    <button className="text-tree-600 hover:text-tree-800 text-sm font-medium flex items-center space-x-1">
                         <Download className="h-3 w-3" />
                         <span>Download</span>
                     </button>
                     {item.status === 'Pending' && (
                         <>
-                            <button className="text-green-600 hover:text-green-800 text-sm font-medium">
+                            <button className="text-tree-600 hover:text-tree-800 text-sm font-medium">
                                 Approve
                             </button>
-                            <button className="text-red-600 hover:text-red-800 text-sm font-medium">
+                            <button className="text-blood-600 hover:text-blood-800 text-sm font-medium">
                                 Reject
                             </button>
                         </>

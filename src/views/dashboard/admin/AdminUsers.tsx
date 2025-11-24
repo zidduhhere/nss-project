@@ -174,8 +174,8 @@ const AdminUsers = () => {
           <span
             className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
               (value || 0) > 0
-                ? 'bg-green-100 text-green-800'
-                : 'bg-gray-100 text-gray-600'
+                ? 'bg-tree-100 text-tree-800'
+                : 'bg-white text-black border border-gray-300'
             }`}
           >
             {value || 0}
@@ -252,7 +252,7 @@ const AdminUsers = () => {
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           selectedUser.role === 'student'
                             ? 'bg-blue-100 text-blue-800'
-                            : 'bg-purple-100 text-purple-800'
+                            : 'bg-nss-100 text-nss-800'
                         }`}
                       >
                         {selectedUser.role === 'student' ? 'Student' : 'Unit'}

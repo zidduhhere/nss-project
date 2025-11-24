@@ -184,8 +184,8 @@ const StudentProfileComponent = () => {
                     <div className="max-w-2xl mx-auto">
                         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                             <div className="flex justify-center mb-4">
-                                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                                    <AlertCircle className="w-8 h-8 text-red-600" />
+                                <div className="w-16 h-16 bg-blood-100 rounded-full flex items-center justify-center">
+                                    <AlertCircle className="w-8 h-8 text-blood-500" />
                                 </div>
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -321,7 +321,7 @@ const StudentProfileComponent = () => {
                                                 <Button
                                                     onClick={handleSave}
                                                     disabled={isUpdating}
-                                                    className="bg-green-500 hover:bg-green-600 text-white flex flex-row items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    className="bg-tree-500 hover:bg-tree-600 text-white flex flex-row items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
                                                     {isUpdating ? (
                                                         <>
@@ -451,7 +451,7 @@ const StudentProfileComponent = () => {
                         {/* Stats Card */}
                         {/* <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <Award className="w-5 h-5 mr-2 text-yellow-500" />
+                                <Award className="w-5 h-5 mr-2 text-nss-500" />
                                 NSS Statistics
                             </h3>
                             <div className="space-y-4">
@@ -460,17 +460,17 @@ const StudentProfileComponent = () => {
                                     <div className="text-sm text-gray-600">Total Points</div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                                        <div className="text-xl font-semibold text-green-600">
+                                    <div className="text-center p-3 bg-tree-50 rounded-lg">
+                                        <div className="text-xl font-semibold text-tree-600">
                                             {achievements.filter(a => a.status === 'approved').length}
                                         </div>
-                                        <div className="text-xs text-green-700">Approved</div>
+                                        <div className="text-xs text-tree-700">Approved</div>
                                     </div>
-                                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                                        <div className="text-xl font-semibold text-yellow-600">
+                                    <div className="text-center p-3 bg-nss-50 rounded-lg">
+                                        <div className="text-xl font-semibold text-nss-600">
                                             {achievements.filter(a => a.status === 'pending').length}
                                         </div>
-                                        <div className="text-xs text-yellow-700">Pending</div>
+                                        <div className="text-xs text-nss-700">Pending</div>
                                     </div>
                                 </div>
                             </div>

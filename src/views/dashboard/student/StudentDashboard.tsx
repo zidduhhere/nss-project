@@ -43,7 +43,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
       <div className="min-h-screen bg-gray-50">
         <DashboardHeader />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-blood-50 border border-blood-200 text-blood-700 px-4 py-3 rounded-lg">
             <p className="font-semibold">Error loading dashboard</p>
             <p className="text-sm">{error}</p>
             <button
@@ -62,13 +62,13 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
     switch (status) {
       case 'approved':
       case 'certified':
-        return 'bg-green-100 text-green-800';
+        return 'bg-tree-100 text-tree-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-nss-100 text-nss-800';
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-blood-100 text-blood-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-white text-black border border-gray-300';
     }
   };
 
@@ -138,24 +138,24 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
             </div>
           </div>
         ) : stats.volunteerStatus === 'pending' ? (
-          <div className="mb-8 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4 sm:p-6">
+          <div className="mb-8 bg-nss-50 border-l-4 border-nss-400 rounded-lg p-4 sm:p-6">
             <div className="flex items-start gap-3">
-              <Clock className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <Clock className="h-6 w-6 text-nss-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-yellow-900 mb-1">Registration Pending</h3>
-                <p className="text-sm text-yellow-800">
+                <h3 className="font-semibold text-nss-900 mb-1">Registration Pending</h3>
+                <p className="text-sm text-nss-800">
                   Your volunteer registration is under review by your unit coordinator. You'll be notified once it's approved.
                 </p>
               </div>
             </div>
           </div>
         ) : stats.volunteerStatus === 'approved' ? (
-          <div className="mb-8 bg-green-50 border-l-4 border-green-400 rounded-lg p-4 sm:p-6">
+          <div className="mb-8 bg-tree-50 border-l-4 border-tree-400 rounded-lg p-4 sm:p-6">
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="h-6 w-6 text-tree-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-green-900 mb-1">Registration Approved!</h3>
-                <p className="text-sm text-green-800">
+                <h3 className="font-semibold text-tree-900 mb-1">Registration Approved!</h3>
+                <p className="text-sm text-tree-800">
                   Your volunteer registration has been approved. Start submitting your activities to earn certification.
                 </p>
               </div>
@@ -183,7 +183,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
               <div className="p-3 bg-gradient-to-br from-nss-500 to-nss-600 rounded-lg">
                 <FileText className="h-6 w-6 text-white" />
               </div>
-              <TrendingUp className="h-5 w-5 text-green-500" />
+              <TrendingUp className="h-5 w-5 text-tree-500" />
             </div>
             <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
               {stats?.totalActivities || 0}
@@ -275,9 +275,9 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                           : 'bg-green-100'
                       }`}>
                         {activity.type === 'blood-donation' ? (
-                          <Heart className="h-5 w-5 text-red-600" />
+                          <Heart className="h-5 w-5 text-blood-600" />
                         ) : (
-                          <TreePine className="h-5 w-5 text-green-600" />
+                          <TreePine className="h-5 w-5 text-tree-600" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -325,7 +325,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                 </button>
                 <button
                   onClick={() => navigate('/dashboard/student/profile')}
-                  className="w-full flex items-center gap-3 p-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="w-full flex items-center gap-3 p-4 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <UserCheck className="h-5 w-5" />
                   <span className="font-medium">View Profile</span>
@@ -333,7 +333,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                 {!stats?.isRegistered && (
                   <button
                     onClick={() => navigate('/dashboard/student/register')}
-                    className="w-full flex items-center gap-3 p-4 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                    className="w-full flex items-center gap-3 p-4 bg-tree-100 text-tree-700 rounded-lg hover:bg-tree-200 transition-colors"
                   >
                     <Award className="h-5 w-5" />
                     <span className="font-medium">Register as Volunteer</span>
@@ -351,7 +351,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Heart className="h-4 w-4 text-red-600" />
+                        <Heart className="h-4 w-4 text-blood-600" />
                         Blood Donation
                       </span>
                       <span className="text-sm font-bold text-gray-900">
@@ -359,10 +359,10 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                       </span>
                     </div>
                     <div className="flex gap-2 text-xs">
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
+                      <span className="px-2 py-1 bg-tree-100 text-tree-700 rounded">
                         ✓ {activitySummary.bloodDonation.approved}
                       </span>
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded">
+                      <span className="px-2 py-1 bg-nss-100 text-nss-700 rounded">
                         ⏳ {activitySummary.bloodDonation.pending}
                       </span>
                       {activitySummary.bloodDonation.rejected > 0 && (
@@ -377,7 +377,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <TreePine className="h-4 w-4 text-green-600" />
+                        <TreePine className="h-4 w-4 text-tree-600" />
                         Tree Tagging
                       </span>
                       <span className="text-sm font-bold text-gray-900">

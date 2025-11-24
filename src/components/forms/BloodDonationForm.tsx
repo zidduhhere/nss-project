@@ -102,8 +102,8 @@ export default function BloodDonationForm() {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <div className="flex items-center mb-6">
-        <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mr-4">
-          <Droplets className="w-6 h-6 text-red-600" />
+        <div className="flex items-center justify-center w-12 h-12 bg-blood-100 rounded-full mr-4">
+            <Droplet className="w-6 h-6 text-blood-600" />
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Blood Donation Certificate</h2>

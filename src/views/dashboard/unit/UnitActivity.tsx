@@ -206,10 +206,10 @@ export default function UnitActivity({ }: UnitActivityProps) {
                                         <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                                             <Eye className="h-4 w-4" />
                                         </button>
-                                        <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                                            <Edit className="h-4 w-4" />
+                                        <button className="p-2 text-tree-600 hover:bg-tree-50 rounded-lg transition-colors">
+                                            <Check className="h-5 w-5" />
                                         </button>
-                                        <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                        <button className="p-2 text-blood-600 hover:bg-blood-50 rounded-lg transition-colors">
                                             <Trash2 className="h-4 w-4" />
                                         </button>
                                     </div>

@@ -153,7 +153,7 @@ const AdminReports = () => {
             subtitle="Active Units"
             description="Participating"
             icon={Building2}
-            iconColor="text-purple-600"
+            iconColor="text-blue-600"
             iconBgColor="bg-purple-100"
           />
         </div>
@@ -225,7 +225,7 @@ const AdminReports = () => {
                       <td className="py-3 px-4 text-sm font-medium text-gray-900">{unit.unit_number}</td>
                       <td className="py-3 px-4 text-sm text-gray-900 text-right">{unit.total_volunteers}</td>
                       <td className="py-3 px-4 text-sm text-blue-600 text-right font-medium">{unit.certified_volunteers}</td>
-                      <td className="py-3 px-4 text-sm text-green-600 text-right font-medium">{unit.approved_volunteers}</td>
+                      <td className="py-3 px-4 text-sm text-tree-600 text-right font-medium">{unit.approved_volunteers}</td>
                       <td className="py-3 px-4 text-sm text-blood-600 text-right font-medium">{unit.blood_donations}</td>
                       <td className="py-3 px-4 text-sm text-tree-600 text-right font-medium">{unit.tree_plantations}</td>
                     </tr>
@@ -325,9 +325,9 @@ const AdminReports = () => {
                       <td className="py-3 px-4 text-sm text-gray-600">{activity.unit_number || 'N/A'}</td>
                       <td className="py-3 px-4 text-sm">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                          activity.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          activity.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
+                          activity.status === 'approved' ? 'bg-tree-100 text-tree-800' :
+                          activity.status === 'pending' ? 'bg-nss-100 text-nss-800' :
+                          'bg-blood-100 text-blood-800'
                         }`}>
                           {activity.status}
                         </span>

@@ -45,7 +45,7 @@ export const HeroSection: React.FC = () => {
                         icon={<Heart className="h-6 w-6 text-white" />}
                         title="Rudhirasena"
                         subtitle="Save Lives"
-                        iconBackground="bg-red-500"
+                        iconBackground="bg-blood-500"
                         titleColor="text-gray-900"
                         subtitleColor="text-gray-700"
                         iconBackgroundRadius="rounded-lg"
@@ -55,7 +55,7 @@ export const HeroSection: React.FC = () => {
                         icon={<TreePine className="h-6 w-6 text-white" />}
                         title="NRPF"
                         subtitle="Go Green"
-                        iconBackground="bg-green-500"
+                        iconBackground="bg-tree-500"
                         titleColor="text-gray-900"
                         subtitleColor="text-gray-700"
                         iconBackgroundRadius="rounded-lg"

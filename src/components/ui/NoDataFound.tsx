@@ -31,9 +31,9 @@ interface NoDataFoundProps {
  */
 const NoDataFound: React.FC<NoDataFoundProps> = ({ title, description, cta }) => {
     return (
-        <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl p-8 text-center">
-            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AlertCircle className="w-8 h-8 text-yellow-600" />
+        <div className="bg-gradient-to-br from-nss-50 to-blue-50 border-2 border-nss-200 rounded-xl p-8 text-center">
+            <div className="w-16 h-16 bg-nss-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-nss-600" />
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-2">
                 {title}

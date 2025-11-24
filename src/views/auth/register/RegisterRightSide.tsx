@@ -1,11 +1,9 @@
-import { GlassCard } from '../../../components/ui';
-import { nssCards } from '../../../utils/CardDetails';
 import HyphenLogo from '../../../components/ui/HyphenLogo';
 import images from '@/assets/images';
 
 export default function RegisterRightSide() {
     return (
-        <div className="flex flex-col h-full bg-gradient-nss relative overflow-hidden">
+        <div className=" font-isans flex flex-col h-full bg-gradient-nss relative overflow-hidden">
             {/* Logo and NSS APJKTU side by side */}
             <div className='flex items-center space-x-2 md:space-x-4 absolute top-4 md:top-8 left-4 md:left-8 z-10'>
                 <img
@@ -18,22 +16,18 @@ export default function RegisterRightSide() {
                 </h1>
             </div>
 
-            {/* NSS Cards Grid - with proper spacing from top */}
-            <div className="flex-1 flex items-center justify-center px-4 md:px-8 lg:px-10 pt-20 md:pt-24 lg:pt-28 pb-16">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 lg:gap-5 w-full max-w-2xl">
-                    {nssCards.map((card, index) => (
-                        <GlassCard
-                            key={index}
-                            icon={card.icon}
-                            title={card.title}
-                            message={card.message}
-                        />
-                    ))}
-                </div>
+           {/* {Simple NSS related quote} */}
+            <div className="flex-grow flex flex-col justify-center items-center px-6 text-center">
+                <h2 className="text-white text-3xl md:text-4xl lg:text-5xl font-isans text-300 mb-4 md:mb-6">
+                    "The best way to find yourself is to lose yourself in the service of others."
+                </h2>
+                <p className="text-white/80 text-lg md:text-xl lg:text-2xl">
+                    - Mahatma Gandhi
+                </p>
             </div>
-
+            
             {/* Bottom Attribution */}
-            <div className='absolute bottom-4 md:bottom-8 left-4 md:left-8 z-10'>
+            <div className='absolute bottom-2 md:bottom-4 left-4 md:left-8 z-10'>
                 <HyphenLogo />
             </div>
         </div>

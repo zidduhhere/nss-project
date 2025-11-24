@@ -129,15 +129,15 @@ export default function UnitProfile({ }: UnitProfileProps) {
             <div className="space-y-6 px-4 sm:px-6 pb-6">
                 {/* Success/Error Messages */}
                 {successMessage && (
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-                        <p className="text-green-800 font-medium">{successMessage}</p>
+                    <div className="bg-tree-50 border border-tree-200 rounded-xl p-4 flex items-center gap-3">
+                        <CheckCircle2 className="h-5 w-5 text-tree-600 flex-shrink-0" />
+                        <p className="text-tree-800 font-medium">{successMessage}</p>
                     </div>
                 )}
 
                 {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-                        <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <div className="bg-blood-50 border border-blood-200 rounded-xl p-4 flex items-center gap-3">
+                        <AlertCircle className="h-5 w-5 text-blood-600 flex-shrink-0" />
                         <div className="flex-1">
                             <p className="text-red-800 font-medium">{error}</p>
                         </div>

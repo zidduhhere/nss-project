@@ -104,8 +104,8 @@ const TreeTaggingSubmission = ({ onSuccess }: TreeTaggingSubmissionProps = {}) =
             {/* Header with Icon */}
             <div className="text-center px-8 pt-8 pb-6">
                 <div className="flex items-center justify-center mb-4">
-                    <div className="bg-green-50 p-4 rounded-full">
-                        <TreePine className="w-8 h-8 text-green-500" />
+                    <div className="bg-tree-50 p-4 rounded-full">
+                        <TreePine className="w-8 h-8 text-tree-600" />
                     </div>
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Tree Tagging Submission</h2>
@@ -186,7 +186,7 @@ const TreeTaggingSubmission = ({ onSuccess }: TreeTaggingSubmissionProps = {}) =
                         isLoading={isSubmitting}
                         loadingText="Submitting..."
                         disabled={uploadedFiles.length === 0}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-semibold text-lg"
+                        className="w-full bg-tree-500 hover:bg-tree-600 text-white py-4 rounded-xl font-semibold text-lg"
                     >
                         Submit Tree Tagging
                     </Button>

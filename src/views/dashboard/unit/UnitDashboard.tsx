@@ -108,7 +108,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Approved</p>
                                 </div>
                             </div>
-                            <h3 className="text-2xl sm:text-3xl font-bold text-green-700 mb-1">{stats?.approvedVolunteers || 0}</h3>
+                            <h3 className="text-2xl sm:text-3xl font-bold text-tree-700 mb-1">{stats?.approvedVolunteers || 0}</h3>
                             <p className="text-xs sm:text-sm text-gray-600">By Unit</p>
                         </div>
 
@@ -136,7 +136,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Pending</p>
                                 </div>
                             </div>
-                            <h3 className="text-2xl sm:text-3xl font-bold text-yellow-700 mb-1">{stats?.pendingApprovals || 0}</h3>
+                            <h3 className="text-2xl sm:text-3xl font-bold text-nss-700 mb-1">{stats?.pendingApprovals || 0}</h3>
                             <p className="text-xs sm:text-sm text-gray-600">Awaiting Review</p>
                         </div>
 
@@ -150,7 +150,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Rejected</p>
                                 </div>
                             </div>
-                            <h3 className="text-2xl sm:text-3xl font-bold text-red-700 mb-1">{stats?.rejectedVolunteers || 0}</h3>
+                            <h3 className="text-2xl sm:text-3xl font-bold text-blood-700 mb-1">{stats?.rejectedVolunteers || 0}</h3>
                             <p className="text-xs sm:text-sm text-gray-600">Applications</p>
                         </div>
                     </div>
@@ -173,16 +173,16 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                         : 0}%
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-xl">
+                            <div className="flex items-center justify-between p-3 bg-nss-50 rounded-xl">
                                 <span className="text-sm font-medium text-gray-700">Pending Review</span>
-                                <span className="text-lg font-bold text-yellow-700">
+                                <span className="text-lg font-bold text-nss-700">
                                     {stats?.pendingApprovals || 0}
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl">
+                            <div className="flex items-center justify-between p-3 bg-tree-50 rounded-xl">
                                 <span className="text-sm font-medium text-gray-700">Active Members</span>
-                                <span className="text-lg font-bold text-green-700">
-                                    {stats?.approvedVolunteers || 0}
+                                <span className="text-lg font-bold text-tree-700">
+                                    {stats?.certifiedVolunteers || 0}
                                 </span>
                             </div>
                         </div>
@@ -332,7 +332,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                         </div>
 
                         {courseError && (
-                            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                            <div className="mb-4 bg-blood-50 border border-blood-200 text-blood-700 px-4 py-3 rounded-lg text-sm">
                                 {courseError}
                             </div>
                         )}

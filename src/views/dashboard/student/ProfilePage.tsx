@@ -29,7 +29,7 @@ const ProfilePage = () => {
       <div className="min-h-screen bg-gray-100">
         <DashboardHeader />
         <div className="max-w-4xl mx-auto px-4 py-12">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-blood-50 border border-blood-200 text-blood-700 px-4 py-3 rounded-lg">
             <p className="font-semibold">Error loading profile</p>
             <p className="text-sm">{error}</p>
             <button
@@ -94,10 +94,10 @@ const ProfilePage = () => {
               <span
                 className={`px-3 py-1 rounded-full text-sm font-medium ${
                   volunteerProfile?.status === "approved"
-                    ? "bg-green-100 text-green-800"
+                    ? "bg-tree-100 text-tree-800"
                     : volunteerProfile?.status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : "bg-red-100 text-red-800"
+                    ? "bg-nss-100 text-nss-800"
+                    : "bg-blood-100 text-blood-800"
                 }`}
               >
                 {volunteerProfile?.status?.toUpperCase() || "UNKNOWN"}
@@ -313,11 +313,11 @@ const ProfilePage = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6 text-center">
-            <p className="text-base sm:text-lg text-yellow-800 font-semibold mb-2">
+          <div className="bg-nss-50 border border-nss-200 rounded-lg p-4 sm:p-6 text-center">
+            <p className="text-base sm:text-lg text-nss-800 font-semibold mb-2">
               You haven't registered as a volunteer yet
             </p>
-            <p className="text-yellow-700 text-sm mb-4">
+            <p className="text-nss-700 text-sm mb-4">
               Complete your volunteer registration to participate in NSS
               activities
             </p>

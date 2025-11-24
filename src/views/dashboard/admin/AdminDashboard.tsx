@@ -5,7 +5,7 @@ import {
   UserCheck,
   Clock,
   XCircle,
-  TrendingUp,
+  TreePine,
   Building2,
   RefreshCw,
   AlertCircle,
@@ -147,8 +147,8 @@ const AdminDashboard = () => {
                 <p className="text-sm text-gray-600 mb-1">Rejected</p>
                 <p className="text-2xl font-bold text-gray-900">{stats?.rejectedVolunteers || 0}</p>
               </div>
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <XCircle className="w-6 h-6 text-red-600" />
+              <div className="w-12 h-12 bg-blood-100 rounded-lg flex items-center justify-center">
+                <XCircle className="w-6 h-6 text-blood-600" />
               </div>
             </div>
           </div>
@@ -159,8 +159,8 @@ const AdminDashboard = () => {
                 <p className="text-sm text-gray-600 mb-1">Recent (7 days)</p>
                 <p className="text-2xl font-bold text-gray-900">{stats?.recentRegistrations || 0}</p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-tree-100 rounded-lg flex items-center justify-center">
+                <TreePine className="w-6 h-6 text-tree-600" />
               </div>
             </div>
           </div>
@@ -232,10 +232,10 @@ const AdminDashboard = () => {
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             registration.status === 'approved'
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-tree-100 text-tree-800'
                               : registration.status === 'rejected'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                              ? 'bg-blood-100 text-blood-800'
+                              : 'bg-nss-100 text-nss-800'
                           }`}
                         >
                           {registration.status}
@@ -273,8 +273,8 @@ const AdminDashboard = () => {
             className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                <Users className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-nss-100 rounded-lg flex items-center justify-center group-hover:bg-nss-200 transition-colors">
+                <Users className="w-6 h-6 text-nss-600" />
               </div>
               <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
             </div>

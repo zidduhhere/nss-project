@@ -3,10 +3,10 @@ import React from 'react';
 
 export const FeaturesSection: React.FC = () => {
     const features = [
-        { icon: Heart, title: 'Blood Donation', description: 'Save lives by donating blood and track your donations for NSS points.', color: 'bg-red-500' },
-        { icon: TreePine, title: 'Tree Tagging', description: 'Contribute to environmental conservation through tree planting and tagging.', color: 'bg-green-500' },
-        { icon: Users, title: 'Community Service', description: 'Engage in various community service activities and make a difference.', color: 'bg-blue-500' },
-        { icon: Award, title: 'Earn Points', description: 'Get recognition for your contributions with our point-based system.', color: 'bg-yellow-500' }
+        { icon: Heart, title: 'Blood Donation', description: 'Save lives by donating blood and track your donations for NSS points.', color: 'bg-blood-500' },
+        { icon: TreePine, title: 'Tree Tagging', description: 'Contribute to environmental conservation through tree planting and tagging.', color: 'bg-tree-500' },
+        { icon: Users, title: 'Community Service', description: 'Engage in various community service activities and make a difference.', color: 'bg-nss-500' },
+        { icon: Award, title: 'Earn Points', description: 'Get recognition for your contributions with our point-based system.', color: 'bg-nss-500' }
     ];
     return (
         <section className="py-20 bg-gray-50 border-t border-gray-100 fade-in">

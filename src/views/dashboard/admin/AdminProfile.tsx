@@ -119,8 +119,8 @@ const AdminProfile = () => {
           <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-xl shadow-lg p-8 text-center">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                  <AlertCircle className="w-8 h-8 text-red-600" />
+                <div className="w-16 h-16 bg-blood-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-8 h-8 text-blood-500" />
                 </div>
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Unable to Load Profile</h2>
@@ -214,7 +214,7 @@ const AdminProfile = () => {
                       <Button
                         onClick={handleSave}
                         disabled={isUpdating}
-                        className="bg-green-500 hover:bg-green-600 text-white flex items-center disabled:opacity-50"
+                        className="bg-tree-500 hover:bg-tree-600 text-white flex items-center disabled:opacity-50"
                       >
                         {isUpdating ? (
                           <>

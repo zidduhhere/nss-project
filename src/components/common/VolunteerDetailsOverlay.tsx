@@ -96,13 +96,13 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
             case 'certified':
                 return 'bg-blue-100 text-blue-800 border-2 border-blue-300';
             case 'approved':
-                return 'bg-green-100 text-green-800';
+                return 'bg-tree-100 text-tree-800';
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800';
+                return 'bg-nss-100 text-nss-800';
             case 'rejected':
-                return 'bg-red-100 text-red-800';
+                return 'bg-blood-100 text-blood-800';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-white text-black border border-gray-300';
         }
     };
 
@@ -229,7 +229,7 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                 <div className="flex flex-wrap gap-2">
                                     {localVolunteer.languages_known && localVolunteer.languages_known.length > 0 ? (
                                         localVolunteer.languages_known.map((language, index) => (
-                                            <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                                            <span key={index} className="px-3 py-1 bg-nss-100 text-nss-800 rounded-full text-sm font-medium">
                                                 {language}
                                             </span>
                                         ))
@@ -365,7 +365,7 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                                 loadingText="Updating..."
                                                 variant="primary"
                                                 size="md"
-                                                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                                                className="flex items-center gap-2 bg-tree-600 hover:bg-tree-700"
                                             >
                                                 <UserCheck className="h-4 w-4" />
                                                 <span>{localVolunteer.status === 'approved' ? 'Approved' : 'Approve'}</span>
@@ -375,7 +375,7 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                                 onClick={() => handleStatusUpdate('rejected')}
                                                 disabled={isUpdating || localVolunteer.status === 'rejected'}
                                                 size="md"
-                                                className="flex items-center gap-2 border-red-300 text-red-600 hover:border-red-400 hover:bg-red-50"
+                                                className="flex items-center gap-2 border-blood-300 text-blood-600 hover:border-blood-400 hover:bg-blood-50"
                                             >
                                                 <UserX className="h-4 w-4" />
                                                 <span>{localVolunteer.status === 'rejected' ? 'Rejected' : 'Reject'}</span>
@@ -410,7 +410,7 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                                 onClick={() => onUncertifyVolunteer?.(localVolunteer)}
                                                 disabled={isUncertifying}
                                                 size="md"
-                                                className="flex items-center gap-2 border-orange-300 text-orange-600 hover:border-orange-400 hover:bg-orange-50"
+                                                className="flex items-center gap-2 border-nss-300 text-nss-600 hover:border-nss-400 hover:bg-nss-50"
                                             >
                                                 <Clock className="h-4 w-4" />
                                                 <span>{isUncertifying ? 'Reverting...' : 'Undo Certification'}</span>
