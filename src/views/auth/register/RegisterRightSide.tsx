@@ -9,7 +9,8 @@ export default function RegisterRightSide() {
                 <img
                     src={images.logo}
                     alt="Rudhirasena Logo"
-                    className='size-14'
+                    className='size-14 aspect-square'
+                    
                 />
                 <h1 className="text-white font-isans text-sm md:text-base lg:text-lg font-medium">
                     NSS APJKTU
