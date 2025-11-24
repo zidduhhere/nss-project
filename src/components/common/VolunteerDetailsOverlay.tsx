@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { X, User, Phone, MapPin, GraduationCap, Heart, Users, Globe } from 'lucide-react';
-import { Volunteer } from '@/assets/utils/volunteers';
+import { VolunteerProfile } from '@/services/profileService';
 
 interface VolunteerDetailsOverlayProps {
-    volunteer: Volunteer | null;
+    volunteer: VolunteerProfile | null;
     isOpen: boolean;
     onClose: () => void;
 }
@@ -44,11 +44,13 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
     };
 
     const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'Active':
+        switch (status.toLowerCase()) {
+            case 'approved':
                 return 'bg-green-100 text-green-800';
-            case 'New':
+            case 'pending':
                 return 'bg-yellow-100 text-yellow-800';
+            case 'rejected':
+                return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
         }
@@ -66,22 +68,22 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
                     <div className="flex items-center space-x-4">
-                        {volunteer.photo ? (
+                        {volunteer.photo_url ? (
                             <img
-                                src={volunteer.photo}
-                                alt={volunteer.name}
+                                src={volunteer.photo_url}
+                                alt={volunteer.full_name || 'Volunteer'}
                                 className="h-16 w-16 rounded-full object-cover border-2 border-white shadow-md"
                             />
                         ) : (
                             <div className="h-16 w-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                                {volunteer.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                {volunteer.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'V'}
                             </div>
                         )}
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900">{volunteer.name}</h2>
-                            <p className="text-gray-600">{volunteer.ktuId}</p>
-                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 ${getStatusColor(volunteer.status)}`}>
-                                {volunteer.status}
+                            <h2 className="text-2xl font-bold text-gray-900">{volunteer.full_name}</h2>
+                            <p className="text-gray-600">{volunteer.ktu_id}</p>
+                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 ${getStatusColor(volunteer.status || 'pending')}`}>
+                                {volunteer.status || 'pending'}
                             </span>
                         </div>
                     </div>
@@ -106,34 +108,34 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Gender:</span>
-                                        <span className="font-medium">{volunteer.gender}</span>
+                                        <span className="font-medium capitalize">{volunteer.gender || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Date of Birth:</span>
-                                        <span className="font-medium">{formatDate(volunteer.dob)}</span>
+                                        <span className="font-medium">{volunteer.dob ? formatDate(volunteer.dob) : 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Blood Group:</span>
                                         <span className="font-medium flex items-center">
                                             <Heart className="h-4 w-4 mr-1 text-red-500" />
-                                            {volunteer.bloodGroup || 'Not specified'}
+                                            {volunteer.blood_group || 'Not specified'}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Height:</span>
-                                        <span className="font-medium">{volunteer.height} cm</span>
+                                        <span className="font-medium">{volunteer.height ? `${volunteer.height} cm` : 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Weight:</span>
-                                        <span className="font-medium">{volunteer.weight} kg</span>
+                                        <span className="font-medium">{volunteer.weight ? `${volunteer.weight} kg` : 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Religion:</span>
-                                        <span className="font-medium">{volunteer.religion}</span>
+                                        <span className="font-medium capitalize">{volunteer.religion || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Community:</span>
-                                        <span className="font-medium">{volunteer.community}</span>
+                                        <span className="font-medium">{volunteer.community || 'Not specified'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -147,15 +149,23 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Phone:</span>
-                                        <a href={`tel:${volunteer.contactNumber}`} className="font-medium text-blue-600 hover:text-blue-800">
-                                            {volunteer.contactNumber}
-                                        </a>
+                                        {volunteer.contact_number ? (
+                                            <a href={`tel:${volunteer.contact_number}`} className="font-medium text-blue-600 hover:text-blue-800">
+                                                {volunteer.contact_number}
+                                            </a>
+                                        ) : (
+                                            <span className="font-medium text-gray-400">Not specified</span>
+                                        )}
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">WhatsApp:</span>
-                                        <a href={`https://wa.me/${volunteer.whatsappNumber.replace(/[^0-9]/g, '')}`} className="font-medium text-green-600 hover:text-green-800">
-                                            {volunteer.whatsappNumber}
-                                        </a>
+                                        {volunteer.whatsapp_number ? (
+                                            <a href={`https://wa.me/${volunteer.whatsapp_number.replace(/[^0-9]/g, '')}`} className="font-medium text-green-600 hover:text-green-800">
+                                                {volunteer.whatsapp_number}
+                                            </a>
+                                        ) : (
+                                            <span className="font-medium text-gray-400">Not specified</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -167,11 +177,15 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                     Languages Known
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {volunteer.languagesKnown.map((language, index) => (
-                                        <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-                                            {language}
-                                        </span>
-                                    ))}
+                                    {volunteer.languages_known && volunteer.languages_known.length > 0 ? (
+                                        volunteer.languages_known.map((language, index) => (
+                                            <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                                                {language}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="text-gray-400">Not specified</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -187,25 +201,25 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Course:</span>
-                                        <span className="font-medium">{volunteer.course}</span>
+                                        <span className="font-medium">{volunteer.course || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Semester:</span>
                                         <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-medium">
-                                            {volunteer.semster}
+                                            {volunteer.semester ? `S${volunteer.semester}` : 'Not specified'}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Admission Year:</span>
-                                        <span className="font-medium font-mono">{volunteer.admissionYear}</span>
+                                        <span className="font-medium font-mono">{volunteer.admission_year || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Unit:</span>
-                                        <span className="font-medium">{volunteer.unit}</span>
+                                        <span className="font-medium">{volunteer.unit_number || 'Not assigned'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Registration Date:</span>
-                                        <span className="font-medium">{formatDate(volunteer.registrationDate)}</span>
+                                        <span className="font-medium">{volunteer.created_at ? formatDate(volunteer.created_at) : 'Not available'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -219,24 +233,24 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">District:</span>
-                                        <span className="font-medium">{volunteer.district}</span>
+                                        <span className="font-medium">{volunteer.district || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Taluk:</span>
-                                        <span className="font-medium">{volunteer.taluk}</span>
+                                        <span className="font-medium">{volunteer.taluk || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Village:</span>
-                                        <span className="font-medium">{volunteer.village}</span>
+                                        <span className="font-medium">{volunteer.village || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Pincode:</span>
-                                        <span className="font-medium font-mono">{volunteer.pincode}</span>
+                                        <span className="font-medium font-mono">{volunteer.pincode || 'Not specified'}</span>
                                     </div>
                                     <div>
                                         <span className="text-gray-600 block mb-2">Permanent Address:</span>
                                         <p className="font-medium text-sm bg-gray-50 p-3 rounded-lg">
-                                            {volunteer.permanentAddress}
+                                            {volunteer.permanent_address || 'Not specified'}
                                         </p>
                                     </div>
                                 </div>
@@ -251,13 +265,17 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Name:</span>
-                                        <span className="font-medium">{volunteer.parent}</span>
+                                        <span className="font-medium">{volunteer.parent_name || 'Not specified'}</span>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Contact:</span>
-                                        <a href={`tel:${volunteer.parentContact}`} className="font-medium text-blue-600 hover:text-blue-800">
-                                            {volunteer.parentContact}
-                                        </a>
+                                        {volunteer.parent_contact_number ? (
+                                            <a href={`tel:${volunteer.parent_contact_number}`} className="font-medium text-blue-600 hover:text-blue-800">
+                                                {volunteer.parent_contact_number}
+                                            </a>
+                                        ) : (
+                                            <span className="font-medium text-gray-400">Not specified</span>
+                                        )}
                                     </div>
                                 </div>
                             </div>

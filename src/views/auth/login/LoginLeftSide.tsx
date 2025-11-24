@@ -13,7 +13,7 @@ export default function LoginLeftSide() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const clearError = () => setErrorMessage(null);
-    const { signInUser, logoutUser } = UseAuthContext();
+    const { signInUser } = UseAuthContext();
 
 
 
@@ -35,6 +35,9 @@ export default function LoginLeftSide() {
                 navigate('/dashboard/unit');
             } else if (result.role === 'admin') {
                 navigate('/dashboard/admin');
+            }
+            else {
+                setErrorMessage("Unknown user role. Please contact support.");
             }
         }
         catch (error) {
@@ -64,7 +67,7 @@ export default function LoginLeftSide() {
                         label="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your KTU ID / email"
+                        placeholder="Enter your email"
                         name="identifier"
                         type="text"
                     />

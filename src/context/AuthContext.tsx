@@ -2,7 +2,7 @@ import { FormFields } from "@/types/StudentFormSchema";
 import supabase from "@/services/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useContext, useState, createContext, PropsWithChildren, useEffect } from "react";
-import { AuthContextType, evaluateRole, RoleResult } from "./authContextTypes";
+import { AuthContextType, RoleResult } from "./authContextTypes";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -25,33 +25,45 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 const { data } = await supabase.auth.getSession();
                 if (data.session) {
                     setSession(data.session);
-                    const roleName = (data.session.user?.app_metadata.role) as string;
-                    if (roleName) {
-                        const tempRole = evaluateRole(roleName, data.session.user.id);
-                        setRole(tempRole);
-                    }
+                    const fetched_role = (await supabase.from("profiles").select("role, unit_id").eq("id", data.session.user.id).single());
+                    console.log(session);
+                    const roleName = fetched_role.data?.role;
+                    const unitId = fetched_role.data?.unit_id;
 
+
+                    if (roleName) {
+                        
+                        setRole({role: roleName, unit_id: unitId} as RoleResult);
+                    }
+                    else {
+                        setRole(null);
+                        setSession(null);
+                        throw new Error("User role not found. Contact admin.");
+                    }
                 }
 
-                // Set up auth state change listener
-                const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-                    if (event === 'SIGNED_OUT') {
-                        setSession(null);
-                        setRole(null);
-                    } else if (event === 'SIGNED_IN' && session) {
-                        setSession(session);
-                        const roleName = session.user?.app_metadata.role as string;
-                        if (roleName) {
-                            const tempRole = evaluateRole(roleName, session.user.id);
-                            setRole(tempRole);
-                        }
-                    }
 
+                 const authListener = supabase.auth.onAuthStateChange((_event, session) => {
+                    setSession(session);
+                    if (!session) {
+                        setRole(null);
+                    }
+                    else {
+                        //Fetch role when session changes
+                        supabase.from("profiles").select("role, unit_id").eq("id", session.user.id).single().then(({data}) => {
+                            const roleName = data?.role;
+                            const unitId = data?.unit_id;
+                            if (roleName) {
+                                setRole({role: roleName, unit_id: unitId} as RoleResult);
+                            }
+                        });
+                    }
                 });
+
 
                 // Return cleanup function
                 return () => {
-                    authListener.subscription.unsubscribe();
+                    authListener.data.subscription.unsubscribe();
                 };
             } catch (e) {
                 console.error("Error fetching session:", e);
@@ -74,26 +86,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                     password: student.password,
                     options: {
                         data: {
-                            display_name: student.fullName,
-                            mobile_number: student.mobile_number,
+                            display_name: student.full_name,
+                            mobile: student.mobile,
                             ktu_id: student.ktu_id,
-                            college: student.college,
-                            name: student.fullName,
+                            college_id: student.college.toLowerCase(),
+                            full_name: student.full_name,
                         }
                     }
                 });
 
-            setSession(data.session || null);
-
             if (error) {
-
                 throw error;
             }
 
-            setRole({ role: 'student' } as const);
             if (!data.session) {
-                throw "No session returned after sign-up, check the credentials"
+                throw new Error("No session returned after sign-up, check the credentials");
             }
+
+            setSession(data.session);
+            setRole({ role: 'student' } as const);
+
+            // Return the session data so the form can use it
+            return data;
 
         } catch (error) {
             console.error('Sign-up error:', error);
@@ -116,7 +130,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             //Check if userId is null or undefined and throw an error if it is.
             if (!userId) {
-                throw new Error('Authentication failed. No user ID found.');
+                console.log("No user ID found in session");
+                throw new Error('Authentication failed. User doesn\'t exist.');
+               
             }
 
             //The session is set which is accessible to the entire app via context.
@@ -133,24 +149,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             setSession(newRes.data.session);
 
-            //Extract the role from the JWT claims in the session.
-            //Assumes the role is stored in app_metadata.role
-            const { data: role } = await supabase
-                        .from("current_user_role")
-                        .select("role, unit_uuid")
-                        .single(); 
-
-            console.log("User role from JWT:", role);
+            //Extract the roke from the profiles table
+            //unit_id is not null for the units
+           const {data: role} = await supabase.from("profiles").select("role, unit_id").eq("id", userId).single();
 
             
             //assign the role to the state variable by checking the unit condition
-            if(role?.role === 'unit' && role.unit_uuid) {
-                setRole({ role: 'unit', unit_uuid: role.unit_uuid } as const);
+            if(role ) {
+                setRole({ role: role.role, unit_id: role.unit_id } as const);
             }
             else {
                 setRole(role);
             }
             
+            //Throws an error if role is null or undefined
             if (!role) throw new Error('Role evaluation failed');
 
             return role;

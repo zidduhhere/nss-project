@@ -1,10 +1,12 @@
-import { VolunteerFormFields } from "@/types/VolunteerFormSchema";
+import { languages, VolunteerFormFields } from "@/types/VolunteerFormSchema";
 import supabase from "@/services/supabase";
 
 /**
  * Volunteer Service - Handles all volunteer-related Supabase operations
  */
 export const volunteerService = {
+  
+
   /**
    * Register a new volunteer with file uploads
    * @param data - Volunteer form data including photo and signature files
@@ -18,30 +20,30 @@ export const volunteerService = {
 
      const isAlreadyRegistered = await supabase
         .from("volunteers")
-        .select("id")
-        .eq("student_id", userId)
-        .single();
+        .select('student_id')
+        .eq('student_id', userId)
 
-      if (isAlreadyRegistered.data) {
-        throw new Error("You have already registered as a volunteer. Manas Nannavatte");
+
+      if (isAlreadyRegistered.data?.length != undefined && isAlreadyRegistered.data?.length > 0) {
+        throw new Error("You have already registered as a volunteer.");
       }
 
       const ktuIdCheck = await supabase
         .from("volunteers")
-        .select("id")
+        .select("ktu_id")
         .eq("ktu_id", data.ktuId)
-        .single();
 
-      if (ktuIdCheck.data) {
+      if (ktuIdCheck.data?.length != undefined && ktuIdCheck.data?.length > 0) {
         throw new Error("A volunteer with this KTU ID already exists.");
       }
 
+      console.log("Starting file uploads...");
 
       // 1. Upload photo to Supabase Storage
       if (data.photo instanceof File) {
         console.log("First photo upload started...");
         const photoFileName = `${Date.now()}_${data.photo.name}_user_${userId}`;
-        const { data: photoData, error: photoError } = await supabase.storage
+        const {error: photoError } = await supabase.storage
           .from("volunteer-photos")
           .upload(photoFileName, data.photo);
 
@@ -61,7 +63,7 @@ export const volunteerService = {
         const signatureFileName = `${Date.now()}_${
           data.signature.name
         }_user_${userId}`;
-        const { data: signatureData, error: signatureError } =
+        const { error: signatureError } =
           await supabase.storage
             .from("volunteer-signatures")
             .upload(signatureFileName, data.signature);
@@ -79,46 +81,62 @@ export const volunteerService = {
       }
 
 
-      // 3. Prepare volunteer data (exclude File objects)
       const volunteerData = {
-        unit: data.unit,
-        semester: data.semster,
-        course: data.course,
-        admission_year: data.admissionYear,
-        ktu_id: data.ktuId,
-        name: data.name,
         student_id: userId, // ✅ Use the passed userId
-        gender: data.gender,
+        unit_id: null, // TODO: Map unit name to unit_id from units table
+        admission_year: data.admissionYear,
+        valid_from_year : null,
+        valid_to_year : null,
+        ktu_id: data.ktuId,
+        full_name : data.name,
+        //valid_from_year : this is the same as the admission year
+        //valid_to_year: this is calculated in the DB trigger
+        status: "pending", // Default status
+        semester: data.semester,
+        course: data.course,
+        unit_number: data.unit, // Store unit name in unit_number for now
+        enroll_no: null, // TODO: Add to form if needed
+        gender: data.gender.toLowerCase(),
         dob: data.dob,
-        contact_number: data.contactNumber,
         whatsapp_number: data.whatsappNumber,
+        contact_number: data.contactNumber,
         religion: data.religion,
         community: data.community,
         blood_group: data.bloodGroup,
-        height: data.height ? parseInt(data.height) : null,
-        weight: data.weight ? parseInt(data.weight) : null,
+        height: data.height ? parseFloat(data.height) : null,
+        weight: data.weight ? parseFloat(data.weight) : null,
         district: data.district,
         taluk: data.taluk,
         village: data.village,
         pincode: data.pincode,
-        permanent_address: data.permanentAddress,
         parent_name: data.parent,
-        parent_contact: data.parentContact,
+        parent_contact_number: data.parentContact,
+        permanent_address: data.permanentAddress,
+        current_address: data.permanentAddress, // Use permanent address as current for now
         photo_url: photoUrl,
         signature_url: signatureUrl,
-        languages_known: data.languagesKnown || [],
-        status: "pending", // Default status
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        languages_known: data.languagesKnown || []
       };
 
       // 4. Insert volunteer record into database
+      // Note: The following fields from form are NOT in database schema:
+      // - name (data.name) - consider adding a 'name' column
+      // - ktu_id (data.ktuId) - consider adding a 'ktu_id' column
+      // - contactNumber (data.contactNumber) - consider adding a 'contact_number' column
+      // - languagesKnown (data.languagesKnown) - consider adding a 'languages_known' jsonb column
+      
       const { data: volunteer, error: insertError } = await supabase
         .from("volunteers")
         .insert(volunteerData)
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error("Database insert error:", insertError);
+        throw insertError;
+      }
 
       return {
         success: true,
@@ -256,4 +274,6 @@ export const volunteerService = {
       throw new Error(error.message || "Failed to delete volunteer");
     }
   },
+  
 };
+

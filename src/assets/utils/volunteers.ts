@@ -19,7 +19,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "1",
     name: "Arjun Krishnan",
     unit: "NSS UNIT 1",
-    semster: "S6" as const,
+    semester: "S6" as const,
     course: "B.Tech Computer Science",
     admissionYear: 2021,
     ktuId: "KTU2021CSE001",
@@ -49,7 +49,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "2",
     name: "Priya Nair",
     unit: "NSS UNIT 1",
-    semster: "S5" as const,
+    semester: "S5" as const,
     course: "B.Tech Electronics",
     admissionYear: 2022,
     ktuId: "KTU2022ECE015",
@@ -79,7 +79,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "3",
     name: "Rohit Menon",
     unit: "NSS UNIT 2",
-    semster: "S7" as const,
+    semester: "S7" as const,
     course: "B.Tech Mechanical",
     admissionYear: 2020,
     ktuId: "KTU2020ME025",
@@ -109,7 +109,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "4",
     name: "Anjali Reddy",
     unit: "NSS UNIT 1",
-    semster: "S4" as const,
+    semester: "S4" as const,
     course: "BCA",
     admissionYear: 2023,
     ktuId: "KTU2023IT008",
@@ -139,7 +139,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "5",
     name: "Mohammed Ali",
     unit: "NSS UNIT 3",
-    semster: "S8" as const,
+    semester: "S8" as const,
     course: "B.Tech Civil",
     admissionYear: 2019,
     ktuId: "KTU2019CE012",
@@ -169,7 +169,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "6",
     name: "Sreya Thomas",
     unit: "NSS UNIT 2",
-    semster: "S3" as const,
+    semester: "S3" as const,
     course: "B.Tech Electrical",
     admissionYear: 2023,
     ktuId: "KTU2023EEE019",
@@ -199,7 +199,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "7",
     name: "Kiran Kumar",
     unit: "NSS UNIT 1",
-    semster: "S6" as const,
+    semester: "S6" as const,
     course: "B.Tech Computer Science",
     admissionYear: 2021,
     ktuId: "KTU2021CSE045",
@@ -229,7 +229,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "8",
     name: "Meera Nair",
     unit: "NSS UNIT 4",
-    semster: "S4" as const,
+    semester: "S4" as const,
     course: "B.Tech Electronics",
     admissionYear: 2023,
     ktuId: "KTU2023ECE022",
@@ -259,7 +259,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "9",
     name: "Ravi Varma",
     unit: "NSS UNIT 5",
-    semster: "S2" as const,
+    semester: "S2" as const,
     course: "B.Tech Mechanical",
     admissionYear: 2024,
     ktuId: "KTU2024ME003",
@@ -289,7 +289,7 @@ export const demoVolunteers: Volunteer[] = [
     id: "10",
     name: "Divya Pillai",
     unit: "NSS UNIT 1",
-    semster: "S7" as const,
+    semester: "S7" as const,
     course: "BBA",
     admissionYear: 2020,
     ktuId: "KTU2020IT011",
@@ -323,7 +323,7 @@ export const getVolunteerStats = () => {
   const activeVolunteers = demoVolunteers.filter(v => v.status === 'Active').length;
   const newVolunteers = demoVolunteers.filter(v => v.status === 'New').length;
   const avgSemester = Math.round(
-    demoVolunteers.reduce((sum, v) => sum + parseInt(v.semster.substring(1)), 0) / totalVolunteers * 10
+    demoVolunteers.reduce((sum, v) => sum + parseInt(v.semester.substring(1)), 0) / totalVolunteers * 10
   ) / 10;
   
   const courses = [...new Set(demoVolunteers.map(v => v.course))];
@@ -350,7 +350,7 @@ export const getVolunteersByStatus = (status: 'Active' | 'Inactive' | 'New'): Vo
 
 // Get volunteers by semester
 export const getVolunteersBySemester = (semester: string): Volunteer[] => {
-  return demoVolunteers.filter(v => v.semster === semester);
+  return demoVolunteers.filter(v => v.semester === semester);
 };
 
 // Search volunteers by name or KTU ID

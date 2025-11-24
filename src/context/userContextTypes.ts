@@ -6,13 +6,13 @@ export type StudentProfile  = {
     college: string;
     course?: string;
     year?: string;
-    rollNumber?: string;
     address?: string;
     dateOfBirth?: string;
     bloodGroup?: string;
     bio?: string;
     profileImage?: string;
     joinedDate?: string;
+    ktuId?: string;
 }
 
 export interface Achievement {

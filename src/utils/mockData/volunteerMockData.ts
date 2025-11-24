@@ -44,7 +44,7 @@ export const generateMockVolunteerData = (): VolunteerFormFields => {
   return {
     // Institution Details
     unit: 'NSS UNIT 1',
-    semster: 'S3',
+    semester: 'S3',
     course: randomCourse,
     admissionYear: randomAdmissionYear,
     ktuId: `KTU${Math.floor(Math.random() * 1000000)}`,
@@ -90,7 +90,7 @@ export const mockVolunteerDataSets = {
    */
   complete: {
     unit: 'NSS UNIT 1',
-    semster: 'S5',
+    semester: 'S5',
     course: 'B.Tech Computer Science',
     admissionYear: 2021,
     ktuId: 'KTU123456789',
@@ -121,7 +121,7 @@ export const mockVolunteerDataSets = {
    */
   female: {
     unit: 'NSS UNIT 2',
-    semster: 'S3',
+    semester: 'S3',
     course: 'B.Tech Electronics',
     admissionYear: 2022,
     ktuId: 'KTU987654321',
@@ -152,7 +152,7 @@ export const mockVolunteerDataSets = {
    */
   minimal: {
     unit: 'NSS UNIT 3',
-    semster: 'S1',
+    semester: 'S1',
     course: 'BCA',
     admissionYear: 2024,
     ktuId: 'KTU111222333',
@@ -183,7 +183,7 @@ export const mockVolunteerDataSets = {
    */
   edgeCase: {
     unit: 'NSS UNIT 10',
-    semster: 'S8',
+    semester: 'S8',
     course: 'B.Tech Mechanical Engineering with specialization in Robotics',
     admissionYear: 2020,
     ktuId: 'KTU9999999999',
@@ -228,7 +228,7 @@ export const logVolunteerData = (data: VolunteerFormFields) => {
   
   console.group('🏫 Institution Details');
   console.log('Unit:', data.unit);
-  console.log('Semester:', data.semster);
+  console.log('Semester:', data.semester);
   console.log('Course:', data.course);
   console.log('Admission Year:', data.admissionYear);
   console.log('KTU ID:', data.ktuId);

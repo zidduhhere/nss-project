@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePreviewFileUpload, LoadingSpinner } from "@/components/common";
 import { bloodGroups, communities, religions } from "@/utils/data/community";
 import { useVolunteerRegistration } from "@/hooks/useVolunteerRegistration";
-import { logVolunteerData } from "@/utils/mockData/volunteerMockData";
+import { logVolunteerData, mockVolunteerDataSets } from "@/utils/mockData/volunteerMockData";
 import { useState } from "react";
 import ErrorPop from "@/components/common/ErrorPop";
 import SuccessModal from "@/components/common/SuccessModal";
@@ -46,23 +46,23 @@ const VolunteerRegistrationPage = () => {
     const watchSignature = watch("signature");
 
     // 🔧 DEBUGGING: Fill form with mock data
-    // const fillMockData = () => {
-    //     // Choose which mock data to use:
-    //     // const mockData = generateMockVolunteerData(); // Random data
-    //     //const mockData = mockVolunteerDataSets.complete; // Predefined complete data
-    //     // const mockData = mockVolunteerDataSets.female; // Female student
-    //     // const mockData = mockVolunteerDataSets.minimal; // Minimal data
+    const fillMockData = () => {
+        // Choose which mock data to use:
+        // const mockData = generateMockVolunteerData(); // Random data
+        const mockData = mockVolunteerDataSets.complete; // Predefined complete data
+        // const mockData = mockVolunteerDataSets.female; // Female student
+        // const mockData = mockVolunteerDataSets.minimal; // Minimal data
 
-    //     // console.log('🔧 Filling form with mock data...');
-    //     // logVolunteerData(mockData);
+        console.log('🔧 Filling form with mock data...');
+        logVolunteerData(mockData);
 
-    //     // // Fill all form fields
-    //     // Object.keys(mockData).forEach((key) => {
-    //     //     setValue(key as keyof VolunteerFormFields, mockData[key as keyof VolunteerFormFields]);
-    //     // });
+        // Fill all form fields
+        Object.keys(mockData).forEach((key) => {
+            setValue(key as keyof VolunteerFormFields, mockData[key as keyof VolunteerFormFields]);
+        });
 
-    //     console.log('✅ Mock data loaded into form');
-    // };
+        console.log('✅ Mock data loaded into form');
+    };
 
     const onSubmit = async (data: VolunteerFormFields) => {
         try {
@@ -129,7 +129,7 @@ const VolunteerRegistrationPage = () => {
                             </p>
                         </div>
 
-                        {/* 🔧 DEBUG BUTTON - Remove in production
+                        {/* 🔧 DEBUG BUTTON - Remove in production */}
                         {process.env.NODE_ENV === 'development' && (
                             <button
                                 type="button"
@@ -138,7 +138,7 @@ const VolunteerRegistrationPage = () => {
                             >
                                 🔧 Fill Mock Data
                             </button>
-                        )} */}
+                        )}
                     </div>
 
                     <div className="bg-white lg:bg-transparent rounded-2xl p-8 mt-8 w-full max-w-[70rem] md:max-w-full shadow-sm border border-gray-100">
@@ -158,11 +158,11 @@ const VolunteerRegistrationPage = () => {
                                         error={errors.unit}
                                     />
                                     <Dropdown
-                                        {...register("semster")}
+                                        {...register("semester")}
                                         required
                                         label="Enrollment Semester"
                                         placeholder="Select your semester"
-                                        error={errors.semster}
+                                        error={errors.semester}
                                         options={["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]}
                                     />
                                     <TextField

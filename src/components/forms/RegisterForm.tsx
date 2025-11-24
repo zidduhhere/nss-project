@@ -22,22 +22,22 @@ export default function RegisterForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [externalError, setExternalError] = useState<string | false>(false);
-  const { signUpUser, session } = UseAuthContext();
+  const { signUpUser } = UseAuthContext();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
       setExternalError(false);
-      console.log("Logged In")
+      console.log("Signing up user")
       const result = await signUpUser(data)
       console.log(result);
-      // Handle successful registration (e.g., show success message, redirect)
-      if (session?.user) {
+      
+      // Check the result directly instead of the session state
+      if (result?.session?.user) {
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
-
           navigate('/dashboard/student');
         }, 1000);
       }
@@ -91,20 +91,20 @@ export default function RegisterForm() {
       <form className="space-y-6 mx-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField
-            {...register("fullName")}
+            {...register("full_name")}
             label="Full Name"
             type="text"
-            error={errors.fullName}
+            error={errors.full_name}
             placeholder="Enter your full name"
             required
 
           />
 
           <TextField
-            {...register("mobile_number")}
+            {...register("mobile")}
             label="Mobile Number"
             type="tel"
-            error={errors.mobile_number}
+            error={errors.mobile}
             placeholder="Enter your mobile number"
             required
           />

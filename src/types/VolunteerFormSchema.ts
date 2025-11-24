@@ -1,6 +1,11 @@
-import { bloodGroups, communities, religions } from "@/utils/data/community";
+import { bloodGroups, communities, genders, religions, semesters } from "@/utils/data/community";
 import { getAllDistricts } from "@/utils/data/taluks";
 import * as z from "zod";
+
+
+
+//Semester enum
+
 
 // Helper to validate non-empty strings
 const nonEmptyString = (fieldName: string) =>
@@ -17,21 +22,20 @@ const nonEmptyString = (fieldName: string) =>
 export const VolunteerSchema = z.object({
   name: nonEmptyString("Name"),
   unit: nonEmptyString("Unit"),
-  semster: z.enum(['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'], "Semester is required")
-    .refine((val) => val !== "" as any, "Semester is required"),
+  semester: z.enum(semesters, "Semester is required"),
   course: nonEmptyString("Course"),
   admissionYear: z.number("Admission year is required")
-    .min(2000, "Admission year is required")
+    .min(2010, "Admission year is required")
     .max(new Date().getFullYear(), "Admission year cannot be in the future"),
   ktuId: nonEmptyString("KTU ID"),
-  gender: z.enum(["Male", "Female"], "Gender is required")
+  gender: z.enum(genders, "Gender is required")
     .refine((val) => val !== "" as any, "Gender is required"),
   dob: nonEmptyString("Date of birth"),
-  contactNumber: nonEmptyString("Contact number").refine((val) => val.length >= 10, {
-    message: "Contact number must be at least 10 digits"
+  contactNumber: nonEmptyString("Contact number").refine((val) => /^[0-9]{10}$/.test(val), {
+    message: "Contact number must be exactly 10 digits and numeric"
   }),
-  whatsappNumber: nonEmptyString("WhatsApp number").refine((val) => val.length >= 10, {
-    message: "WhatsApp number must be at least 10 digits"
+  whatsappNumber: nonEmptyString("WhatsApp number").refine((val) => /^[0-9]{10}$/.test(val), {
+    message: "WhatsApp number must be exactly 10 digits and numeric"
   }),
   religion: z.enum(religions, "Religion is required")
     .refine((val) => val !== "" as any, "Religion is required"),
@@ -49,8 +53,8 @@ export const VolunteerSchema = z.object({
   taluk: nonEmptyString("Taluk"),
   village: nonEmptyString("Village"),
   parent: nonEmptyString("Parent/Guardian name"),
-  parentContact: nonEmptyString("Parent/Guardian contact").refine((val) => val.length >= 10, {
-    message: "Parent/Guardian contact must be at least 10 digits"
+  parentContact: nonEmptyString("Parent/Guardian contact").refine((val) => /^[0-9]{10}$/.test(val), {
+    message: "Parent/Guardian contact must be exactly 10 digits and numerics"
   }),
   permanentAddress: nonEmptyString("Permanent address").refine((val) => val.length <= 200, {
     message: "Permanent address is too long"

@@ -2,6 +2,7 @@
 export { default as Button } from "./Button";
 export { default as GlassCard } from "./GlassCard";
 export { default as HyphenLogo } from "./HyphenLogo";
+export { default as NoDataFound } from "./NoDataFound";
 export { default as OutlinedButton } from "./OutlinedButton";
 export { default as FilledButton } from "./FilledButton";
 export { default as TextField } from "./TextField";
