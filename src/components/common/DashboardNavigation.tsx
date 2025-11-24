@@ -26,7 +26,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                 { name: 'Dashboard', path: '/dashboard/admin' },
                 { name: 'Volunteers', path: '/dashboard/admin/volunteers' },
                 { name: 'Users', path: '/dashboard/admin/users' },
-                { name: 'Reports', path: '/dashboard/admin/reports' },
+                // { name: 'Reports', path: '/dashboard/admin/reports' },
             ];
         } else {
             return [

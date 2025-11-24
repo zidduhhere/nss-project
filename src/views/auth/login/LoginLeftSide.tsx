@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import { TextField, Button } from '@/components/ui';
 import { useState, } from 'react';
 import ErrorMessage from '@/components/common/ErrorMessage';
@@ -54,15 +55,25 @@ export default function LoginLeftSide() {
     };
     return (
         <div className="flex items-center justify-center w-full p-8">
-            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">
-                <div className="space-y-4">
-                    {errorMessage !== null && (
-                        <ErrorMessage
-                            message={errorMessage}
-                            type="error"
-                            onClose={() => clearError()}
-                        />
-                    )}
+            <div className="w-full max-w-md">
+                {/* Back to Home Button */}
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+                >
+                    <Home className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back to Home</span>
+                </button>
+                
+                <form onSubmit={handleSubmit} className="w-full space-y-6">
+                    <div className="space-y-4">
+                        {errorMessage !== null && (
+                            <ErrorMessage
+                                message={errorMessage}
+                                type="error"
+                                onClose={() => clearError()}
+                            />
+                        )}
                     <TextField
                         label="Email"
                         value={email}
@@ -101,18 +112,9 @@ export default function LoginLeftSide() {
                             Register
                         </button>
                     </div>
-                    <div className="text-sm text-nss-500">
-                        Are you faculty?{' '}
-                        <button
-                            type="button"
-                            onClick={() => navigate('/login/faculty')}
-                            className="font-bold text-nss-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-nss-500/40"
-                        >
-                            Login here
-                        </button>
-                    </div>
                 </div>
             </form>
+            </div>
         </div>
     );
 }

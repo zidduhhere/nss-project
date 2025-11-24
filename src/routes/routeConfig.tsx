@@ -10,7 +10,6 @@ const BlogView = lazy(() => import('@/views/miscellaneous/blog/BlogView'));
 const WebsiteTeamView = lazy(() => import('@/views/miscellaneous/website-team/WebsiteTeamView'));
 const ContactView = lazy(() => import('@/views/contact/ContactView'));
 const LoginView = lazy(() => import('@/views/auth/login/LoginView'));
-const UnitLoginView = lazy(() => import('@/views/auth/unit-login/UnitLoginView'));
 const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
 const StudentDashboard = lazy(() => import('@/views/dashboard/student/StudentDashboard'));
 const StudentProfile = lazy(() => import('@/views/dashboard/student/StudentProfile'));
@@ -27,6 +26,7 @@ const AdminDashboard = lazy(() => import('@/views/dashboard/admin/AdminDashboard
 const AdminProfile = lazy(() => import('@/views/dashboard/admin/AdminProfile'));
 const AdminVolunteers = lazy(() => import('@/views/dashboard/admin/AdminVolunteers'));
 const AdminUsers = lazy(() => import('@/views/dashboard/admin/AdminUsers'));
+const AdminReports = lazy(() => import('@/views/dashboard/admin/AdminReports'));
 
 
 export interface AppRoute {
@@ -52,9 +52,6 @@ export const appRoutes: AppRoute[] = [
     { path: '/contact', label: 'Contact Us', component: ContactView },
     { path: '/unauthorized', component: UnauthorizedView },
     { path: '/login', component: LoginView },
-    { path: '/login/unit', component: UnitLoginView },
-    // Legacy redirect
-    { path: '/login/faculty', component: () => <Navigate to="/login/unit" replace /> },
     { path: '/register', component: RegisterView },
     { path: '/dashboard/student', component: StudentDashboard, protected: true, roles: ['student'] },
     { path: '/dashboard/student/profile', component: StudentProfile, protected: true, roles: ['student'] },
@@ -72,6 +69,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/admin/profile', component: AdminProfile, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/volunteers', component: AdminVolunteers, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/users', component: AdminUsers, protected: true, roles: ['admin'] },
+    { path: '/dashboard/admin/reports', component: AdminReports, protected: true, roles: ['admin'] },
     
 ];
 

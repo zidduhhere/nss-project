@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import { UseAuthContext } from '@/context/AuthContext';
 import ErrorMessage from '@/components/common/ErrorMessage';
+import { TextField, FilledButton } from '@/components/ui';
 
 export default function UnitLoginLeftSide() {
     const navigate = useNavigate();
@@ -41,60 +43,77 @@ export default function UnitLoginLeftSide() {
 
     return (
         <div className="flex items-center justify-center w-full p-8">
-            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6 bg-white/60 backdrop-blur rounded-2xl p-8 shadow">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-black font-isans">UNIT Sign In</h2>
-                </div>
-
-                {errorMessage && (
-                    <ErrorMessage
-                        message={errorMessage}
-                        type="error"
-                        onClose={() => setErrorMessage(null)}
-                    />
-                )}
-
-                <div>
-                    <label className="block text-sm font-medium text-black mb-2">Email</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 border rounded-lg bg-white/80"
-                        placeholder="unit@example.com"
-                        disabled={isLoading}
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-black mb-2">Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3 border rounded-lg bg-white/80"
-                        placeholder="••••••"
-                        disabled={isLoading}
-                    />
-                </div>
+            <div className="w-full max-w-md">
+                {/* Back to Home - Desktop only */}
                 <button
-                    type="submit"
-                    className="w-full bg-nss-600 hover:bg-nss-700 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center"
-                    disabled={isLoading}
+                    onClick={() => navigate('/')}
+                    className="hidden lg:flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
                 >
-                    {isLoading ? (
-                        <>
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Signing In...
-                        </>
-                    ) : (
-                        'Sign In'
-                    )}
+                    <Home className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back to Home</span>
                 </button>
-                <div className="text-center text-xs text-gray-500">Switch to student? <a href="/login" className="text-nss-600 hover:underline">Student Login</a></div>
-            </form>
+                
+                <form onSubmit={handleSubmit} className="w-full space-y-6 bg-white/60 backdrop-blur rounded-2xl p-8 shadow-lg lg:bg-white">
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold text-black font-isans">Faculty Sign In</h2>
+                        <p className="text-gray-600 text-sm mt-1">Access your unit dashboard</p>
+                    </div>
+
+                    {errorMessage && (
+                        <ErrorMessage
+                            message={errorMessage}
+                            type="error"
+                            onClose={() => setErrorMessage(null)}
+                        />
+                    )}
+
+                    <div className="space-y-4">
+                        <TextField
+                            label="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="faculty@example.com"
+                            name="email"
+                            type="email"
+                            disabled={isLoading}
+                        />
+                        
+                        <TextField
+                            label="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            name="password"
+                            type="password"
+                            showPasswordToggle
+                            disabled={isLoading}
+                        />
+                    </div>
+                    
+                    <FilledButton
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        disabled={isLoading}
+                        isLoading={isLoading}
+                        loadingText="Signing in..."
+                        className="w-full"
+                    >
+                        Sign In
+                    </FilledButton>
+                    
+                    <div className="text-center text-sm text-gray-600">
+                        Not a faculty member?{' '}
+                        <button
+                            type="button"
+                            onClick={() => navigate('/login')}
+                            className="text-nss-600 hover:text-nss-700 hover:underline font-semibold"
+                        >
+                            Student Login
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

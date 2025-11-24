@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import { TextField, HyphenLogo, FilledButton } from '@/components/ui';
 import { UseAuthContext } from '@/context/AuthContext';
 import ErrorMessage from '@/components/common/ErrorMessage';
@@ -47,6 +48,15 @@ const AdminLogin = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4 font-isans">
             <div className="w-full max-w-md">
+                {/* Back to Home Button */}
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+                >
+                    <Home className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back to Home</span>
+                </button>
+                
                 {/* Admin Badge */}
                 <div className="text-center mb-8">
                     
@@ -117,17 +127,7 @@ const AdminLogin = () => {
                                 onClick={() => navigate('/login')}
                                 className="font-semibold text-indigo-600 hover:text-indigo-500 hover:underline"
                             >
-                                Student Login
-                            </button>
-                        </p>
-                        <p className="text-sm text-gray-600">
-                            Faculty?{' '}
-                            <button
-                                type="button"
-                                onClick={() => navigate('/login/faculty')}
-                                className="font-semibold text-indigo-600 hover:text-indigo-500 hover:underline"
-                            >
-                                Unit Login
+                                Back to Login
                             </button>
                         </p>
                     </div>

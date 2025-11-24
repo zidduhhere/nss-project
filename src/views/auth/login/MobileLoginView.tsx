@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, GraduationCap } from 'lucide-react';
+import { LogIn, UserPlus, Home } from 'lucide-react';
 import { TextField, FilledButton } from '@/components/ui';
 import ErrorMessage from '@/components/common/ErrorMessage';
 import { UseAuthContext } from '@/context/AuthContext';
@@ -52,8 +52,19 @@ export default function MobileLoginView() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-nss-600 via-nss-800 to-indigo-700 flex flex-col">
+            {/* Back to Home Button */}
+            <div className="pt-4 px-6">
+                <button
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+                >
+                    <Home className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back to Home</span>
+                </button>
+            </div>
+            
             {/* Header */}
-            <div className="pt-8 pb-6 px-6">
+            <div className="pt-4 pb-6 px-6">
                 <div className="flex flex-col items-center space-y-3">
                     <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-lg">
                         <LogIn className="w-8 h-8 text-white" />
@@ -134,15 +145,6 @@ export default function MobileLoginView() {
                         >
                             <UserPlus className="w-5 h-5" />
                             <span>Create Account</span>
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => navigate('/login/faculty')}
-                            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 text-gray-700 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-sm"
-                        >
-                            <GraduationCap className="w-5 h-5" />
-                            <span>Faculty Login</span>
                         </button>
                     </div>
                 </form>
