@@ -4,3 +4,4 @@ export * from './useVolunteerRegistration';
 export * from './useScrollReveal';
 export * from './useUnitVolunteerManagement';
 export * from './useAdminService';
+export * from './useStudentDashboard';

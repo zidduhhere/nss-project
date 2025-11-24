@@ -209,6 +209,7 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                 volunteer={selectedVolunteer}
                 isOpen={isOverlayOpen}
                 onClose={handleCloseOverlay}
+                userRole="unit"
             />
             <div className="mt-16">
                 <Footer />

@@ -1,7 +1,9 @@
 import { VolunteerProfile } from '@/types/VolunteerProfile';
 import { BookOpen, Calendar, MapPin, Phone } from 'lucide-react';
 
-export function getVolunteerColumns(handleViewVolunteer: (volunteer: VolunteerProfile) => void) {
+export function getVolunteerColumns(
+    handleViewVolunteer: (volunteer: VolunteerProfile) => void
+) {
     return [
         {
             key: 'full_name' as keyof VolunteerProfile,
@@ -71,6 +73,7 @@ export function getVolunteerColumns(handleViewVolunteer: (volunteer: VolunteerPr
             width: '10%',
             render: (value: string | null) => (
                 <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                    value?.toLowerCase() === 'certified' ? 'bg-blue-100 text-blue-800' :
                     value?.toLowerCase() === 'approved' ? 'bg-green-100 text-green-800' :
                     value?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                     value?.toLowerCase() === 'rejected' ? 'bg-red-100 text-red-800' :
@@ -96,7 +99,8 @@ export function getVolunteerColumns(handleViewVolunteer: (volunteer: VolunteerPr
                 <div className="flex space-x-1">
                     <button
                         onClick={() => handleViewVolunteer(volunteer)}
-                        className="text-primary-600 hover:text-primary-800 text-xs font-medium px-2 py-1 rounded border border-primary-200 hover:bg-primary-50">
+                        className="text-primary-600 hover:text-primary-800 text-xs font-medium px-2 py-1 rounded border border-primary-200 hover:bg-primary-50"
+                    >
                         View
                     </button>
                 </div>

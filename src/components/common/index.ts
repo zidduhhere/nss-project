@@ -6,3 +6,4 @@ export { default as ImagePreviewFileUpload } from "./ImagePreviewFileUpload";
 export { Placeholder } from "./Placeholder";
 export { UnitInfoCard } from "./UnitInfoCard";
 export { VolunteerDetailsOverlay } from "./VolunteerDetailsOverlay";
+export { default as DashboardHeader } from "./DashboardHeader";

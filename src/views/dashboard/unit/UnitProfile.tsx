@@ -1,5 +1,5 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { UnitInfoCard } from '../../../components/common';
+import { UnitInfoCard, DashboardHeader } from '../../../components/common';
 import { TextField, TextArea, StatCard, FilledButton, OutlinedButton, Footer } from '../../../components/ui';
 import { Calendar, Building, Users, KeyRound, AlertCircle, CheckCircle2, RefreshCw, MapPin, User, UserCheck, Clock, UserX } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -152,27 +152,15 @@ export default function UnitProfile({ }: UnitProfileProps) {
 
                 {/* Header */}
                 <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-between gap-6">
-                    <div className="bg-nss-gradient rounded-2xl text-white p-6 sm:p-8 flex-1 shadow-xl">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                            <div>
-                                <h2 className="text-2xl sm:text-3xl font-bold mb-2">Unit Profile</h2>
-                                <p className="text-nss-100 text-base sm:text-lg">Manage your NSS unit information and settings</p>
-                                <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-nss-200">
-                                    <span className="flex items-center gap-2">
-                                        <Building className="h-4 w-4" />
-                                        {profile.unit_number}
-                                    </span>
-                                    <span className="flex items-center gap-2">
-                                        <MapPin className="h-4 w-4" />
-                                        {profile.college_district}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <Building className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
-                            </div>
-                        </div>
-                    </div>
+                    <DashboardHeader
+                        title="Unit Profile"
+                        subtitle="Manage your NSS unit information and settings"
+                        icon={Building}
+                        badges={[
+                            { icon: Building, text: profile.unit_number || 'N/A' },
+                            { icon: MapPin, text: profile.college_district || 'N/A' }
+                        ]}
+                    />
 
                     {/* Unit Info Card */}
                     <UnitInfoCard className="w-full lg:w-80 flex-shrink-0" />

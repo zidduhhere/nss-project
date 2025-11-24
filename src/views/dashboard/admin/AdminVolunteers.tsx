@@ -42,6 +42,12 @@ const AdminVolunteers = () => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [certifyingId, setCertifyingId] = useState<string | null>(null);
+  const [certifyError, setCertifyError] = useState<string | null>(null);
+  const [certifySuccess, setCertifySuccess] = useState<string | null>(null);
+  const [uncertifyingId, setUncertifyingId] = useState<string | null>(null);
+  const [uncertifyError, setUncertifyError] = useState<string | null>(null);
+  const [uncertifySuccess, setUncertifySuccess] = useState<string | null>(null);
 
   // Filter options state
   const [searchQuery, setSearchQuery] = useState('');
@@ -135,9 +141,78 @@ const AdminVolunteers = () => {
     [refetch, clearFilters]
   );
 
+  // Handler for certifying a volunteer
+  const handleCertifyVolunteer = async (volunteer: VolunteerProfile) => {
+    if (!confirm(`Are you sure you want to certify ${volunteer.full_name}?\n\nThis will upgrade their status from "approved" to "certified".`)) {
+      return;
+    }
+
+    setCertifyingId(volunteer.id);
+    setCertifyError(null);
+    setCertifySuccess(null);
+
+    try {
+      const certified = await adminService.certifyVolunteer(volunteer.id);
+      setCertifySuccess(`${certified.full_name} has been successfully certified!`);
+      await refetch(); // Refresh the volunteer list
+      
+      // Close overlay if open
+      if (isOverlayOpen) {
+        handlers.handleCloseOverlay();
+      }
+      
+      // Auto-hide success message
+      setTimeout(() => setCertifySuccess(null), 3000);
+    } catch (error: any) {
+      const errorMessage = error.message || 'Failed to certify volunteer';
+      setCertifyError(errorMessage);
+      console.error('Certification error:', error);
+      
+      // Auto-hide error message after 5 seconds
+      setTimeout(() => setCertifyError(null), 5000);
+    } finally {
+      setCertifyingId(null);
+    }
+  };
+
+  // Handler for undoing certification
+  const handleUncertifyVolunteer = async (volunteer: VolunteerProfile) => {
+    if (!confirm(`Are you sure you want to undo certification for ${volunteer.full_name}?\n\nThis will revert their status from "certified" back to "approved".`)) {
+      return;
+    }
+
+    setUncertifyingId(volunteer.id);
+    setUncertifyError(null);
+    setUncertifySuccess(null);
+
+    try {
+      const uncertified = await adminService.uncertifyVolunteer(volunteer.id);
+      setUncertifySuccess(`${uncertified.full_name} certification has been reverted to approved.`);
+      await refetch(); // Refresh the volunteer list
+      
+      // Close overlay if open
+      if (isOverlayOpen) {
+        handlers.handleCloseOverlay();
+      }
+      
+      // Auto-hide success message
+      setTimeout(() => setUncertifySuccess(null), 3000);
+    } catch (error: any) {
+      const errorMessage = error.message || 'Failed to undo certification';
+      setUncertifyError(errorMessage);
+      console.error('Uncertification error:', error);
+      
+      // Auto-hide error message after 5 seconds
+      setTimeout(() => setUncertifyError(null), 5000);
+    } finally {
+      setUncertifyingId(null);
+    }
+  };
+
   // Stats for quick overview
   const stats = {
     total: volunteers.length,
+    certified: volunteers.filter((v) => v.status === 'certified').length,
     approved: volunteers.filter((v) => v.status === 'approved').length,
     pending: volunteers.filter((v) => v.status === 'pending').length,
     rejected: volunteers.filter((v) => v.status === 'rejected').length,
@@ -149,9 +224,23 @@ const AdminVolunteers = () => {
 
       {/* Success Modal */}
       {successMessage && <SuccessModal title="Success" message={successMessage} />}
+      {certifySuccess && <SuccessModal title="Volunteer Certified" message={certifySuccess} />}
+      {uncertifySuccess && <SuccessModal title="Certification Reverted" message={uncertifySuccess} />}
 
       {/* Error Alert */}
       {error && <ErrorPop error={error} onCloseClick={clearMessages} />}
+      {certifyError && (
+        <ErrorPop 
+          error={certifyError} 
+          onCloseClick={() => setCertifyError(null)} 
+        />
+      )}
+      {uncertifyError && (
+        <ErrorPop 
+          error={uncertifyError} 
+          onCloseClick={() => setUncertifyError(null)} 
+        />
+      )}
 
       {/* Volunteer Details Overlay */}
       {isOverlayOpen && selectedVolunteer && (
@@ -159,10 +248,31 @@ const AdminVolunteers = () => {
           volunteer={selectedVolunteer} 
           onClose={handlers.handleCloseOverlay}
           isOpen={isOverlayOpen}
+          userRole="admin"
+          onCertifyVolunteer={handleCertifyVolunteer}
+          isCertifying={certifyingId === selectedVolunteer?.id}
+          onUncertifyVolunteer={handleUncertifyVolunteer}
+          isUncertifying={uncertifyingId === selectedVolunteer?.id}
         />
       )}
 
       <div className="container mx-auto px-4 py-8">
+        {/* Info Banner for Certification */}
+        {stats.approved > 0 && (
+          <div className="mb-6 bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-blue-900 text-sm">Volunteer Certification Available</h3>
+                <p className="text-blue-800 text-sm mt-1">
+                  You have <span className="font-bold">{stats.approved}</span> approved volunteer(s) ready for certification. 
+                  Click "View" to open volunteer details and certify them.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex justify-between items-start mb-4">
@@ -210,7 +320,7 @@ const AdminVolunteers = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -218,6 +328,15 @@ const AdminVolunteers = () => {
                   <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
                 </div>
                 <Users className="w-8 h-8 text-blue-500" />
+              </div>
+            </div>
+            <div className="bg-white rounded-lg shadow-sm border border-blue-200 p-4 bg-blue-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-700 font-medium">Certified</p>
+                  <p className="text-2xl font-bold text-blue-600">{stats.certified}</p>
+                </div>
+                <CheckCircle className="w-8 h-8 text-blue-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -311,6 +430,7 @@ const AdminVolunteers = () => {
                     <option value="all">All Status</option>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
+                    <option value="certified">Certified</option>
                     <option value="rejected">Rejected</option>
                   </select>
                 </div>

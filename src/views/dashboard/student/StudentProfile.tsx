@@ -313,8 +313,8 @@ const StudentProfileComponent = () => {
                                                 onClick={() => setIsEditing(true)}
                                                 className="flex flex-row justify-center items-center hover:border  hover:border-white "
                                             >
-                                                <Edit2 className="w-4 h-4 mr-2" />
-                                                Edit Profile
+                                                <Edit2 className="w-4 h-4 mr-2 max-h-4 overflow-hidden" />
+                                                Edit
                                             </Button>
                                         ) : (
                                             <div className="flex space-x-2">
@@ -417,6 +417,19 @@ const StudentProfileComponent = () => {
                                             onChange={handleInputChange('joinedDate')}
                                             disabled={true}
                                         />
+                                        {volunteerProfile?.status === 'certified' && volunteerProfile?.enroll_no && (
+                                            <div className="relative">
+                                                <TextField
+                                                    label="NSS Enrollment Number"
+                                                    value={volunteerProfile.enroll_no}
+                                                    disabled={true}
+                                                    className="bg-blue-50 border-blue-200"
+                                                />
+                                                <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs px-2 py-1 rounded-bl rounded-tr font-medium">
+                                                    Certified
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

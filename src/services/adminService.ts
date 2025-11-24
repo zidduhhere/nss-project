@@ -637,6 +637,213 @@ export const adminService = {
   },
 
   /**
+   * Certify a volunteer (admin only)
+   * 
+   * Upgrades an approved volunteer to certified status. Only approved volunteers
+   * can be certified. This is the final recognition status for NSS volunteers.
+   * 
+   * @param {string} volunteerId - The UUID of the volunteer to certify
+   * 
+   * @returns {Promise<VolunteerProfile>} The updated volunteer profile with certified status
+   * 
+   * @throws {Error} If volunteer is not found, not approved, or certification fails
+   * 
+   * @example
+   * // Certify an approved volunteer
+   * try {
+   *   const certified = await adminService.certifyVolunteer('volunteer-123');
+   *   console.log(`${certified.full_name} is now certified!`);
+   * } catch (error) {
+   *   console.error('Certification failed:', error.message);
+   * }
+   */
+  certifyVolunteer: async (volunteerId: string): Promise<VolunteerProfile> => {
+    try {
+      // First check if volunteer exists and is approved
+      const { data: volunteer, error: fetchError } = await supabase
+        .from("volunteers")
+        .select("id, full_name, status")
+        .eq("id", volunteerId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (!volunteer) {
+        throw new Error("Volunteer not found");
+      }
+
+      if (volunteer.status !== "approved") {
+        throw new Error(
+          `Cannot certify volunteer with status "${volunteer.status}". Only approved volunteers can be certified.`
+        );
+      }
+
+      // Update to certified status
+      const { data, error } = await supabase
+        .from("volunteers")
+        .update({ status: "certified", updated_at: new Date().toISOString() })
+        .eq("id", volunteerId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (!data) {
+        throw new Error("Failed to certify volunteer");
+      }
+
+      return data as VolunteerProfile;
+    } catch (error: any) {
+      console.error("Error certifying volunteer:", error);
+      throw new Error(error.message || "Failed to certify volunteer");
+    }
+  },
+
+  /**
+   * Undo volunteer certification (admin only)
+   * 
+   * Reverts a certified volunteer back to approved status. This allows admins
+   * to undo certification if it was done in error or needs to be reconsidered.
+   * Only certified volunteers can be uncertified.
+   * 
+   * @param {string} volunteerId - The UUID of the volunteer to uncertify
+   * 
+   * @returns {Promise<VolunteerProfile>} The updated volunteer profile with approved status
+   * 
+   * @throws {Error} If volunteer is not found, not certified, or operation fails
+   * 
+   * @example
+   * // Undo certification
+   * try {
+   *   const uncertified = await adminService.uncertifyVolunteer('volunteer-123');
+   *   console.log(`${uncertified.full_name} certification reverted to approved`);
+   * } catch (error) {
+   *   console.error('Failed to undo certification:', error.message);
+   * }
+   */
+  uncertifyVolunteer: async (volunteerId: string): Promise<VolunteerProfile> => {
+    try {
+      // First check if volunteer exists and is certified
+      const { data: volunteer, error: fetchError } = await supabase
+        .from("volunteers")
+        .select("id, full_name, status")
+        .eq("id", volunteerId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (!volunteer) {
+        throw new Error("Volunteer not found");
+      }
+
+      if (volunteer.status !== "certified") {
+        throw new Error(
+          `Cannot undo certification for volunteer with status "${volunteer.status}". Only certified volunteers can be reverted.`
+        );
+      }
+
+      // Revert to approved status
+      const { data, error } = await supabase
+        .from("volunteers")
+        .update({ status: "approved", updated_at: new Date().toISOString() })
+        .eq("id", volunteerId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (!data) {
+        throw new Error("Failed to undo certification");
+      }
+
+      return data as VolunteerProfile;
+    } catch (error: any) {
+      console.error("Error undoing certification:", error);
+      throw new Error(error.message || "Failed to undo certification");
+    }
+  },
+
+  /**
+   * Certify multiple volunteers in a single operation (admin only)
+   * 
+   * Efficiently updates multiple approved volunteers to certified status.
+   * Only volunteers with 'approved' status will be certified.
+   * 
+   * @param {string[]} volunteerIds - Array of volunteer IDs to certify
+   * 
+   * @returns {Promise<{success: number, failed: number, errors: string[]}>} 
+   *          Results object with success count, failed count, and error messages
+   * 
+   * @example
+   * // Certify selected volunteers
+   * const result = await adminService.bulkCertifyVolunteers(['vol-1', 'vol-2']);
+   * console.log(`${result.success} certified, ${result.failed} failed`);
+   * if (result.errors.length > 0) {
+   *   console.error('Errors:', result.errors);
+   * }
+   */
+  bulkCertifyVolunteers: async (
+    volunteerIds: string[]
+  ): Promise<{ success: number; failed: number; errors: string[] }> => {
+    try {
+      // First, get all volunteers to check their status
+      const { data: volunteers, error: fetchError } = await supabase
+        .from("volunteers")
+        .select("id, full_name, status")
+        .in("id", volunteerIds);
+
+      if (fetchError) throw fetchError;
+
+      if (!volunteers || volunteers.length === 0) {
+        throw new Error("No volunteers found with the provided IDs");
+      }
+
+      // Filter only approved volunteers
+      const approvedVolunteers = volunteers.filter(
+        (v) => v.status === "approved"
+      );
+      const notApprovedVolunteers = volunteers.filter(
+        (v) => v.status !== "approved"
+      );
+
+      const errors: string[] = [];
+
+      // Add errors for non-approved volunteers
+      notApprovedVolunteers.forEach((v) => {
+        errors.push(
+          `${v.full_name || 'Unknown'} (${v.status}): Cannot certify - must be approved first`
+        );
+      });
+
+      // Certify approved volunteers
+      let successCount = 0;
+      if (approvedVolunteers.length > 0) {
+        const approvedIds = approvedVolunteers.map((v) => v.id);
+        const { data, error } = await supabase
+          .from("volunteers")
+          .update({ status: "certified", updated_at: new Date().toISOString() })
+          .in("id", approvedIds)
+          .select();
+
+        if (error) {
+          errors.push(`Database error: ${error.message}`);
+        } else {
+          successCount = data?.length || 0;
+        }
+      }
+
+      return {
+        success: successCount,
+        failed: notApprovedVolunteers.length,
+        errors,
+      };
+    } catch (error: any) {
+      console.error("Error bulk certifying volunteers:", error);
+      throw new Error(error.message || "Failed to certify volunteers");
+    }
+  },
+
+  /**
    * Get the most recent volunteer registrations
    * 
    * Retrieves the latest volunteer applications ordered by creation date (newest first).

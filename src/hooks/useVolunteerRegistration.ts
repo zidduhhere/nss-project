@@ -11,6 +11,23 @@ export const useVolunteerRegistration = () => {
   
   const { session } = UseAuthContext();
 
+
+  const getCollegeCourses = async () => {
+    try {
+      let courses = await volunteerService.getCollegeCourses(session!.user.id);
+      console.log("Fetched college courses:", courses);
+
+      const formattedCourses = courses.map(course => {
+        return `${course.code} - ${course.name}`;
+      });
+
+      return formattedCourses;
+    } catch (error) {
+      console.error("Error fetching college courses:", error);
+      return [];
+    }
+  };
+
   const registerVolunteer = async (data: VolunteerFormFields) => {
     setIsLoading(true);
     setError(null);
@@ -56,6 +73,7 @@ export const useVolunteerRegistration = () => {
 
   return {
     registerVolunteer,
+    getCollegeCourses,
     isLoading,
     error,
     success,

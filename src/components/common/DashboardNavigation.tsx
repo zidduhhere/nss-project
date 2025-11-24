@@ -19,7 +19,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
             return [
                 { name: 'Dashboard', path: '/dashboard/student' },
                 { name: 'Volunteer Registration', path: '/dashboard/student/volunteer-registration' },
-                { name: 'Submit Certificate', path: '/dashboard/student/certificates' },
+                { name: 'Submit Certificate', path: '/dashboard/student/submit' },
             ];
         } else if (mode === 'admin') {
             return [

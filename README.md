@@ -9,6 +9,7 @@ nss-project/
 ├── src/
 │   ├── components/          # Reusable UI components
 │   │   ├── common/         # Shared components
+│   │   │   ├── DashboardHeader.tsx  # Reusable dashboard header component
 │   │   │   ├── DashboardNavigation.tsx
 │   │   │   ├── ErrorBoundary.tsx
 │   │   │   ├── ErrorMessage.tsx
@@ -92,8 +93,9 @@ nss-project/
 │   │   └── userContextTypes.ts
 │   │
 │   ├── hooks/              # Custom React hooks
+│   │   ├── useScrollReveal.ts  # Scroll reveal animations
 │   │   ├── useVolunteerRegistration.ts
-│   │   └── useUnitProfile.ts
+│   │   └── useUnitProfile.ts  # Unit profile with course management
 │   │
 │   ├── types/              # TypeScript type definitions
 │   │   ├── AdminProfile.ts
@@ -185,6 +187,7 @@ The application supports three distinct user roles:
 - View pending, approved, rejected, and certified volunteers
 - Unit profile management
 - Program Officer details editing
+- **College course management** (add, view, delete courses)
 - Submission tracking (blood donation, tree tagging)
 - Password reset functionality
 
@@ -250,7 +253,8 @@ NSS-themed gradient color palette:
 - **OutlinedButton**: Secondary actions with border styling
 - **HeroButton**: Large call-to-action buttons for landing pages
 
-#### **Cards**
+#### **Cards & Layouts**
+- **DashboardHeader**: Reusable header with title, subtitle, icon, and badges
 - **StatCard**: Statistics display with icons and gradients
 - **GlassCard**: Liquid glass UI cards with backdrop blur
 - **UnitInfoCard**: Compact unit information display
@@ -272,10 +276,16 @@ NSS-themed gradient color palette:
 ### Responsive Design
 
 - **Mobile-first**: Optimized for small screens
-- **Breakpoints**: sm, md, lg, xl, 2xl
+- **Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px), 2xl (1536px)
 - **Adaptive Layouts**: Different layouts for mobile/tablet/desktop
-- **Touch-friendly**: Optimized touch targets
+- **Touch-friendly**: Optimized touch targets with proper spacing
 - **Simple Animations**: Quick fade-in animations (0 → 10% → 100% opacity in 0.4s)
+- **Fully Responsive Dashboards**: All dashboard pages optimized for mobile, tablet, and desktop
+  - Unit Dashboard: Responsive stats grid, course management
+  - Unit Profile: Stacked forms on mobile
+  - Unit Volunteers: Horizontal scroll tables on mobile
+  - Student Registration: Multi-column grids adapt to screen size
+  - Profile Pages: Responsive image galleries and info sections
 
 ## 🛠️ Technology Stack
 
@@ -296,6 +306,7 @@ NSS-themed gradient color palette:
 - Get unit profile with college details
 - Update Program Officer information
 - Fetch unit statistics (total, approved, certified, pending, rejected)
+- **Course management** (get, add, delete college courses)
 - Password reset for unit accounts
 
 ### unitVolunteerService
@@ -375,13 +386,38 @@ All backend operations are abstracted into service files with:
 
 ### Custom Hooks Pattern
 Complex logic is encapsulated in custom hooks:
-- `useUnitProfile`: Profile and stats management
+- `useUnitProfile`: Profile, stats, and course management
 - `useVolunteerRegistration`: Registration workflow
+- `useScrollReveal`: Scroll-based reveal animations
 
 ### Context Pattern
 Global state management:
 - `AuthContext`: Authentication state, login/logout
 - `UserDataContext`: User profile data
+
+## 🔄 Recent Updates
+
+### Mobile Responsiveness (November 2025)
+- ✅ All dashboard pages fully responsive across devices
+- ✅ Unit Dashboard: Adaptive grid layouts (1→2→5 columns)
+- ✅ Unit Profile: Form layouts stack on mobile
+- ✅ Unit Volunteers: Horizontal scroll for tables
+- ✅ Student Registration: Multi-column grids adapt to screen size
+- ✅ Profile Pages: Responsive image galleries
+
+### Course Management Feature (November 2025)
+- ✅ Unit coordinators can manage college courses
+- ✅ Add courses with name and code
+- ✅ Delete courses with confirmation
+- ✅ Real-time course list updates
+- ✅ Integrated into Unit Dashboard
+- ✅ Modal-based add course interface
+
+### Component Architecture (November 2025)
+- ✅ Created reusable `DashboardHeader` component
+- ✅ Standardized header design across dashboards
+- ✅ Flexible badge system for metadata display
+- ✅ Responsive icon and text layouts
 
 ## 🔄 Migration Notes
 

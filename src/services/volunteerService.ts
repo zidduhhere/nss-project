@@ -1,10 +1,52 @@
-import { languages, VolunteerFormFields } from "@/types/VolunteerFormSchema";
+import { VolunteerFormFields } from "@/types/VolunteerFormSchema";
 import supabase from "@/services/supabase";
 
 /**
  * Volunteer Service - Handles all volunteer-related Supabase operations
  */
 export const volunteerService = {
+
+
+  getCollegeId: async (studentId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("college_id")
+        .eq("id", studentId)
+        .single();
+      if (error) {
+        throw error;
+      }
+      return data?.college_id || null;
+    } catch (error) {
+      console.error("Error fetching college ID:", error);
+      return null;
+    }
+  },
+
+  getCollegeCourses: async (studentId: string) => {
+    try {
+      const collegeId = await volunteerService.getCollegeId(studentId);
+      if (!collegeId) {
+        throw new Error("College ID not found for the student");
+      }
+      const { data, error } = await supabase
+        .from("courses")
+        .select("name, code")
+        .eq("college_id", collegeId)
+        .order("name", { ascending: true });
+
+        if (error) {
+          throw error;
+        }
+      console.log("Courses data:", data);
+      return data || [];
+
+    } catch (error) {
+      console.error("Error fetching college courses:", error);
+      throw error;
+    }
+  },
   
 
   /**

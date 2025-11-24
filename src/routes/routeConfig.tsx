@@ -14,7 +14,6 @@ const UnitLoginView = lazy(() => import('@/views/auth/unit-login/UnitLoginView')
 const RegisterView = lazy(() => import('@/views/auth/register/RegisterView'));
 const StudentDashboard = lazy(() => import('@/views/dashboard/student/StudentDashboard'));
 const StudentProfile = lazy(() => import('@/views/dashboard/student/StudentProfile'));
-const CertificateSubmission = lazy(() => import('@/views/dashboard/student/CertificateSubmission'));
 const ActivitySubmissionPage = lazy(() => import('@/views/dashboard/student/ActivitySubmissionPage'));
 const UnitDashboard = lazy(() => import('@/views/dashboard/unit/UnitDashboard'));
 const UnitProfile = lazy(() => import('@/views/dashboard/unit/UnitProfile'));
@@ -59,7 +58,6 @@ export const appRoutes: AppRoute[] = [
     { path: '/register', component: RegisterView },
     { path: '/dashboard/student', component: StudentDashboard, protected: true, roles: ['student'] },
     { path: '/dashboard/student/profile', component: StudentProfile, protected: true, roles: ['student'] },
-    { path: '/dashboard/student/certificates', component: CertificateSubmission, protected: true, roles: ['student'] },
     { path: '/dashboard/student/submit', component: ActivitySubmissionPage, protected: true, roles: ['student'] },
     { path: '/dashboard/student/volunteer-registration', component: VolunteerRegistrationPage, protected: true, roles: ['student'] },
     { path: '/dashboard/unit', component: UnitDashboard, protected: true, roles: ['unit'] },

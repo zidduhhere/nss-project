@@ -17,7 +17,7 @@ import { ImagePreviewFileUpload, LoadingSpinner } from "@/components/common";
 import { bloodGroups, communities, religions } from "@/utils/data/community";
 import { useVolunteerRegistration } from "@/hooks/useVolunteerRegistration";
 import { logVolunteerData, mockVolunteerDataSets } from "@/utils/mockData/volunteerMockData";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ErrorPop from "@/components/common/ErrorPop";
 import SuccessModal from "@/components/common/SuccessModal";
 
@@ -36,8 +36,21 @@ const VolunteerRegistrationPage = () => {
         resolver: zodResolver(VolunteerSchema),
     });
 
-    const { registerVolunteer, isLoading, error, resetState } =
+
+
+    const { registerVolunteer, isLoading, error, resetState, getCollegeCourses } =
         useVolunteerRegistration();
+
+    const [collegeCourses, setCollegeCourses] = useState<any[]>([]);
+
+    // Fetch college courses on component mount
+    useEffect(() => {
+        const fetchCourses = async () => {
+            const courses = await getCollegeCourses();
+            setCollegeCourses(courses);
+        };
+        fetchCourses();
+    }, []);
 
     // Watch district and taluk values from React Hook Form state
     const watchDistrict = watch("district");
@@ -117,14 +130,14 @@ const VolunteerRegistrationPage = () => {
             {error && <ErrorPop error={error} onCloseClick={resetState} />}
 
             {/* {Main Content} */}
-            <div className="max-w-full px-8 py-12 flex justify-center items-center">
-                <div className="mt-16">
-                    <div className="flex justify-between items-center">
+            <div className="max-w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex justify-center items-center">
+                <div className="mt-12 sm:mt-16">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 className="text-4xl font-isans font-semibold text-primary-500">
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-isans font-semibold text-primary-500">
                                 Volunteer Registration
                             </h2>
-                            <p className="mt-2 text-md text-gray-600">
+                            <p className="mt-2 text-sm sm:text-md text-gray-600">
                                 Please fill in all the required details below.
                             </p>
                         </div>
@@ -134,21 +147,21 @@ const VolunteerRegistrationPage = () => {
                             <button
                                 type="button"
                                 onClick={fillMockData}
-                                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-colors"
+                                className="px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
                             >
                                 🔧 Fill Mock Data
                             </button>
                         )}
                     </div>
 
-                    <div className="bg-white lg:bg-transparent rounded-2xl p-8 mt-8 w-full max-w-[70rem] md:max-w-full shadow-sm border border-gray-100">
+                    <div className="bg-white lg:bg-transparent rounded-2xl p-4 sm:p-6 lg:p-8 mt-6 sm:mt-8 w-full max-w-[70rem] md:max-w-full shadow-sm border border-gray-100">
                         <form onSubmit={handleSubmit(onSubmit, onError)}>
                             {/* Institution Details Section */}
-                            <div className="mb-12">
-                                <h3 className="text-2xl font-semibold text-primary-500 mb-6">
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-4 sm:mb-6">
                                     Institution Details
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                                     <Dropdown
                                         {...register("unit")}
                                         label="Select College Unit"
@@ -165,11 +178,12 @@ const VolunteerRegistrationPage = () => {
                                         error={errors.semester}
                                         options={["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]}
                                     />
-                                    <TextField
+                                    <Dropdown
                                         {...register("course")}
                                         required
                                         label="Course"
-                                        placeholder="Enter your course"
+                                        placeholder="Select your course"
+                                        options={collegeCourses}
                                         error={errors.course}
                                     />
                                     <TextField
@@ -191,11 +205,11 @@ const VolunteerRegistrationPage = () => {
                             </div>
 
                             {/* Personal Details Section */}
-                            <div className="mb-12">
-                                <h3 className="text-2xl font-semibold text-primary-500 mb-6">
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-4 sm:mb-6">
                                     Personal Details
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                                     <TextField
                                         {...register("name")}
                                         required
@@ -279,11 +293,11 @@ const VolunteerRegistrationPage = () => {
                             </div>
 
                             {/* Address Details Section */}
-                            <div className="mb-12">
-                                <h3 className="text-2xl font-semibold text-primary-500 mb-6">
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-4 sm:mb-6">
                                     Address Details
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                                     {/* District - Reset dependent fields on change */}
                                     <Dropdown
                                         {...register("district")}
@@ -331,7 +345,7 @@ const VolunteerRegistrationPage = () => {
                                         disabled={!watchTaluk}
                                     />
                                 </div>
-                                <div className="mt-6 max-w-7xl grid grid-cols-1 md:grid-cols-2  gap-6">
+                                <div className="mt-4 sm:mt-6 max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                     <TextField
                                         {...register("pincode")}
                                         required
@@ -352,8 +366,8 @@ const VolunteerRegistrationPage = () => {
                             </div>
 
                             {/* Parent/Guardian Details Section */}
-                            <div className="mb-12">
-                                <h3 className="text-2xl font-semibold text-primary-500 mb-6">
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-4 sm:mb-6">
                                     Parent/Guardian Details
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -376,8 +390,8 @@ const VolunteerRegistrationPage = () => {
                             </div>
 
                             {/* Documents Section */}
-                            <div className="mb-12">
-                                <h3 className="text-2xl font-semibold text-primary-500 mb-6">
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-4 sm:mb-6">
                                     Documents
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -421,14 +435,14 @@ const VolunteerRegistrationPage = () => {
                             </div>
 
                             {/* Languages Known Section */}
-                            <div className="mb-12">
-                                <h3 className="text-2xl font-semibold text-primary-500 mb-6">
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-4 sm:mb-6">
                                     Languages Known
                                 </h3>
-                                <div className="flex flex-col space-y-4">
-                                    <label className="flex items-center space-x-3 cursor-pointer">
+                                <div className="flex flex-wrap gap-4">
+                                    <label className="flex flex-wrap items-center gap-4 sm:gap-6 cursor-pointer">
                                         {languages.map((lang) => (
-                                            <div key={lang} className="flex items-center space-x-3">
+                                            <div key={lang} className="flex items-center space-x-2 sm:space-x-3">
                                                 <input
                                                     type="checkbox"
                                                     value={lang}
@@ -452,7 +466,7 @@ const VolunteerRegistrationPage = () => {
                                 type="submit"
                                 variant="primary"
                                 size="lg"
-                                className="w-full !mt-12 bg-primary-500 hover:bg-primary-600 text-white px-6 py-3"
+                                className="w-full !mt-8 sm:!mt-12 bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-3 text-sm sm:text-base"
                             >
                                 Submit Registration
                             </FilledButton>

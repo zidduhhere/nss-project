@@ -1,5 +1,6 @@
 import LoginLeftSide from './LoginLeftSide';
 import LoginRightSide from './LoginRightSide';
+import MobileLoginView from './MobileLoginView';
 import { useEffect, useState } from 'react';
 
 export default function LoginView() {
@@ -18,21 +19,7 @@ export default function LoginView() {
 
     // Mobile / Tablet Layout
     if (isMobile) {
-        return (
-            <div className="min-h-screen min-w-6xl bg-nss-50 flex flex-col">
-                {/* Mobile Header */}
-
-                <div className="p-6 text-center">
-                    <h1 className="text-black  text-3xl font-bold font-isans mb-2">NSS Portal</h1>
-                    <p className="text-white/80 font-isans">Sign in to continue</p>
-                </div>
-
-                {/* Mobile Login Form */}
-
-                <LoginLeftSide />
-
-            </div>
-        );
+        return <MobileLoginView />;
     }
 
     // Desktop Layout

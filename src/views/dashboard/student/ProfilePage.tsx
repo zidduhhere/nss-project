@@ -48,20 +48,20 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-gray-100">
       <DashboardHeader />
 
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary-600 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-600 mb-2">
             My Profile
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             View and manage your account information
           </p>
         </div>
 
         {/* User Profile Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4 border-b pb-2">
             Account Information
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -86,9 +86,9 @@ const ProfilePage = () => {
 
         {/* Volunteer Registration Status */}
         {isVolunteerRegistered ? (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div className="flex items-center justify-between mb-4 border-b pb-2">
-              <h2 className="text-2xl font-semibold text-gray-800">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mb-3 sm:mb-4 border-b pb-2">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">
                 Volunteer Registration
               </h2>
               <span
@@ -106,10 +106,10 @@ const ProfilePage = () => {
 
             {/* Institution Details */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                 Institution Details
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 <ProfileField
                   label="Unit Number"
                   value={volunteerProfile?.unit_number}
@@ -137,10 +137,10 @@ const ProfilePage = () => {
 
             {/* Personal Details */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                 Personal Details
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 <ProfileField
                   label="Full Name"
                   value={volunteerProfile?.full_name}
@@ -194,10 +194,10 @@ const ProfilePage = () => {
 
             {/* Address Details */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                 Address Details
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 <ProfileField
                   label="District"
                   value={volunteerProfile?.district}
@@ -228,10 +228,10 @@ const ProfilePage = () => {
 
             {/* Parent/Guardian Details */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                 Parent/Guardian Details
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <ProfileField
                   label="Parent Name"
                   value={volunteerProfile?.parent_name}
@@ -245,10 +245,10 @@ const ProfilePage = () => {
 
             {/* Documents */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                 Documents
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {volunteerProfile?.photo_url && (
                   <div>
                     <p className="text-sm font-medium text-gray-600 mb-2">
@@ -257,7 +257,7 @@ const ProfilePage = () => {
                     <img
                       src={volunteerProfile.photo_url}
                       alt="Volunteer Photo"
-                      className="w-40 h-40 object-cover rounded-lg border border-gray-300"
+                      className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-lg border border-gray-300"
                     />
                   </div>
                 )}
@@ -269,7 +269,7 @@ const ProfilePage = () => {
                     <img
                       src={volunteerProfile.signature_url}
                       alt="Volunteer Signature"
-                      className="w-40 h-20 object-contain rounded-lg border border-gray-300 bg-white p-2"
+                      className="w-32 h-16 sm:w-40 sm:h-20 object-contain rounded-lg border border-gray-300 bg-white p-2"
                     />
                   </div>
                 )}
@@ -280,7 +280,7 @@ const ProfilePage = () => {
             {volunteerProfile?.languages_known &&
               volunteerProfile.languages_known.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-3">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3">
                     Languages Known
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -313,8 +313,8 @@ const ProfilePage = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <p className="text-yellow-800 font-semibold mb-2">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6 text-center">
+            <p className="text-base sm:text-lg text-yellow-800 font-semibold mb-2">
               You haven't registered as a volunteer yet
             </p>
             <p className="text-yellow-700 text-sm mb-4">
@@ -323,7 +323,7 @@ const ProfilePage = () => {
             </p>
             <a
               href="/dashboard/student/volunteer-registration"
-              className="inline-block px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-block px-4 sm:px-6 py-2 bg-primary-600 text-white text-sm sm:text-base rounded-lg hover:bg-primary-700 transition-colors"
             >
               Register as Volunteer
             </a>
@@ -353,13 +353,13 @@ const ProfileField = ({
 }: ProfileFieldProps) => {
   return (
     <div className={fullWidth ? "col-span-full" : ""}>
-      <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
+      <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">{label}</p>
       {badge ? (
         <span className="inline-block px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium">
           {value || "N/A"}
         </span>
       ) : (
-        <p className="text-gray-900 font-medium">
+        <p className="text-sm sm:text-base text-gray-900 font-medium">
           {value || <span className="text-gray-400">Not provided</span>}
         </p>
       )}

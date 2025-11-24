@@ -1,9 +1,11 @@
 import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { UnitInfoCard } from '../../../components/common';
+import { UnitInfoCard, DashboardHeader } from '../../../components/common';
 import { useUnitProfile } from '@/hooks/useUnitProfile';
 import { UseAuthContext } from '@/context/AuthContext';
-import { Users, UserCheck, UserX, Clock, Building, TrendingUp, Calendar } from 'lucide-react';
+import { Users, UserCheck, UserX, Clock, Building, TrendingUp, Calendar, Plus, BookOpen, Trash2, X } from 'lucide-react';
 import { Footer } from '@/components/ui/Footer';
+import { useState } from 'react';
+import { FilledButton, TextField } from '@/components/ui';
 
 interface UnitDashboardProps {
     user?: { name?: string; role?: string } | null;
@@ -13,7 +15,40 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
     const { session } = UseAuthContext();
     const unitId = session?.user?.id
     
-    const { profile, stats, isLoading } = useUnitProfile(unitId || '');
+    const { profile, stats, isLoading, courses, isLoadingCourses, addCourse, deleteCourse } = useUnitProfile(unitId || '');
+    
+    // Course management state
+    const [showAddCourseModal, setShowAddCourseModal] = useState(false);
+    const [newCourseName, setNewCourseName] = useState('');
+    const [newCourseCode, setNewCourseCode] = useState('');
+    const [courseError, setCourseError] = useState<string | null>(null);
+
+    const handleAddCourse = async () => {
+        if (!newCourseName.trim() || !newCourseCode.trim()) {
+            setCourseError('Please enter both course name and code');
+            return;
+        }
+
+        try {
+            setCourseError(null);
+            await addCourse({ name: newCourseName.trim(), code: newCourseCode.trim() });
+            setNewCourseName('');
+            setNewCourseCode('');
+            setShowAddCourseModal(false);
+        } catch (err: any) {
+            setCourseError(err.message || 'Failed to add course');
+        }
+    };
+
+    const handleDeleteCourse = async (courseId: string, courseName: string) => {
+        if (confirm(`Are you sure you want to delete "${courseName}"?`)) {
+            try {
+                await deleteCourse(courseId);
+            } catch (err: any) {
+                alert(`Failed to delete course: ${err.message}`);
+            }
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-nss-50 font-isans">
@@ -22,29 +57,15 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                 
                 {/* Header Section */}
                 <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-between gap-6">
-                    <div className="bg-nss-gradient rounded-2xl text-white p-6 sm:p-8 flex-1 shadow-xl">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                            <div>
-                                <h2 className="text-2xl sm:text-3xl font-bold mb-2">Unit Dashboard</h2>
-                                <p className="text-nss-100 text-base sm:text-lg">
-                                    {isLoading ? 'Loading...' : `Welcome, ${profile?.po_name || 'Coordinator'}`}
-                                </p>
-                                {profile && (
-                                    <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-nss-200">
-                                        <span className="flex items-center gap-2">
-                                            <Building className="h-4 w-4" />
-                                            {profile.unit_number}
-                                        </span>
-                                        <span className="hidden sm:inline">•</span>
-                                        <span className="break-words">{profile.college_name}</span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="h-16 w-16 sm:h-20 sm:w-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <Building className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
-                            </div>
-                        </div>
-                    </div>
+                    <DashboardHeader
+                        title="Unit Dashboard"
+                        subtitle={isLoading ? 'Loading...' : `Welcome, ${profile?.po_name || 'Coordinator'}`}
+                        icon={Building}
+                        badges={profile ? [
+                            { icon: Building, text: profile.unit_number || 'N/A' },
+                            { icon: Building, text: profile.college_name || 'N/A' }
+                        ] : undefined}
+                    />
 
                     {/* Unit Info Card */}
                     <UnitInfoCard className="w-full lg:w-80 flex-shrink-0" />
@@ -221,7 +242,144 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* College Courses Management Section */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                        <div className="flex items-center gap-2">
+                            <BookOpen className="h-6 w-6 text-nss-600" />
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-900">College Courses</h3>
+                                <p className="text-sm text-gray-600">Manage courses offered at your college</p>
+                            </div>
+                        </div>
+                        <FilledButton
+                            variant="primary"
+                            onClick={() => setShowAddCourseModal(true)}
+                            className="flex items-center gap-2"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Add Course
+                        </FilledButton>
+                    </div>
+
+                    {isLoadingCourses ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="bg-gray-50 rounded-xl p-4 animate-pulse">
+                                    <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : courses.length === 0 ? (
+                        <div className="text-center py-12">
+                            <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                            <p className="text-gray-600 mb-4">No courses added yet</p>
+                            <FilledButton
+                                variant="lightNss"
+                                onClick={() => setShowAddCourseModal(true)}
+                                className="flex items-center gap-2 mx-auto"
+                            >
+                                <Plus className="h-4 w-4" />
+                                Add Your First Course
+                            </FilledButton>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {courses.map((course) => (
+                                <div
+                                    key={course.id}
+                                    className="bg-gradient-to-br from-nss-50 to-nss-100 rounded-xl p-4 border border-nss-200 hover:shadow-md transition-shadow relative group"
+                                >
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h4 className="font-semibold text-gray-900 text-sm pr-8">{course.name}</h4>
+                                        <button
+                                            onClick={() => handleDeleteCourse(course.id, course.name)}
+                                            className="absolute top-3 right-3 p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Delete course"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-gray-600 font-mono bg-white/50 px-2 py-1 rounded inline-block">
+                                        {course.code}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* Add Course Modal */}
+            {showAddCourseModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-900">Add New Course</h3>
+                            <button
+                                onClick={() => {
+                                    setShowAddCourseModal(false);
+                                    setCourseError(null);
+                                    setNewCourseName('');
+                                    setNewCourseCode('');
+                                }}
+                                className="text-gray-400 hover:text-gray-600"
+                            >
+                                <X className="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        {courseError && (
+                            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                                {courseError}
+                            </div>
+                        )}
+
+                        <div className="space-y-4">
+                            <TextField
+                                label="Course Name"
+                                placeholder="e.g., Computer Science Engineering"
+                                value={newCourseName}
+                                onChange={(e) => setNewCourseName(e.target.value)}
+                                required
+                            />
+                            <TextField
+                                label="Course Code"
+                                placeholder="e.g., CSE or B.Tech CSE"
+                                value={newCourseCode}
+                                onChange={(e) => setNewCourseCode(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <FilledButton
+                                variant="lightNss"
+                                onClick={() => {
+                                    setShowAddCourseModal(false);
+                                    setCourseError(null);
+                                    setNewCourseName('');
+                                    setNewCourseCode('');
+                                }}
+                                className="flex-1"
+                            >
+                                Cancel
+                            </FilledButton>
+                            <FilledButton
+                                variant="primary"
+                                onClick={handleAddCourse}
+                                isLoading={isLoadingCourses}
+                                className="flex-1"
+                            >
+                                Add Course
+                            </FilledButton>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="mt-16">
                 <Footer />
             </div>

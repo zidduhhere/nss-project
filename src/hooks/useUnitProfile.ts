@@ -75,6 +75,8 @@ export function useUnitProfile(unitId: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [isLoadingCourses, setIsLoadingCourses] = useState(false);
 
   /**
    * Fetch unit profile data
@@ -186,12 +188,76 @@ export function useUnitProfile(unitId: string) {
     await fetchStats();
   }, [fetchStats]);
 
+  /**
+   * Fetch college courses
+   */
+  const fetchCourses = useCallback(async () => {
+    if (!profile?.college_id) return;
+
+    try {
+      setIsLoadingCourses(true);
+      const coursesData = await unitProfileService.getCollegeCourses(profile.college_id);
+      setCourses(coursesData);
+    } catch (err: any) {
+      console.error("Error fetching courses:", err);
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  }, [profile?.college_id]);
+
+  /**
+   * Add a new course
+   */
+  const addCourse = useCallback(async (courseData: { name: string; code: string }) => {
+    if (!profile?.college_id) {
+      throw new Error("College ID not found");
+    }
+
+    try {
+      setIsLoadingCourses(true);
+      setError(null);
+      await unitProfileService.addCourse(profile.college_id, courseData);
+      await fetchCourses(); // Refresh courses list
+    } catch (err: any) {
+      console.error("Error adding course:", err);
+      setError(err.message || "Failed to add course");
+      throw err;
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  }, [profile?.college_id, fetchCourses]);
+
+  /**
+   * Delete a course
+   */
+  const deleteCourse = useCallback(async (courseId: string) => {
+    try {
+      setIsLoadingCourses(true);
+      setError(null);
+      await unitProfileService.deleteCourse(courseId);
+      await fetchCourses(); // Refresh courses list
+    } catch (err: any) {
+      console.error("Error deleting course:", err);
+      setError(err.message || "Failed to delete course");
+      throw err;
+    } finally {
+      setIsLoadingCourses(false);
+    }
+  }, [fetchCourses]);
+
   // Initial data fetch
   useEffect(() => {
     if (unitId) {
       fetchProfile();
     }
   }, [unitId, fetchProfile]);
+
+  // Fetch courses when profile is loaded
+  useEffect(() => {
+    if (profile?.college_id) {
+      fetchCourses();
+    }
+  }, [profile?.college_id, fetchCourses]);
 
   return {
     profile,
@@ -203,5 +269,10 @@ export function useUnitProfile(unitId: string) {
     refreshProfile,
     refreshStats,
     resetPassword,
+    courses,
+    isLoadingCourses,
+    fetchCourses,
+    addCourse,
+    deleteCourse,
   };
 }

@@ -9,13 +9,23 @@ interface VolunteerDetailsOverlayProps {
     isOpen: boolean;
     onClose: () => void;
     onStatusUpdate?: () => void; // Callback to refresh volunteer list
+    userRole?: 'admin' | 'unit'; // Control which actions are available
+    onCertifyVolunteer?: (volunteer: VolunteerProfile) => void; // Admin-only action
+    isCertifying?: boolean; // Loading state for certification
+    onUncertifyVolunteer?: (volunteer: VolunteerProfile) => void; // Admin-only undo action
+    isUncertifying?: boolean; // Loading state for uncertification
 }
 
 export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = ({
     volunteer,
     isOpen,
     onClose,
-    onStatusUpdate
+    onStatusUpdate,
+    userRole = 'unit', // Default to unit for backward compatibility
+    onCertifyVolunteer,
+    isCertifying = false,
+    onUncertifyVolunteer,
+    isUncertifying = false
 }) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [updateError, setUpdateError] = useState<string | null>(null);
@@ -257,6 +267,12 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                                         <span className="text-gray-600">Unit:</span>
                                         <span className="font-medium">{localVolunteer.unit_number || 'Not assigned'}</span>
                                     </div>
+                                    {localVolunteer.status === 'certified' && localVolunteer.enroll_no && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-600">Enrollment Number:</span>
+                                            <span className="font-medium font-mono text-blue-600 bg-blue-50 px-3 py-1 rounded">{localVolunteer.enroll_no}</span>
+                                        </div>
+                                    )}
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Registration Date:</span>
                                         <span className="font-medium">{localVolunteer.created_at ? formatDate(localVolunteer.created_at) : 'Not available'}</span>
@@ -332,54 +348,98 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
                     {/* Action Buttons */}
                     <div className="mt-8 pt-6 border-t border-gray-200">
                         <div className="flex flex-col sm:flex-row gap-4">
-                            {/* Status Update Buttons */}
-                            <div className="flex flex-wrap gap-3 flex-1">
-                                {localVolunteer.status === 'certified' ? (
-                                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border-2 border-blue-300 rounded-lg">
-                                        <UserCheck className="h-4 w-4 text-blue-600" />
-                                        <span className="text-sm font-medium text-blue-800">Certified by Admin - Cannot modify status</span>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <FilledButton
-                                            onClick={() => handleStatusUpdate('approved')}
-                                            disabled={isUpdating || localVolunteer.status === 'approved'}
-                                            isLoading={isUpdating}
-                                            loadingText="Updating..."
-                                            variant="primary"
-                                            size="md"
-                                            className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-                                        >
-                                            <UserCheck className="h-4 w-4" />
-                                            <span>{localVolunteer.status === 'approved' ? 'Approved' : 'Approve'}</span>
-                                        </FilledButton>
-
-                                        <OutlinedButton
-                                            onClick={() => handleStatusUpdate('rejected')}
-                                            disabled={isUpdating || localVolunteer.status === 'rejected'}
-                                            size="md"
-                                            className="flex items-center gap-2 border-red-300 text-red-600 hover:border-red-400 hover:bg-red-50"
-                                        >
-                                            <UserX className="h-4 w-4" />
-                                            <span>{localVolunteer.status === 'rejected' ? 'Rejected' : 'Reject'}</span>
-                                        </OutlinedButton>
-
-                                        {(localVolunteer.status === 'approved' || localVolunteer.status === 'rejected') && (
+                            {/* Status Update Buttons - Only for Unit Coordinators */}
+                            {userRole === 'unit' ? (
+                                <div className="flex flex-wrap gap-3 flex-1">
+                                    {localVolunteer.status === 'certified' ? (
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border-2 border-blue-300 rounded-lg">
+                                            <UserCheck className="h-4 w-4 text-blue-600" />
+                                            <span className="text-sm font-medium text-blue-800">Certified by Admin - Cannot modify status</span>
+                                        </div>
+                                    ) : (
+                                        <>
                                             <FilledButton
-                                                onClick={() => handleStatusUpdate('pending')}
-                                                disabled={isUpdating}
+                                                onClick={() => handleStatusUpdate('approved')}
+                                                disabled={isUpdating || localVolunteer.status === 'approved'}
                                                 isLoading={isUpdating}
-                                                variant="lightNss"
+                                                loadingText="Updating..."
+                                                variant="primary"
                                                 size="md"
-                                                className="flex items-center gap-2"
+                                                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
                                             >
-                                                <Clock className="h-4 w-4" />
-                                                <span>Reset to Pending</span>
+                                                <UserCheck className="h-4 w-4" />
+                                                <span>{localVolunteer.status === 'approved' ? 'Approved' : 'Approve'}</span>
                                             </FilledButton>
+
+                                            <OutlinedButton
+                                                onClick={() => handleStatusUpdate('rejected')}
+                                                disabled={isUpdating || localVolunteer.status === 'rejected'}
+                                                size="md"
+                                                className="flex items-center gap-2 border-red-300 text-red-600 hover:border-red-400 hover:bg-red-50"
+                                            >
+                                                <UserX className="h-4 w-4" />
+                                                <span>{localVolunteer.status === 'rejected' ? 'Rejected' : 'Reject'}</span>
+                                            </OutlinedButton>
+
+                                            {(localVolunteer.status === 'approved' || localVolunteer.status === 'rejected') && (
+                                                <FilledButton
+                                                    onClick={() => handleStatusUpdate('pending')}
+                                                    disabled={isUpdating}
+                                                    isLoading={isUpdating}
+                                                    variant="lightNss"
+                                                    size="md"
+                                                    className="flex items-center gap-2"
+                                                >
+                                                    <Clock className="h-4 w-4" />
+                                                    <span>Reset to Pending</span>
+                                                </FilledButton>
                                         )}
                                     </>
                                 )}
                             </div>
+                            ) : (
+                                // Admin view - only certify action for approved volunteers
+                                <div className="flex flex-wrap gap-3 flex-1">
+                                    {localVolunteer.status === 'certified' ? (
+                                        <>
+                                            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border-2 border-blue-300 rounded-lg">
+                                                <UserCheck className="h-4 w-4 text-blue-600" />
+                                                <span className="text-sm font-medium text-blue-800">Already Certified</span>
+                                            </div>
+                                            <OutlinedButton
+                                                onClick={() => onUncertifyVolunteer?.(localVolunteer)}
+                                                disabled={isUncertifying}
+                                                size="md"
+                                                className="flex items-center gap-2 border-orange-300 text-orange-600 hover:border-orange-400 hover:bg-orange-50"
+                                            >
+                                                <Clock className="h-4 w-4" />
+                                                <span>{isUncertifying ? 'Reverting...' : 'Undo Certification'}</span>
+                                            </OutlinedButton>
+                                        </>
+                                    ) : localVolunteer.status === 'approved' ? (
+                                        <FilledButton
+                                            onClick={() => onCertifyVolunteer?.(localVolunteer)}
+                                            disabled={isCertifying}
+                                            isLoading={isCertifying}
+                                            loadingText="Certifying..."
+                                            variant="primary"
+                                            size="md"
+                                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                                        >
+                                            <UserCheck className="h-4 w-4" />
+                                            <span>Certify Volunteer</span>
+                                        </FilledButton>
+                                    ) : (
+                                        <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                                            <span className="text-sm text-gray-600">
+                                                {localVolunteer.status === 'pending' ? 'Pending approval from unit coordinator' : 
+                                                 localVolunteer.status === 'rejected' ? 'Rejected by unit coordinator' : 
+                                                 'Only approved volunteers can be certified'}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             {/* Close Button */}
                             <OutlinedButton

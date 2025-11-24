@@ -338,4 +338,74 @@ export const unitProfileService = {
       throw new Error(error.message || "Failed to send password reset email");
     }
   },
+
+  /**
+   * Get college courses for the unit's college
+   * 
+   * @param {string} collegeId - The college ID
+   * @returns {Promise<Array>} List of courses with name and code
+   */
+  getCollegeCourses: async (collegeId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id, name, code")
+        .eq("college_id", collegeId)
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error: any) {
+      console.error("Error fetching college courses:", error);
+      throw new Error(error.message || "Failed to fetch college courses");
+    }
+  },
+
+  /**
+   * Add a new course to the college
+   * 
+   * @param {string} collegeId - The college ID
+   * @param {Object} courseData - Course information (name, code)
+   * @returns {Promise<Object>} The created course
+   */
+  addCourse: async (collegeId: string, courseData: { name: string; code: string }) => {
+    try {
+      const { data, error } = await supabase
+        .from("courses")
+        .insert({
+          college_id: collegeId,
+          name: courseData.name,
+          code: courseData.code,
+          created_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error("Error adding course:", error);
+      throw new Error(error.message || "Failed to add course");
+    }
+  },
+
+  /**
+   * Delete a course from the college
+   * 
+   * @param {string} courseId - The course ID to delete
+   * @returns {Promise<void>}
+   */
+  deleteCourse: async (courseId: string) => {
+    try {
+      const { error } = await supabase
+        .from("courses")
+        .delete()
+        .eq("id", courseId);
+
+      if (error) throw error;
+    } catch (error: any) {
+      console.error("Error deleting course:", error);
+      throw new Error(error.message || "Failed to delete course");
+    }
+  },
 };
