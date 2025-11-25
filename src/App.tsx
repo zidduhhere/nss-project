@@ -7,7 +7,7 @@ import { GlobalLoader } from '@/components/common/GlobalLoader';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 function AppContent() {
   return (
