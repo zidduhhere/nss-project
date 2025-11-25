@@ -7,6 +7,7 @@ import { GlobalLoader } from '@/components/common/GlobalLoader';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from "@vercel/analytics/next"
 
 function AppContent() {
   return (
@@ -54,6 +55,7 @@ function App() {
       <div className="font-isans antialiased">
         <AppContent />
       </div>
+      <Analytics />
       <SpeedInsights />
     </ErrorBoundary>
   );
