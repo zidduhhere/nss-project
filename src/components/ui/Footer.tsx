@@ -17,6 +17,7 @@ export const Footer: React.FC = () => (
                     <a href="#" className="hover:text-white transition">Privacy</a>
                     <a href="#" className="hover:text-white transition">Terms</a>
                     <a href="#" className="hover:text-white transition">Support</a>
+                    <a href="/website-team" className="hover:text-white transition">Website Team</a>
                 </div>
                 <HyphenLogo />
             </div>

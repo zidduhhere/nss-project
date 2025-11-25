@@ -1,6 +1,6 @@
 import Navbar from '@/components/common/Navbar';
 import { Footer } from '@/components/ui/Footer';
-import { Code2, Palette, Github, Linkedin, Mail, Sparkles, Award } from 'lucide-react';
+import { Code2, Palette, Github, Linkedin, Mail, Sparkles, BadgeCheck } from 'lucide-react';
 
 export default function WebsiteTeamView() {
 
@@ -44,7 +44,7 @@ export default function WebsiteTeamView() {
                         </div>
                         <h1 className="text-6xl md:text-7xl font-bold mb-6 tracking-tight">
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-nss-600 via-blue-600 to-tree-600 animate-gradient">
-                                Website Team
+                                The Team Hyphen
                             </span>
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
@@ -55,7 +55,7 @@ export default function WebsiteTeamView() {
                     </div>
 
                     {/* Team Cards */}
-                    <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto mb-16">
+                    <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto mb-16">
                         {teamMembers.map((member, index) => (
                             <div 
                                 key={index} 
@@ -88,17 +88,20 @@ export default function WebsiteTeamView() {
                                             />
                                         </div>
                                         
-                                        {/* Award Badge */}
-                                        <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-gradient-to-br from-${member.accentColor}-500 to-${member.primaryColor}-600 flex items-center justify-center shadow-lg border-4 border-white group-hover:scale-110 transition-transform duration-300`}>
-                                            <Award className="w-5 h-5 text-white" />
-                                        </div>
+                                        {/* Verified Badge */}
+                                        
                                     </div>
 
                                     {/* Info */}
                                     <div className="text-center space-y-4">
+                                        <div className='flex flex-row justify-center items-center gap-2'>
                                         <h2 className={`text-3xl font-bold text-gray-900 group-hover:text-${member.primaryColor}-700 transition-colors duration-300`}>
                                             {member.name}
                                         </h2>
+                                        <div className=" w-4 h-4 rounded-full bg-blue-800 flex items-center justify-center shadow-lg border-3 border-white group-hover:scale-110 transition-transform duration-300">
+                                            <BadgeCheck className="w-7 h-7 text-white fill-blue-600" />
+                                        </div>
+                                        </div>
                                         <div className={`inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-${member.primaryColor}-100 to-${member.accentColor}-100 border border-${member.primaryColor}-200/50 shadow-sm`}>
                                             <div className={`w-2 h-2 rounded-full bg-${member.primaryColor}-500 animate-pulse`} />
                                             <span className={`text-sm font-bold text-${member.primaryColor}-700`}>
@@ -129,19 +132,14 @@ export default function WebsiteTeamView() {
 
                     {/* Bottom CTA Section */}
                     <div className="text-center">
-                        <div className="inline-block relative group/cta">
-                            {/* Glow Effect */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-nss-400 to-blue-400 rounded-2xl blur-xl opacity-20 group-hover/cta:opacity-40 transition-opacity duration-500" />
-                            
-                            <div className="relative px-10 py-5 bg-gradient-to-r from-nss-50 via-blue-50 to-tree-50 rounded-2xl border border-nss-200/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                                <p className="text-gray-800 font-semibold text-lg">
-                                    Want to contribute and join our amazing team? 
-                                    <a href="/contact" className="ml-2 text-nss-600 hover:text-nss-700 font-bold hover:underline transition-colors inline-flex items-center gap-1 group-hover/cta:gap-2">
-                                        Get in touch
-                                        <span className="transform group-hover/cta:translate-x-1 transition-transform">→</span>
-                                    </a>
-                                </p>
-                            </div>
+                        <div className="inline-block px-10 py-5 bg-nss-50 rounded-xl border border-nss-200">
+                            <p className="text-gray-800 font-semibold text-lg">
+                                Want to contribute and join our amazing team? 
+                                <a href="/contact" className="ml-2 text-nss-600 hover:text-nss-700 font-bold hover:underline transition-colors inline-flex items-center gap-1">
+                                    Get in touch
+                                    <span className="transition-transform">→</span>
+                                </a>
+                            </p>
                         </div>
                     </div>
                 </div>
