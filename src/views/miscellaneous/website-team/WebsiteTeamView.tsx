@@ -1,6 +1,6 @@
 import Navbar from '@/components/common/Navbar';
 import { Footer } from '@/components/ui/Footer';
-import { Code2, Palette, Github, Linkedin, Mail, Sparkles, BadgeCheck } from 'lucide-react';
+import { Code2, Palette, Github, Linkedin, Mail, Sparkles, BadgeCheck, Triangle } from 'lucide-react';
 
 export default function WebsiteTeamView() {
 
@@ -22,6 +22,15 @@ export default function WebsiteTeamView() {
             primaryColor: 'tree',
             accentColor: 'nss',
             description: 'Crafting intuitive and delightful user experiences'
+        },
+        {
+            name: 'Fazil S',
+            role: 'UI & Brand Designer',
+            photo: 'https://odyekfdkauucgacbsbub.supabase.co/storage/v1/object/public/website-images/faizi.webp',
+            icon: Triangle,
+            primaryColor: 'blue',
+            accentColor: 'tree',
+            description: 'Designing cohesive brand identities and engaging user interfaces'
         }
     ];
 
@@ -55,7 +64,7 @@ export default function WebsiteTeamView() {
                     </div>
 
                     {/* Team Cards */}
-                    <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto mb-16">
+                    <div className="grid md:grid-cols-3 gap-6 max-w-9xl mx-auto mb-16">
                         {teamMembers.map((member, index) => (
                             <div 
                                 key={index} 
