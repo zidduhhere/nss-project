@@ -115,3 +115,10 @@ coverage
 
 # TypeScript
 *.tsbuildinfo
+
+#supabase migration
+supabase/migrations/*
+
+
+#backend
+backend/*
