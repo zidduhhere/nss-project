@@ -16,7 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePreviewFileUpload, LoadingSpinner } from "@/components/common";
 import { bloodGroups, communities, religions } from "@/utils/data/community";
 import { useVolunteerRegistration } from "@/hooks/useVolunteerRegistration";
-import { logVolunteerData, mockVolunteerDataSets } from "@/utils/mockData/volunteerMockData";
 import { useState, useEffect } from "react";
 import ErrorPop from "@/components/common/ErrorPop";
 import SuccessModal from "@/components/common/SuccessModal";
@@ -59,27 +58,27 @@ const VolunteerRegistrationPage = () => {
     const watchSignature = watch("signature");
 
     // 🔧 DEBUGGING: Fill form with mock data
-    const fillMockData = () => {
-        // Choose which mock data to use:
-        // const mockData = generateMockVolunteerData(); // Random data
-        const mockData = mockVolunteerDataSets.complete; // Predefined complete data
-        // const mockData = mockVolunteerDataSets.female; // Female student
-        // const mockData = mockVolunteerDataSets.minimal; // Minimal data
+    // const fillMockData = () => {
+    //     // Choose which mock data to use:
+    //     // const mockData = generateMockVolunteerData(); // Random data
+    //     const mockData = mockVolunteerDataSets.complete; // Predefined complete data
+    //     // const mockData = mockVolunteerDataSets.female; // Female student
+    //     // const mockData = mockVolunteerDataSets.minimal; // Minimal data
 
-        console.log('🔧 Filling form with mock data...');
-        logVolunteerData(mockData);
+    //     console.log('🔧 Filling form with mock data...');
+    //     logVolunteerData(mockData);
 
-        // Fill all form fields
-        Object.keys(mockData).forEach((key) => {
-            setValue(key as keyof VolunteerFormFields, mockData[key as keyof VolunteerFormFields]);
-        });
+    //     // Fill all form fields
+    //     Object.keys(mockData).forEach((key) => {
+    //         setValue(key as keyof VolunteerFormFields, mockData[key as keyof VolunteerFormFields]);
+    //     });
 
-        console.log('✅ Mock data loaded into form');
-    };
+    //     console.log('✅ Mock data loaded into form');
+    // };
 
     const onSubmit = async (data: VolunteerFormFields) => {
         try {
-            logVolunteerData(data);
+            // logVolunteerData(data);
             await registerVolunteer(data);
             setShowSuccessModal(true);
             // Reset form after 3 seconds
@@ -134,24 +133,15 @@ const VolunteerRegistrationPage = () => {
                 <div className="mt-12 sm:mt-16">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-isans font-semibold text-primary-500">
+                            <h2 className="text-2xl sm:text-3xl lg:text-6xl font-isans font-semibold text-black">
                                 Volunteer Registration
                             </h2>
-                            <p className="mt-2 text-sm sm:text-md text-gray-600">
+                            <p className="mt-2 text-md  sm:text-md text-black">
                                 Please fill in all the required details below.
                             </p>
                         </div>
 
-                        {/* 🔧 DEBUG BUTTON - Remove in production */}
-                        {process.env.NODE_ENV === 'development' && (
-                            <button
-                                type="button"
-                                onClick={fillMockData}
-                                className="px-3 sm:px-4 py-2 bg-nss-500 hover:bg-nss-600 text-white rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
-                            >
-                                🔧 Fill Mock Data
-                            </button>
-                        )}
+            
                     </div>
 
                     <div className="bg-white lg:bg-transparent rounded-2xl p-4 sm:p-6 lg:p-8 mt-6 sm:mt-8 w-full max-w-[70rem] md:max-w-full shadow-sm border border-gray-100">

@@ -1,30 +1,40 @@
-import { Footer } from '@/components/ui';
-import DashboardHeader from './sections/DashboardHeader';
-import { useStudentDashboard } from '@/hooks/useStudentDashboard';
-import { LoadingSpinner, DashboardHeader as CommonDashboardHeader } from '@/components/common';
-import { 
-  CheckCircle2, 
-  Clock, 
-  Heart, 
-  TreePine, 
-  TrendingUp, 
-  FileText, 
-  UserCheck, 
+import { Footer } from "@/components/ui";
+import DashboardHeader from "./sections/DashboardHeader";
+import { useStudentDashboard } from "@/hooks/useStudentDashboard";
+import {
+  LoadingSpinner,
+  DashboardHeader as CommonDashboardHeader,
+} from "@/components/common";
+import {
+  CheckCircle2,
+  Clock,
+  Heart,
+  TreePine,
+  TrendingUp,
+  FileText,
+  UserCheck,
   AlertCircle,
   Calendar,
   Award,
   ArrowRight,
-  Plus
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { FilledButton } from '@/components/ui';
+  Plus,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FilledButton } from "@/components/ui";
 
 interface StudentDashboardProps {
   onLogout: () => void;
 }
 
-export default function StudentDashboard({ }: StudentDashboardProps) {
-  const { stats, recentActivities, activitySummary, isLoading, error, refetch } = useStudentDashboard();
+export default function StudentDashboard({}: StudentDashboardProps) {
+  const {
+    stats,
+    recentActivities,
+    activitySummary,
+    isLoading,
+    error,
+    refetch,
+  } = useStudentDashboard();
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -60,26 +70,26 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
 
   const getStatusColor = (status: string | null) => {
     switch (status) {
-      case 'approved':
-      case 'certified':
-        return 'bg-tree-100 text-tree-800';
-      case 'pending':
-        return 'bg-nss-100 text-nss-800';
-      case 'rejected':
-        return 'bg-blood-100 text-blood-800';
+      case "approved":
+      case "certified":
+        return "bg-tree-100 text-tree-800";
+      case "pending":
+        return "bg-nss-100 text-nss-800";
+      case "rejected":
+        return "bg-blood-100 text-blood-800";
       default:
-        return 'bg-white text-black border border-gray-300';
+        return "bg-white text-black border border-gray-300";
     }
   };
 
   const getStatusIcon = (status: string | null) => {
     switch (status) {
-      case 'approved':
-      case 'certified':
+      case "approved":
+      case "certified":
         return <CheckCircle2 className="h-4 w-4" />;
-      case 'pending':
+      case "pending":
         return <Clock className="h-4 w-4" />;
-      case 'rejected':
+      case "rejected":
         return <AlertCircle className="h-4 w-4" />;
       default:
         return null;
@@ -88,10 +98,10 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -105,18 +115,22 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
           title="My Dashboard"
           subtitle="Track your NSS journey and activities"
           icon={TrendingUp}
-          badges={stats?.isRegistered ? [
-            { 
-              icon: UserCheck, 
-              text: `Status: ${stats.volunteerStatus?.toUpperCase()}` 
-            }
-          ] : undefined}
+          badges={
+            stats?.isRegistered
+              ? [
+                  {
+                    icon: UserCheck,
+                    text: `Status: ${stats.volunteerStatus?.toUpperCase()}`,
+                  },
+                ]
+              : undefined
+          }
           className="mb-8"
         />
 
         {/* Volunteer Registration Status Banner */}
         {!stats?.isRegistered ? (
-          <div className="mb-8 bg-gradient-to-r from-nss-500 to-nss-700 rounded-2xl shadow-lg p-6 sm:p-8 text-white">
+          <div className="mb-8 bg-gradient-to-r from-nss-500 to-nss-600 rounded-2xl shadow-lg p-6 sm:p-8 text-white width-fit">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
               <div className="flex-1">
                 <h3 className="text-xl sm:text-2xl font-bold mb-2 flex items-center gap-2">
@@ -124,12 +138,15 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                   Complete Your Volunteer Registration
                 </h3>
                 <p className="text-nss-100 text-sm sm:text-base">
-                  Register as an NSS volunteer to start tracking your activities and earning recognition for your service.
+                  Register as an NSS volunteer to start tracking your activities
+                  and earning recognition for your service.
                 </p>
               </div>
               <FilledButton
                 variant="lightNss"
-                onClick={() => navigate('/dashboard/student/volunteer-registration')}
+                onClick={() =>
+                  navigate("/dashboard/student/volunteer-registration")
+                }
                 className="flex items-center gap-2 whitespace-nowrap bg-white hover:bg-gray-50"
               >
                 <Plus className="h-4 w-4" />
@@ -137,38 +154,47 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
               </FilledButton>
             </div>
           </div>
-        ) : stats.volunteerStatus === 'pending' ? (
+        ) : stats.volunteerStatus === "pending" ? (
           <div className="mb-8 bg-nss-50 border-l-4 border-nss-400 rounded-lg p-4 sm:p-6">
             <div className="flex items-start gap-3">
               <Clock className="h-6 w-6 text-nss-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-nss-900 mb-1">Registration Pending</h3>
+                <h3 className="font-semibold text-nss-900 mb-1">
+                  Registration Pending
+                </h3>
                 <p className="text-sm text-nss-800">
-                  Your volunteer registration is under review by your unit coordinator. You'll be notified once it's approved.
+                  Your volunteer registration is under review by your unit
+                  coordinator. You'll be notified once it's approved.
                 </p>
               </div>
             </div>
           </div>
-        ) : stats.volunteerStatus === 'approved' ? (
+        ) : stats.volunteerStatus === "approved" ? (
           <div className="mb-8 bg-tree-50 border-l-4 border-tree-400 rounded-lg p-4 sm:p-6">
             <div className="flex items-start gap-3">
               <CheckCircle2 className="h-6 w-6 text-tree-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-tree-900 mb-1">Registration Approved!</h3>
+                <h3 className="font-semibold text-tree-900 mb-1">
+                  Registration Approved!
+                </h3>
                 <p className="text-sm text-tree-800">
-                  Your volunteer registration has been approved. Start submitting your activities to earn certification.
+                  Your volunteer registration has been approved. Start
+                  submitting your activities to earn certification.
                 </p>
               </div>
             </div>
           </div>
-        ) : stats.volunteerStatus === 'certified' ? (
+        ) : stats.volunteerStatus === "certified" ? (
           <div className="mb-8 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl shadow-lg p-4 sm:p-6 text-white">
             <div className="flex items-center gap-3">
               <Award className="h-8 w-8 flex-shrink-0" />
               <div>
-                <h3 className="text-lg sm:text-xl font-bold mb-1">Certified NSS Volunteer</h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-1">
+                  Certified NSS Volunteer
+                </h3>
                 <p className="text-sm text-green-50">
-                  Congratulations! You are now a certified NSS volunteer. Keep up the great work!
+                  Congratulations! You are now a certified NSS volunteer. Keep
+                  up the great work!
                 </p>
               </div>
             </div>
@@ -242,7 +268,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                   Recent Activities
                 </h2>
                 <button
-                  onClick={() => navigate('/dashboard/student/profile')}
+                  onClick={() => navigate("/dashboard/student/profile")}
                   className="text-sm text-nss-600 hover:text-nss-700 flex items-center gap-1"
                 >
                   View All <ArrowRight className="h-4 w-4" />
@@ -252,10 +278,12 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
               {recentActivities.length === 0 ? (
                 <div className="text-center py-12">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600 mb-4">No activities submitted yet</p>
+                  <p className="text-gray-600 mb-4">
+                    No activities submitted yet
+                  </p>
                   <FilledButton
                     variant="primary"
-                    onClick={() => navigate('/dashboard/student/submit')}
+                    onClick={() => navigate("/dashboard/student/submit")}
                     className="flex items-center gap-2 mx-auto"
                   >
                     <Plus className="h-4 w-4" />
@@ -269,12 +297,14 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                       key={activity.id}
                       className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <div className={`p-2 rounded-lg ${
-                        activity.type === 'blood-donation' 
-                          ? 'bg-red-100' 
-                          : 'bg-green-100'
-                      }`}>
-                        {activity.type === 'blood-donation' ? (
+                      <div
+                        className={`p-2 rounded-lg ${
+                          activity.type === "blood-donation"
+                            ? "bg-red-100"
+                            : "bg-green-100"
+                        }`}
+                      >
+                        {activity.type === "blood-donation" ? (
                           <Heart className="h-5 w-5 text-blood-600" />
                         ) : (
                           <TreePine className="h-5 w-5 text-tree-600" />
@@ -285,7 +315,11 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                           <h3 className="font-semibold text-gray-900 text-sm">
                             {activity.title}
                           </h3>
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                              activity.status
+                            )}`}
+                          >
                             {getStatusIcon(activity.status)}
                             {activity.status}
                           </span>
@@ -296,10 +330,14 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                             {formatDate(activity.date)}
                           </span>
                           {activity.location && (
-                            <span className="truncate">{activity.location}</span>
+                            <span className="truncate">
+                              {activity.location}
+                            </span>
                           )}
                           {activity.count && (
-                            <span className="font-medium">{activity.count} trees</span>
+                            <span className="font-medium">
+                              {activity.count} trees
+                            </span>
                           )}
                         </div>
                       </div>
@@ -314,17 +352,19 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
           <div className="space-y-6">
             {/* Quick Actions Card */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-4">
+                Quick Actions
+              </h2>
               <div className="space-y-3">
                 <button
-                  onClick={() => navigate('/dashboard/student/submit')}
+                  onClick={() => navigate("/dashboard/student/submit")}
                   className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-nss-500 to-nss-600 text-white rounded-lg hover:from-nss-600 hover:to-nss-700 transition-all"
                 >
                   <Plus className="h-5 w-5" />
                   <span className="font-medium">Submit Activity</span>
                 </button>
                 <button
-                  onClick={() => navigate('/dashboard/student/profile')}
+                  onClick={() => navigate("/dashboard/student/profile")}
                   className="w-full flex items-center gap-3 p-4 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <UserCheck className="h-5 w-5" />
@@ -332,7 +372,7 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
                 </button>
                 {!stats?.isRegistered && (
                   <button
-                    onClick={() => navigate('/dashboard/student/register')}
+                    onClick={() => navigate("/dashboard/student/volunteer-registration")}
                     className="w-full flex items-center gap-3 p-4 bg-tree-100 text-tree-700 rounded-lg hover:bg-tree-200 transition-colors"
                   >
                     <Award className="h-5 w-5" />
@@ -345,7 +385,9 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
             {/* Activity Summary Card */}
             {activitySummary && (stats?.totalActivities || 0) > 0 && (
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">Activity Summary</h2>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">
+                  Activity Summary
+                </h2>
                 <div className="space-y-4">
                   {/* Blood Donation Summary */}
                   <div>
@@ -405,25 +447,37 @@ export default function StudentDashboard({ }: StudentDashboardProps) {
             {/* Volunteer Info Card */}
             {stats?.isRegistered && (
               <div className="bg-gradient-to-br from-nss-50 to-nss-100 rounded-2xl shadow-lg border border-nss-200 p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">Volunteer Info</h2>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">
+                  Volunteer Info
+                </h2>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">Unit Number</span>
-                    <span className="font-semibold text-gray-900">{stats.unitNumber || 'N/A'}</span>
+                    <span className="font-semibold text-gray-900">
+                      {stats.unitNumber || "N/A"}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">Semester</span>
-                    <span className="font-semibold text-gray-900">{stats.semester || 'N/A'}</span>
+                    <span className="font-semibold text-gray-900">
+                      {stats.semester || "N/A"}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">Registered On</span>
                     <span className="font-semibold text-gray-900">
-                      {stats.registrationDate ? formatDate(stats.registrationDate) : 'N/A'}
+                      {stats.registrationDate
+                        ? formatDate(stats.registrationDate)
+                        : "N/A"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm pt-3 border-t border-nss-200">
                     <span className="text-gray-600">Status</span>
-                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(stats.volunteerStatus)}`}>
+                    <span
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        stats.volunteerStatus
+                      )}`}
+                    >
                       {getStatusIcon(stats.volunteerStatus)}
                       {stats.volunteerStatus?.toUpperCase()}
                     </span>

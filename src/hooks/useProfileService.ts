@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   profileService,
-  UserProfile,
-  VolunteerProfile,
-  CompleteProfile,
+
 } from "@/services/profileService";
 import { UseAuthContext } from "@/context/AuthContext";
-import supabase from "@/services/supabase";
+import { UserProfile } from "@/types/UserProfile";
+import { VolunteerProfile } from "@/types/VolunteerProfile";
+import { CompleteProfile } from "@/types/CompleteProfile";
 
 /**
  * Custom hook for managing user profile data from the profiles table
