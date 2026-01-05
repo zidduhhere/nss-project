@@ -4,12 +4,12 @@ import TextField from '@/components/ui/TextField';
 import TextArea from '@/components/ui/TextArea';
 import Button from '@/components/ui/Button';
 import { ImagePreviewFileUpload } from '@/components/common';
+import { Dropdown } from '../ui';
+import { BloodDonationSubmissionData } from '@/types/BloodDonation';
 
-interface BloodDonationSubmissionData {
-    hospitalName: string;
-    donationDate: string;
-    unitsDonated: string;
-    donationCase: string;
+
+interface FormError {
+    message: string;
 }
 
 interface BloodDonationSubmissionProps {
@@ -22,11 +22,12 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {
     const [formData, setFormData] = useState<BloodDonationSubmissionData>({
         hospitalName: '',
         donationDate: '',
-        unitsDonated: '',
-        donationCase: ''
+        typeDonated: '',
+        donationCase: '',
+        certificate: null
     });
 
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [errors, setErrors] = useState<{ [key: string]: FormError }>({});
 
     const handleInputChange = (field: keyof BloodDonationSubmissionData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData(prev => ({
@@ -42,12 +43,11 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {
     };
 
     const validateForm = (): boolean => {
-        const newErrors: { [key: string]: string } = {};
+        const newErrors: { [key: string]: FormError } = {};
 
-        if (!formData.hospitalName.trim()) newErrors.hospitalName = 'Hospital name is required';
-        if (!formData.donationDate) newErrors.donationDate = 'Date of donation is required';
-        if (!formData.unitsDonated.trim()) newErrors.unitsDonated = 'Units donated is required';
-
+        if (!formData.hospitalName.trim()) newErrors.hospitalName = { message: 'Hospital name is required' };
+        if (!formData.donationDate) newErrors.donationDate = { message: 'Date of donation is required' };
+        if (!formData.typeDonated.trim()) newErrors.typeDonated = { message: 'Type donated is required' };
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -77,8 +77,9 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {
             setFormData({
                 hospitalName: '',
                 donationDate: '',
-                unitsDonated: '',
-                donationCase: ''
+                typeDonated: '',
+                donationCase: '',
+                certificate: null
             });
             setUploadedFiles([]);
 
@@ -132,13 +133,11 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {
                     </div>
 
                     {/* Units Donated */}
-                    <TextField
-                        label="Units Donated *"
-                        value={formData.unitsDonated}
-                        onChange={handleInputChange('unitsDonated')}
-                        placeholder="Enter number of units donated"
-                        error={errors.unitsDonated}
-                    />
+                    <Dropdown
+                        label='Type Of Donation *'
+                        options={["Platelets", "Whole Blood", "Plasma", "Double Red Cells"]}
+
+                        />
 
                     {/* Donation Case */}
                     <TextArea
