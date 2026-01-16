@@ -187,7 +187,7 @@ const ImagePreviewFileUpload: React.FC<ImagePreviewFileUploadProps> = React.forw
                 <input
                     ref={ref}
                     type="file"
-                    multiple={multiple}
+                    multiple={false}
                     accept={accept}
                     onChange={handleFileChange}
                     className="hidden"

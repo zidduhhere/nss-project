@@ -963,6 +963,13 @@ export const adminService = {
    */
   getAllUsersWithDetails: async (filters?: UserFilters): Promise<UserWithDetails[]> => {
     try {
+      // First, query the view without any filters to see what data exists
+      const { data: allViewData, error: allViewError } = await supabase
+        .from("user_with_college")
+        .select("*");
+
+      console.log("DEBUG - All data in user_with_college view:", { allViewData, allViewError });
+
       // Query the user_with_college view with all data pre-joined
       let query = supabase
         .from("user_with_college")
@@ -989,6 +996,8 @@ export const adminService = {
       }
 
       const { data: viewData, error: viewError } = await query;
+
+      console.log("user_with_college view query result:", { viewData, viewError, filters });
 
       if (viewError) throw viewError;
 
@@ -1148,6 +1157,142 @@ export const adminService = {
     } catch (error: any) {
       console.error("Error fetching user stats:", error);
       throw new Error(error.message || "Failed to fetch user statistics");
+    }
+  },
+
+  /**
+   * Promote a student account to unit account
+   * 
+   * Updates a student's role from 'student' to 'unit' in the profiles table.
+   * This operation allows a student account to be upgraded to a unit (college) account.
+   * The user details are fetched from the profiles table.
+   * 
+   * @param {string} userId - The UUID of the student user to promote
+   * 
+   * @returns {Promise<UserProfile>} The updated user profile with role changed to 'unit'
+   * 
+   * @throws {Error} If user is not found, is not a student, or update fails
+   * 
+   * @example
+   * // Promote a student to unit account
+   * const promoted = await adminService.promoteStudent('user-123');
+   * console.log(`${promoted.full_name} has been promoted to unit account`);
+   * 
+   * @example
+   * // With error handling
+   * try {
+   *   const promoted = await adminService.promoteStudent('user-456');
+   * } catch (error) {
+   *   console.error('Promotion failed:', error.message);
+   * }
+   */
+  promoteStudent: async (userId: string): Promise<UserProfile> => {
+    try {
+      // First check if user exists and is a student
+      const { data: user, error: fetchError } = await supabase
+        .from("profiles")
+        .select("id, full_name, role")
+        .eq("id", userId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (user.role !== "student") {
+        throw new Error(
+          `Cannot promote user with role "${user.role}". Only student accounts can be promoted.`
+        );
+      }
+
+      // Update role to unit
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ role: "unit", updated_at: new Date().toISOString() })
+        .eq("id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (!data) {
+        throw new Error("Failed to promote student to unit");
+      }
+
+      return data as UserProfile;
+    } catch (error: any) {
+      console.error("Error promoting student:", error);
+      throw new Error(error.message || "Failed to promote student");
+    }
+  },
+
+  /**
+   * Demote a unit account back to student account
+   * 
+   * Updates a unit's role from 'unit' to 'student' in the profiles table.
+   * This operation allows a unit (college) account to be downgraded back to a student account.
+   * The user details are fetched from the profiles table.
+   * 
+   * @param {string} userId - The UUID of the unit user to demote
+   * 
+   * @returns {Promise<UserProfile>} The updated user profile with role changed to 'student'
+   * 
+   * @throws {Error} If user is not found, is not a unit, or update fails
+   * 
+   * @example
+   * // Demote a unit to student account
+   * const demoted = await adminService.demoteUnit('user-789');
+   * console.log(`${demoted.full_name} has been demoted to student account`);
+   * 
+   * @example
+   * // With error handling
+   * try {
+   *   const demoted = await adminService.demoteUnit('user-123');
+   * } catch (error) {
+   *   console.error('Demotion failed:', error.message);
+   * }
+   */
+  demoteUnit: async (userId: string): Promise<UserProfile> => {
+    try {
+      // First check if user exists and is a unit
+      const { data: user, error: fetchError } = await supabase
+        .from("profiles")
+        .select("id, full_name, role")
+        .eq("id", userId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (user.role !== "unit") {
+        throw new Error(
+          `Cannot demote user with role "${user.role}". Only unit accounts can be demoted.`
+        );
+      }
+
+      // Update role to student
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ role: "student", updated_at: new Date().toISOString() })
+        .eq("id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (!data) {
+        throw new Error("Failed to demote unit to student");
+      }
+
+      return data as UserProfile;
+    } catch (error: any) {
+      console.error("Error demoting unit:", error);
+      throw new Error(error.message || "Failed to demote unit");
     }
   },
 

@@ -17,7 +17,8 @@ export const useActivity = () => {
             return response;    
         }
         catch (e) {
-            console.error('Error in useActivity hook while adding blood donation:', e);
+            
+            throw e;
             
         }
     }
@@ -28,8 +29,8 @@ export const useActivity = () => {
             return response;    
         }
         catch (e) {
-            console.error('Error in useActivity hook while adding tree tagging:', e);
             
+            throw e;
         }
     }
 
@@ -40,7 +41,7 @@ export const useActivity = () => {
             return response;    
         } 
         catch (e) {
-            console.error('Error in useActivity hook while approving activity:', e);
+            throw e;
             
         }   
     }
@@ -51,7 +52,7 @@ export const useActivity = () => {
             return response;    
         }   
         catch (e) {
-            console.error('Error in useActivity hook while rejecting activity:', e);
+            throw e;
             
         }
     }
@@ -63,7 +64,7 @@ export const useActivity = () => {
             return response;    
         }   
         catch (e) {
-            console.error('Error in useActivity hook while certifying activity:', e);
+            throw e;
             
         }
     }   
@@ -74,7 +75,7 @@ export const useActivity = () => {
             return response;    
         }   
         catch (e) {
-            console.error('Error in useActivity hook while changing activity to pending:', e);
+            throw e;
             
         }
     }

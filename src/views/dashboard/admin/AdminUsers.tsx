@@ -10,6 +10,8 @@ import {
   GraduationCap,
   Building2,
   UserCheck,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
 import DashboardNavigation from '@/components/common/DashboardNavigation';
 import Footer from '@/components/ui/Footer';
@@ -17,6 +19,7 @@ import { Table } from '@/components/ui';
 import SuccessModal from '@/components/common/SuccessModal';
 import ErrorPop from '@/components/common/ErrorPop';
 import { useAdminUserManagement } from '@/hooks/useAdminService';
+import { useUserRoleManagement } from '@/hooks/useAdminService';
 import { UserWithDetails } from '@/types/UserWithDetails';
 import { AdminUsersHandlers } from '@/handlers/adminUsersHandlers';
 import { adminService } from '@/services/adminService';
@@ -34,6 +37,16 @@ const AdminUsers = () => {
     clearMessages,
     refetch,
   } = useAdminUserManagement();
+
+  // User role management hook
+  const {
+    promoteStudent,
+    demoteUnit,
+    isUpdating,
+    updateError,
+    successMessage: roleUpdateMessage,
+    resetUpdateState,
+  } = useUserRoleManagement();
 
   // Local UI state
   const [selectedUser, setSelectedUser] = useState<UserWithDetails | null>(null);
@@ -84,6 +97,18 @@ const AdminUsers = () => {
       return () => clearTimeout(timer);
     }
   }, [successMessage, clearMessages]);
+
+  // Handle role update success
+  useEffect(() => {
+    if (roleUpdateMessage) {
+      const timer = setTimeout(() => {
+        resetUpdateState();
+        refetch();
+        setIsDetailsOpen(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [roleUpdateMessage, resetUpdateState, refetch]);
 
   // Initialize handlers class
   const handlers = useMemo(
@@ -215,8 +240,14 @@ const AdminUsers = () => {
       {/* Success Modal */}
       {successMessage && <SuccessModal title="Success" message={successMessage} />}
 
+      {/* Role Update Success Message */}
+      {roleUpdateMessage && <SuccessModal title="Success" message={roleUpdateMessage} />}
+
       {/* Error Alert */}
       {error && <ErrorPop error={error} onCloseClick={clearMessages} />}
+
+      {/* Role Update Error */}
+      {updateError && <ErrorPop error={updateError} onCloseClick={resetUpdateState} />}
 
       {/* User Details Modal */}
       {isDetailsOpen && selectedUser && (
@@ -289,6 +320,59 @@ const AdminUsers = () => {
                       {new Date(selectedUser.created_at).toLocaleString()}
                     </p>
                   </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="mt-6 pt-6 border-t border-gray-200 flex gap-3">
+                  {selectedUser.role === 'student' && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await promoteStudent(selectedUser.id);
+                        } catch (err) {
+                          console.error('Promotion failed:', err);
+                        }
+                      }}
+                      disabled={isUpdating}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 font-medium"
+                    >
+                      {isUpdating ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <ArrowUp className="w-4 h-4" />
+                      )}
+                      <span>Promote to Unit</span>
+                    </button>
+                  )}
+
+                  {selectedUser.role === 'unit' && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await demoteUnit(selectedUser.id);
+                        } catch (err) {
+                          console.error('Demotion failed:', err);
+                        }
+                      }}
+                      disabled={isUpdating}
+                      className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium"
+                    >
+                      {isUpdating ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <ArrowDown className="w-4 h-4" />
+                      )}
+                      <span>Demote to Student</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handlers.handleCloseDetails}
+                    disabled={isUpdating}
+                    className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 font-medium"
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>

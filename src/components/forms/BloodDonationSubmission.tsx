@@ -1,101 +1,39 @@
-import { useState } from 'react';
 import { Droplets } from 'lucide-react';
 import TextField from '@/components/ui/TextField';
 import TextArea from '@/components/ui/TextArea';
 import Button from '@/components/ui/Button';
 import { ImagePreviewFileUpload } from '@/components/common';
 import { Dropdown } from '../ui';
-import { BloodDonationSubmissionData } from '@/types/BloodDonation';
+import { FieldError, useForm } from 'react-hook-form';
+import { useState } from 'react';
 
 
-interface FormError {
-    message: string;
+
+interface BloodDonationFormValues {
+    hospitalName: string;
+    donationDate: Date;
+    donationType: string;
+    donationCase: string;
+    certificate: File[] | null;
 }
 
-interface BloodDonationSubmissionProps {
-    onSuccess?: () => void;
-}
 
-const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {}) => {
-    const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState<BloodDonationSubmissionData>({
-        hospitalName: '',
-        donationDate: '',
-        typeDonated: '',
-        donationCase: '',
-        certificate: null
+
+const BloodDonationSubmission = () => {
+
+    const {register, handleSubmit, watch, formState: { errors, isLoading, isDirty }, getValues, setValue} = useForm<BloodDonationFormValues>({
+        defaultValues: {
+            hospitalName: '',
+            donationDate: new Date(),
+            donationType: '',
+            donationCase: '',
+            certificate: null
+        }
     });
 
-    const [errors, setErrors] = useState<{ [key: string]: FormError }>({});
+    const watchCertificate = watch('certificate');
 
-    const handleInputChange = (field: keyof BloodDonationSubmissionData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: e.target.value
-        }));
-        // Clear error when user starts typing
-        if (errors[field]) {
-            const newErrors = { ...errors };
-            delete newErrors[field];
-            setErrors(newErrors);
-        }
-    };
-
-    const validateForm = (): boolean => {
-        const newErrors: { [key: string]: FormError } = {};
-
-        if (!formData.hospitalName.trim()) newErrors.hospitalName = { message: 'Hospital name is required' };
-        if (!formData.donationDate) newErrors.donationDate = { message: 'Date of donation is required' };
-        if (!formData.typeDonated.trim()) newErrors.typeDonated = { message: 'Type donated is required' };
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        if (uploadedFiles.length === 0) {
-            alert('Please upload your blood donation certificate');
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Show success message
-            alert('Blood donation submission successful!');
-
-            // Reset form
-            setFormData({
-                hospitalName: '',
-                donationDate: '',
-                typeDonated: '',
-                donationCase: '',
-                certificate: null
-            });
-            setUploadedFiles([]);
-
-            // Call onSuccess callback if provided
-            if (onSuccess) {
-                setTimeout(() => onSuccess(), 1000);
-            }
-
-        } catch (error) {
-            console.error('Submission error:', error);
-            alert('Submission failed. Please try again.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
+    
     return (
         <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
             {/* Header with Icon */}
@@ -111,47 +49,57 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {
 
             {/* Form */}
             <div className="px-8 pb-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit((data) => {
+                    console.log('Form Data:', data);
+                })} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Hospital Name */}
                         <TextField
-                            label="Hospital Name *"
-                            value={formData.hospitalName}
-                            onChange={handleInputChange('hospitalName')}
+                            {...register('hospitalName', { required: 'Hospital Name is required', minLength: { value: 2, message: 'Hospital Name must be at least 3 characters' } })}
+                        label="Hospital Name *"
+
                             placeholder="Enter hospital name"
                             error={errors.hospitalName}
                         />
 
                         {/* Date of Donation */}
                         <TextField
+                            {...register('donationDate', { required: 'Date of Donation is required' })}
                             label="Date of Donation *"
                             type="date"
-                            value={formData.donationDate}
-                            onChange={handleInputChange('donationDate')}
                             error={errors.donationDate}
                         />
                     </div>
 
-                    {/* Units Donated */}
+                    {/* Type of Blood Donated */}
                     <Dropdown
+                        {...register('donationType', { required: 'Type of Donation is required' })}
                         label='Type Of Donation *'
                         options={["Platelets", "Whole Blood", "Plasma", "Double Red Cells"]}
+                        error={errors.donationType}
 
                         />
 
                     {/* Donation Case */}
                     <TextArea
+                        {...register('donationCase')}
                         label="Donation Case (Optional)"
-                        value={formData.donationCase}
-                        onChange={handleInputChange('donationCase')}
+                       
                         placeholder="Describe the case or reason for donation (optional)"
                         rows={4}
                     />
 
                     {/* File Upload */}
                     <ImagePreviewFileUpload
-                        uploadedFiles={uploadedFiles}
-                        onFilesChange={setUploadedFiles}
+                    {...register('certificate', {
+                        required: 'Certificate is required',
+                       
+                        
+                    })}
+                        uploadedFiles={getValues('certificate') || []}
+                        onFilesChange={(files) => {
+                            setValue('certificate', files);
+                        }}
                         accept="image/*,.pdf"
                         multiple={true}
                         label="Upload Certificate *"
@@ -160,14 +108,15 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps = {
                         maxSize="10MB"
                         uploadButtonColor="red"
                         id="file-upload"
+                        error={errors.certificate as FieldError}
                     />
 
                     {/* Submit Button */}
                     <Button
                         type="submit"
-                        isLoading={isSubmitting}
+                        isLoading={isLoading}
                         loadingText="Submitting..."
-                        disabled={uploadedFiles.length === 0}
+                        disabled={!isDirty}
                         className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl font-semibold text-lg"
                     >
                         Submit Blood Donation

@@ -3,6 +3,7 @@ import { UseAuthContext } from "@/context/AuthContext";
 import { adminService } from "@/services/adminService";
 import { AdminProfile, AdminStats } from "@/types/AdminProfile";
 import { VolunteerProfile } from "@/types/VolunteerProfile";
+import { UserProfile } from "@/types/UserProfile";
 import type { UserWithDetails, UserFilters, UserStats } from "@/types/UserWithDetails";
 
 /**
@@ -316,6 +317,7 @@ export const useAdminUserManagement = () => {
     try {
       const data = await adminService.getAllUsersWithDetails(filters);
       setUsers(data);
+      console.log("Fetched users:", data);
     } catch (err: any) {
       setError(err.message || "Failed to fetch users");
       setUsers([]);
@@ -409,5 +411,89 @@ export const useRecentRegistrations = (limit: number = 10) => {
     isLoading,
     error,
     refetch: fetchRegistrations,
+  };
+};
+
+/**
+ * Custom hook for managing user role changes (promote/demote)
+ * 
+ * Provides functionality to promote student accounts to unit accounts
+ * and demote unit accounts back to student accounts. Includes loading and
+ * error states for UI feedback.
+ * 
+ * @returns User role update functions and state management
+ */
+export const useUserRoleManagement = () => {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  /**
+   * Promote a student account to unit account
+   * 
+   * @param {string} userId - The UUID of the student user to promote
+   * @returns {Promise<UserProfile>} The updated user profile
+   */
+  const promoteStudent = async (userId: string): Promise<UserProfile> => {
+    setIsUpdating(true);
+    setUpdateError(null);
+    setUpdateSuccess(false);
+    setSuccessMessage(null);
+
+    try {
+      const updatedUser = await adminService.promoteStudent(userId);
+      setUpdateSuccess(true);
+      setSuccessMessage(`${updatedUser.full_name || 'User'} has been promoted to unit account`);
+      return updatedUser;
+    } catch (err: any) {
+      const errorMessage = err.message || "Failed to promote student";
+      setUpdateError(errorMessage);
+      throw err;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  /**
+   * Demote a unit account back to student account
+   * 
+   * @param {string} userId - The UUID of the unit user to demote
+   * @returns {Promise<UserProfile>} The updated user profile
+   */
+  const demoteUnit = async (userId: string): Promise<UserProfile> => {
+    setIsUpdating(true);
+    setUpdateError(null);
+    setUpdateSuccess(false);
+    setSuccessMessage(null);
+
+    try {
+      const updatedUser = await adminService.demoteUnit(userId);
+      setUpdateSuccess(true);
+      setSuccessMessage(`${updatedUser.full_name || 'User'} has been demoted to student account`);
+      return updatedUser;
+    } catch (err: any) {
+      const errorMessage = err.message || "Failed to demote unit";
+      setUpdateError(errorMessage);
+      throw err;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const resetUpdateState = () => {
+    setUpdateError(null);
+    setUpdateSuccess(false);
+    setSuccessMessage(null);
+  };
+
+  return {
+    promoteStudent,
+    demoteUnit,
+    isUpdating,
+    updateError,
+    updateSuccess,
+    successMessage,
+    resetUpdateState,
   };
 };
