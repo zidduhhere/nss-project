@@ -81,6 +81,7 @@ export default function LoginLeftSide() {
                         placeholder="Enter your email"
                         name="identifier"
                         type="text"
+                        className='text-black'
                     />
                     <TextField
                         label="Password"

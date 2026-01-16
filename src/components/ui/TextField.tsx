@@ -43,8 +43,8 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, CombinedPro
         const textareaStyles = 'w-full px-4 py-4 bg-white border focus:outline-2 focus:outline-blue-500 rounded-full transition-all duration-200 placeholder-gray-500 h-32 resize-none align-top placeholder:align-top';
         const labelStyles = 'block text-sm font-medium font-isans text-black mb-2';
 
-        const inputClasses = `${inputStyles} ${className} ${showPasswordToggle ? 'pr-12' : ''}`;
-        const textareaClasses = `${textareaStyles} ${className}`;
+        const inputClasses = `text-black ${inputStyles} ${className} ${showPasswordToggle ? 'pr-12' : ''}`;
+        const textareaClasses = `text-black ${textareaStyles} ${className}`;
 
         return (
             <div>
