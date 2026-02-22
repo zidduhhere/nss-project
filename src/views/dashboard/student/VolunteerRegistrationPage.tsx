@@ -452,6 +452,49 @@ const VolunteerRegistrationPage = () => {
                                 )}
                             </div>
 
+                            {/* Additional Information Section (Optional) */}
+                            <div className="mb-8 sm:mb-12">
+                                <h3 className="text-xl sm:text-2xl font-semibold text-primary-500 mb-2 sm:mb-4">
+                                    Additional Information
+                                </h3>
+                                <p className="text-sm text-gray-500 mb-4 sm:mb-6">
+                                    These fields are optional but help us understand you better.
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <TextField
+                                        {...register("areaOfInterest")}
+                                        label="Area of Interest"
+                                        placeholder="e.g. Social work, Environment, Education"
+                                        error={errors.areaOfInterest}
+                                    />
+                                    <TextField
+                                        {...register("hobbies")}
+                                        label="Hobbies"
+                                        placeholder="e.g. Reading, Painting, Sports"
+                                        error={errors.hobbies}
+                                    />
+                                    <TextField
+                                        {...register("priorExperience")}
+                                        label="Prior Experience in Volunteering"
+                                        placeholder="Describe any previous volunteering experience"
+                                        error={errors.priorExperience}
+                                    />
+                                    <TextField
+                                        {...register("culturalTalents")}
+                                        label="Cultural Talents"
+                                        placeholder="e.g. Singing, Dancing, Drama"
+                                        error={errors.culturalTalents}
+                                    />
+                                    <Dropdown
+                                        {...register("campInterest")}
+                                        label="Interested in Camps (State / National / International)?"
+                                        placeholder="Select an option"
+                                        options={["Yes", "No"]}
+                                        error={errors.campInterest}
+                                    />
+                                </div>
+                            </div>
+
                             <FilledButton
                                 type="submit"
                                 variant="primary"

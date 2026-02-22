@@ -15,7 +15,6 @@ export const useVolunteerRegistration = () => {
   const getCollegeCourses = async () => {
     try {
       let courses = await volunteerService.getCollegeCourses(session!.user.id);
-      console.log("Fetched college courses:", courses);
 
       const formattedCourses = courses.map(course => {
         return `${course.code} - ${course.name}`;
@@ -37,8 +36,6 @@ export const useVolunteerRegistration = () => {
       if (!session?.user?.id) {
         throw new Error("You must be logged in to register as a volunteer");
       }
-      //TODO: Remove this code
-      console.log("Registering volunteer for user ID:", session.user.id);
       const response = await volunteerService.registerVolunteer(
         data,
         session.user.id
@@ -47,12 +44,11 @@ export const useVolunteerRegistration = () => {
       return response;
     } catch (err: any) {
       if (err instanceof Error) {
-        console.log(err);
         if (err.message.includes("volunteers_student_id_key")) {
           console.error(err);
           
           setError(
-            "You have already registered as a volunteer. Manas Nannavatte"
+            "You have already registered as a volunteer."
           );
         }
         if (err.message.includes("volunteers_ktu_id_key")) {

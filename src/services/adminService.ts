@@ -963,13 +963,6 @@ export const adminService = {
    */
   getAllUsersWithDetails: async (filters?: UserFilters): Promise<UserWithDetails[]> => {
     try {
-      // First, query the view without any filters to see what data exists
-      const { data: allViewData, error: allViewError } = await supabase
-        .from("user_with_college")
-        .select("*");
-
-      console.log("DEBUG - All data in user_with_college view:", { allViewData, allViewError });
-
       // Query the user_with_college view with all data pre-joined
       let query = supabase
         .from("user_with_college")
@@ -996,8 +989,6 @@ export const adminService = {
       }
 
       const { data: viewData, error: viewError } = await query;
-
-      console.log("user_with_college view query result:", { viewData, viewError, filters });
 
       if (viewError) throw viewError;
 

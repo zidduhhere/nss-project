@@ -3,17 +3,21 @@ import { activitySubmissionService } from "@/services/activitySubmissionService"
 import { ActivityType } from "@/types/ActivityType";
 import { BloodDonationSubmissionData } from "@/types/BloodDonation"
 import { TreeTaggingSubmissionData } from "@/types/TreeTagging";
+import { UseAuthContext } from "@/context/AuthContext";
 
 
 
 export const useActivity = () => {
-    // Placeholder for activity-related hooks
 
+    const { session } = UseAuthContext();
 
     //Upload the blood donation data
     const addBloodDonation = async (data: BloodDonationSubmissionData) => {
         try {
-            const response = await activitySubmissionService.submitBloodDonation(data);
+            if (!session?.user?.id) {
+                throw new Error("You must be logged in to submit a blood donation");
+            }
+            const response = await activitySubmissionService.submitBloodDonation(data, session.user.id);
             return response;    
         }
         catch (e) {
@@ -25,7 +29,10 @@ export const useActivity = () => {
 
     const addTreeTagging = async (data: TreeTaggingSubmissionData) => {
         try {
-            const response = await activitySubmissionService.submitTreeTagging(data);
+            if (!session?.user?.id) {
+                throw new Error("You must be logged in to submit a tree tagging activity");
+            }
+            const response = await activitySubmissionService.submitTreeTagging(data, session.user.id);
             return response;    
         }
         catch (e) {

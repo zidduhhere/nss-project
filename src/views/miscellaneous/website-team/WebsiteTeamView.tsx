@@ -12,7 +12,10 @@ export default function WebsiteTeamView() {
             icon: Code2,
             primaryColor: 'nss',
             accentColor: 'blue',
-            description: 'Architecting some hooks and components and some kunj kunj karyams'
+            description: 'Architecting some hooks and components and some kunj kunj karyams',
+            github: 'https://github.com/abialif',
+            linkedin: 'https://linkedin.com/in/abialif',
+            email: 'mailto:abialif@example.com',
         },
         {
             name: 'Aleena Jaison',
@@ -21,7 +24,10 @@ export default function WebsiteTeamView() {
             icon: Palette,
             primaryColor: 'tree',
             accentColor: 'nss',
-            description: 'Crafting intuitive and delightful user experiences'
+            description: 'Crafting intuitive and delightful user experiences',
+            github: 'https://github.com/aleenajaison',
+            linkedin: 'https://linkedin.com/in/aleenajaison',
+            email: 'mailto:aleenajaison@example.com',
         },
         {
             name: 'Fazil S',
@@ -30,7 +36,10 @@ export default function WebsiteTeamView() {
             icon: Triangle,
             primaryColor: 'blue',
             accentColor: 'tree',
-            description: 'Designing cohesive brand identities and engaging user interfaces'
+            description: 'Designing cohesive brand identities and engaging user interfaces',
+            github: 'https://github.com/fazils',
+            linkedin: 'https://linkedin.com/in/fazils',
+            email: 'mailto:fazils@example.com',
         }
     ];
 
@@ -124,15 +133,15 @@ export default function WebsiteTeamView() {
 
                                     {/* Social Links */}
                                     <div className="flex items-center justify-center gap-4 mt-8 pt-8 border-t border-gray-200/50">
-                                        <button className="group/btn p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-nss-50 hover:to-nss-100 text-gray-600 hover:text-nss-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110">
+                                        <a href={member.github} target="_blank" rel="noopener noreferrer" className="group/btn p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-nss-50 hover:to-nss-100 text-gray-600 hover:text-nss-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110">
                                             <Github className="w-5 h-5" />
-                                        </button>
-                                        <button className="group/btn p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100 text-gray-600 hover:text-blue-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110">
+                                        </a>
+                                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="group/btn p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100 text-gray-600 hover:text-blue-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110">
                                             <Linkedin className="w-5 h-5" />
-                                        </button>
-                                        <button className="group/btn p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-tree-50 hover:to-tree-100 text-gray-600 hover:text-tree-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110">
+                                        </a>
+                                        <a href={member.email} className="group/btn p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-tree-50 hover:to-tree-100 text-gray-600 hover:text-tree-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110">
                                             <Mail className="w-5 h-5" />
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

@@ -8,9 +8,8 @@ interface TreeTaggingSubmissionData {
   location: string;
   plantationDate: string;
   treesPlanted: string;
-  treeSpecies: string;
   activityDetails: string;
-  taggedTreeLink: string;
+  taggedTreeLinks: string[];
 }
 
 interface TreeTaggingSubmissionProps {
@@ -26,8 +25,7 @@ const TreeTaggingSubmission = ({
     location: "",
     plantationDate: "",
     treesPlanted: "",
-    treeSpecies: "",
-    taggedTreeLink: "",
+    taggedTreeLinks: [],
     activityDetails: "",
   });
 
@@ -56,8 +54,6 @@ const TreeTaggingSubmission = ({
       newErrors.plantationDate = "Plantation date is required";
     if (!formData.treesPlanted.trim())
       newErrors.treesPlanted = "Number of trees planted is required";
-    if (!formData.treeSpecies.trim())
-      newErrors.treeSpecies = "Tree species is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -89,9 +85,8 @@ const TreeTaggingSubmission = ({
         location: "",
         plantationDate: "",
         treesPlanted: "",
-        treeSpecies: "",
+        taggedTreeLinks: [],
         activityDetails: "",
-        taggedTreeLink: "",
       });
       setUploadedFiles([]);
 
@@ -145,33 +140,57 @@ const TreeTaggingSubmission = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Trees Planted */}
-            <TextField
-              label="Trees Planted *"
-              type="number"
-              min="1"
-              value={formData.treesPlanted}
-              onChange={handleInputChange("treesPlanted")}
-              placeholder="Enter number of trees planted"
-            />
-
-            {/* Tree Species */}
-            <TextField
-              label="Tree Species *"
-              value={formData.treeSpecies}
-              onChange={handleInputChange("treeSpecies")}
-              placeholder="e.g., Neem, Mango, Banyan"
-            />
-          </div>
-
+          {/* Trees Planted */}
           <TextField
-            label="Tagged Tree Link"
-            value={formData.taggedTreeLink}
-            onChange={handleInputChange("taggedTreeLink")}
-            placeholder="Enter the link of the tagged tree"
-            className="border border-gray-300 rounded-xl p-4"
+            label="Trees Planted *"
+            type="number"
+            min="1"
+            value={formData.treesPlanted}
+            onChange={(e) => {
+              const count = parseInt(e.target.value) || 0;
+              setFormData((prev) => ({
+                ...prev,
+                treesPlanted: e.target.value,
+                taggedTreeLinks: Array(count)
+                  .fill("")
+                  .map((_, i) => prev.taggedTreeLinks[i] || ""),
+              }));
+              // Clear error when user starts typing
+              if (errors.treesPlanted) {
+                const newErrors = { ...errors };
+                delete newErrors.treesPlanted;
+                setErrors(newErrors);
+              }
+            }}
+            placeholder="Enter number of trees planted"
           />
+
+          {/* Tagged Tree Links - Dynamic based on number of trees */}
+          {formData.treesPlanted && parseInt(formData.treesPlanted) > 0 && (
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tagged Tree Links ({formData.taggedTreeLinks.length} of{" "}
+                {formData.treesPlanted})
+              </label>
+              {formData.taggedTreeLinks.map((link, index) => (
+                <TextField
+                  key={index}
+                  label={`Tree ${index + 1} Link`}
+                  value={link}
+                  onChange={(e) => {
+                    const newLinks = [...formData.taggedTreeLinks];
+                    newLinks[index] = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      taggedTreeLinks: newLinks,
+                    }));
+                  }}
+                  placeholder={`Enter link for tree ${index + 1}`}
+                  className="border border-gray-300 rounded-xl p-4"
+                />
+              ))}
+            </div>
+          )}
 
           {/* Activity Details */}
           <TextArea

@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 if (data.session) {
                     setSession(data.session);
                     const fetched_role = (await supabase.from("profiles").select("role, unit_id").eq("id", data.session.user.id).single());
-                    console.log(session);
                     const roleName = fetched_role.data?.role;
                     const unitId = fetched_role.data?.unit_id;
 

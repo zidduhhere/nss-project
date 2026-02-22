@@ -5,10 +5,13 @@ import { TreeTaggingSubmissionData } from "@/types/TreeTagging";
 
 export const activitySubmissionService = {
 
- submitBloodDonation: async (data: BloodDonationSubmissionData) => {
+ submitBloodDonation: async (data: BloodDonationSubmissionData, studentId: string) => {
 
         try {
 
+            if (!studentId) {
+                throw new Error("Student ID is required to submit a blood donation");
+            }
 
             const { hospitalName, donationDate, typeDonated, donationCase, certificate } = data;
             
@@ -33,8 +36,9 @@ export const activitySubmissionService = {
             }
 
             const { data: insertData, error: insertError } = await supabase
-                .from('blood_donations')
+                .from('blood_donation_submissions')
                 .insert([{
+                    student_id: studentId,
                     hospital_name: hospitalName,
                     donation_date: donationDate,
                     type_donated: typeDonated,
@@ -50,22 +54,26 @@ export const activitySubmissionService = {
         }
 
         catch(e) {
-
             console.error('Error submitting blood donation:', e);
             throw e;
         }
  },
 
 
-    submitTreeTagging: async (data: TreeTaggingSubmissionData) => {
+    submitTreeTagging: async (data: TreeTaggingSubmissionData, studentId: string) => {
 
         try {
+
+            if (!studentId) {
+                throw new Error("Student ID is required to submit a tree tagging activity");
+            }
 
             const { treesPlanted, taggedTreeLinks, taggingDate } = data;
 
             const { data: insertData, error: insertError } = await supabase
-                .from('tree_tagging_activities')
+                .from('tree_tagging_submissions')
                 .insert([{
+                    student_id: studentId,
                     trees_planted: treesPlanted,
                     tagged_tree_links: taggedTreeLinks,
                     tagging_date: taggingDate,
@@ -79,7 +87,6 @@ export const activitySubmissionService = {
         }
 
         catch(e) {
-
             console.error('Error submitting tree tagging activity:', e);
             throw e;
         }

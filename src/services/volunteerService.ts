@@ -36,10 +36,9 @@ export const volunteerService = {
         .eq("college_id", collegeId)
         .order("name", { ascending: true });
 
-        if (error) {
+      if (error) {
           throw error;
         }
-      console.log("Courses data:", data);
       return data || [];
 
     } catch (error) {
@@ -79,11 +78,8 @@ export const volunteerService = {
         throw new Error("A volunteer with this KTU ID already exists.");
       }
 
-      console.log("Starting file uploads...");
-
       // 1. Upload photo to Supabase Storage
       if (data.photo instanceof File) {
-        console.log("First photo upload started...");
         const photoFileName = `${Date.now()}_${data.photo.name}_user_${userId}`;
         const {error: photoError } = await supabase.storage
           .from("volunteer-photos")
@@ -101,7 +97,6 @@ export const volunteerService = {
 
       // 2. Upload signature to Supabase Storage
       if (data.signature instanceof File) {
-        console.log("First signature upload started...");
         const signatureFileName = `${Date.now()}_${
           data.signature.name
         }_user_${userId}`;
@@ -109,12 +104,10 @@ export const volunteerService = {
           await supabase.storage
             .from("volunteer-signatures")
             .upload(signatureFileName, data.signature);
-        console.log("First signature upload ENDED...");
 
         if (signatureError) throw signatureError;
 
         // Get public URL for the signature
-        console.log("Getting signature public URL...");
         const { data: signatureUrlData } = supabase.storage
           .from("volunteer-signatures")
           .getPublicUrl(signatureFileName);
@@ -122,22 +115,33 @@ export const volunteerService = {
         signatureUrl = signatureUrlData.publicUrl;
       }
 
+      // 3. Map unit name to unit_id from nss_units table
+      let unitId = null;
+      if (data.unit) {
+        const { data: unitData } = await supabase
+          .from("nss_units")
+          .select("id")
+          .eq("unit_number", data.unit)
+          .single();
+        
+        if (unitData) {
+          unitId = unitData.id;
+        }
+      }
 
       const volunteerData = {
-        student_id: userId, // ✅ Use the passed userId
-        unit_id: null, // TODO: Map unit name to unit_id from units table
+        student_id: userId,
+        unit_id: unitId,
         admission_year: data.admissionYear,
         valid_from_year : null,
         valid_to_year : null,
         ktu_id: data.ktuId,
         full_name : data.name,
-        //valid_from_year : this is the same as the admission year
-        //valid_to_year: this is calculated in the DB trigger
-        status: "pending", // Default status
+        status: "pending",
         semester: data.semester,
         course: data.course,
-        unit_number: data.unit, // Store unit name in unit_number for now
-        enroll_no: null, // TODO: Add to form if needed
+        unit_number: data.unit,
+        enroll_no: null,
         gender: data.gender.toLowerCase(),
         dob: data.dob,
         whatsapp_number: data.whatsappNumber,
@@ -154,21 +158,20 @@ export const volunteerService = {
         parent_name: data.parent,
         parent_contact_number: data.parentContact,
         permanent_address: data.permanentAddress,
-        current_address: data.permanentAddress, // Use permanent address as current for now
+        current_address: data.permanentAddress,
         photo_url: photoUrl,
         signature_url: signatureUrl,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        languages_known: data.languagesKnown || []
+        languages_known: data.languagesKnown || [],
+        area_of_interest: data.areaOfInterest || null,
+        hobbies: data.hobbies || null,
+        prior_experience: data.priorExperience || null,
+        cultural_talents: data.culturalTalents || null,
+        camp_interest: data.campInterest || null,
       };
 
       // 4. Insert volunteer record into database
-      // Note: The following fields from form are NOT in database schema:
-      // - name (data.name) - consider adding a 'name' column
-      // - ktu_id (data.ktuId) - consider adding a 'ktu_id' column
-      // - contactNumber (data.contactNumber) - consider adding a 'contact_number' column
-      // - languagesKnown (data.languagesKnown) - consider adding a 'languages_known' jsonb column
-      
       const { data: volunteer, error: insertError } = await supabase
         .from("volunteers")
         .insert(volunteerData)

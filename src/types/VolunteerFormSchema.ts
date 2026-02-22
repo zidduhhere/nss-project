@@ -74,6 +74,13 @@ export const VolunteerSchema = z.object({
     message: "Signature must be a JPEG or PNG image"
   }),
   languagesKnown: z.enum (['English', 'Hindi', 'Malayalam', 'Tamil', 'Telugu', 'Kannada', 'Other']).array(),
+
+  // Optional fields
+  areaOfInterest: z.string().optional(),
+  hobbies: z.string().optional(),
+  priorExperience: z.string().optional(),
+  culturalTalents: z.string().optional(),
+  campInterest: z.enum(['Yes', 'No']).optional(),
 });
 
 export type VolunteerFormFields = z.infer<typeof VolunteerSchema>;

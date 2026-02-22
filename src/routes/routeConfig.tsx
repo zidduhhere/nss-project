@@ -27,6 +27,7 @@ const AdminProfile = lazy(() => import('@/views/dashboard/admin/AdminProfile'));
 const AdminVolunteers = lazy(() => import('@/views/dashboard/admin/AdminVolunteers'));
 const AdminUsers = lazy(() => import('@/views/dashboard/admin/AdminUsers'));
 const AdminReports = lazy(() => import('@/views/dashboard/admin/AdminReports'));
+const ResetPasswordView = lazy(() => import('@/views/auth/reset-password/ResetPasswordView'));
 
 
 export interface AppRoute {
@@ -59,7 +60,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/student/volunteer-registration', component: VolunteerRegistrationPage, protected: true, roles: ['student'] },
     { path: '/dashboard/unit', component: UnitDashboard, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/profile', component: UnitProfile, protected: true, roles: ['unit'] },
-    { path: '/dashboard/unit/volunteer', component: UnitVolunteers },
+    { path: '/dashboard/unit/volunteer', component: UnitVolunteers, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/submissions', component: UnitSubmissions, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/activity', component: UnitActivity, protected: true, roles: ['unit'] },
     // Legacy redirect
@@ -70,6 +71,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/admin/volunteers', component: AdminVolunteers, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/users', component: AdminUsers, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/reports', component: AdminReports, protected: true, roles: ['admin'] },
+    { path: '/auth/reset-password', component: ResetPasswordView },
     
 ];
 
