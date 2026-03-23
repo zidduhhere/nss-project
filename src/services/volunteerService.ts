@@ -1,6 +1,9 @@
 import { VolunteerFormFields } from "@/types/VolunteerFormSchema";
 import supabase from "@/services/supabase";
 
+const sanitizeFileName = (name: string) =>
+  name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
 /**
  * Volunteer Service - Handles all volunteer-related Supabase operations
  */
@@ -80,7 +83,7 @@ export const volunteerService = {
 
       // 1. Upload photo to Supabase Storage
       if (data.photo instanceof File) {
-        const photoFileName = `${Date.now()}_${data.photo.name}_user_${userId}`;
+        const photoFileName = `${Date.now()}_${sanitizeFileName(data.photo.name)}_user_${userId}`;
         const {error: photoError } = await supabase.storage
           .from("volunteer-photos")
           .upload(photoFileName, data.photo);
@@ -97,9 +100,9 @@ export const volunteerService = {
 
       // 2. Upload signature to Supabase Storage
       if (data.signature instanceof File) {
-        const signatureFileName = `${Date.now()}_${
+        const signatureFileName = `${Date.now()}_${sanitizeFileName(
           data.signature.name
-        }_user_${userId}`;
+        )}_user_${userId}`;
         const { error: signatureError } =
           await supabase.storage
             .from("volunteer-signatures")
