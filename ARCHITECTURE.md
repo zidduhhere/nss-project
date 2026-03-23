@@ -20,15 +20,17 @@
 | `courses` | College courses linked to `college_id` |
 | `nss_units` | NSS unit info (PO details, college association) |
 | `colleges` | College names and districts |
-| `blood_donation_submissions` | Blood donation records with certificate uploads |
-| `tree_tagging_submissions` | Tree tagging records |
+| `blood_donations` | Blood donation records with certificate uploads (FK: volunteer_id) |
+| `tree_tagging` | Tree tagging records (FK: volunteer_id) |
 | `profiles_with_unit` | **View** - pre-joined profiles + nss_units + colleges |
 | `user_with_college` | **View** - profiles joined with college info |
 
 ## Storage Buckets
 - `volunteer-photos` - Volunteer registration photos
 - `volunteer-signatures` - Volunteer registration signatures
-- `blood-donation-certificates` - Blood donation certificates
+- `blood-donations` - Blood donation certificates
+- `tree-tagging` - Tree tagging photos
+- `website-images` - Website static images
 
 ## Directory Structure
 

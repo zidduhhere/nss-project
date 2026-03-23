@@ -65,38 +65,37 @@ export const unitProfileService = {
         throw new Error("Unit profile not found");
       }
 
-      // The view already provides all necessary data in a flat structure
-      // Map the view columns to our UnitProfileWithCollege interface
-      const unitProfile: UnitProfileWithCollege = {
+      // Fetch college info in parallel if college_id is available
+      const collegeId = data.unit_college_id || data.college_id;
+      let collegeName = null;
+      let collegeDistrict = null;
+
+      if (collegeId) {
+        const { data: collegeData } = await supabase
+          .from("colleges")
+          .select("name, district")
+          .eq("id", collegeId)
+          .single();
+
+        if (collegeData) {
+          collegeName = collegeData.name;
+          collegeDistrict = collegeData.district;
+        }
+      }
+
+      return {
         id: data.id,
         unit_number: data.unit_number,
-        college_id: data.unit_college_id, // Use unit_college_id from nss_units table
+        college_id: collegeId,
         created_at: data.created_at,
         po_name: data.po_name,
         po_phone: data.po_phone,
         po_email: data.po_email,
         po_address: data.po_address,
         po_designation: data.po_designation,
-        // Get college name from the colleges table via college_id lookup
-        college_name: null, // Will be resolved via colleges table lookup below
-        college_district: null, // Will be resolved via colleges table lookup below
-      };
-
-      // If we have college_id, fetch college name and district
-      if (data.college_id) {
-        const { data: collegeData } = await supabase
-          .from("colleges")
-          .select("name, district")
-          .eq("id", data.college_id)
-          .single();
-
-        if (collegeData) {
-          unitProfile.college_name = collegeData.name;
-          unitProfile.college_district = collegeData.district;
-        }
-      }
-
-      return unitProfile;
+        college_name: collegeName,
+        college_district: collegeDistrict,
+      } as UnitProfileWithCollege;
     } catch (error: any) {
       console.error("Error fetching unit profile:", error);
       throw new Error(error.message || "Failed to fetch unit profile");
@@ -210,7 +209,7 @@ export const unitProfileService = {
    */
   getUnitStats: async (unitId: string): Promise<UnitStats> => {
     try {
-      // First get the unit_id from profiles_with_unit view
+      // Get the unit_id from profiles_with_unit view
       const { data: profileData, error: profileError } = await supabase
         .from("profiles_with_unit")
         .select("unit_id, created_at")
@@ -219,67 +218,31 @@ export const unitProfileService = {
         .single();
 
       if (profileError) throw profileError;
-      
+
       const actualUnitId = profileData?.unit_id;
       if (!actualUnitId) {
         throw new Error("Unit ID not found for this profile");
       }
 
-      // Get total volunteers count for this unit
-      const { count: totalVolunteers, error: totalError } = await supabase
+      // Single query — fetch all statuses and aggregate client-side
+      const { data: volunteers, error } = await supabase
         .from("volunteers")
-        .select("*", { count: "exact", head: true })
+        .select("status")
         .eq("unit_id", actualUnitId);
 
-      if (totalError) throw totalError;
+      if (error) throw error;
 
-      // Get pending approvals count
-      const { count: pendingApprovals, error: pendingError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("unit_id", actualUnitId)
-        .eq("status", "pending");
-
-      if (pendingError) throw pendingError;
-
-      // Get approved volunteers count
-      const { count: approvedVolunteers, error: approvedError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("unit_id", actualUnitId)
-        .eq("status", "approved");
-
-      if (approvedError) throw approvedError;
-
-      // Get rejected volunteers count
-      const { count: rejectedVolunteers, error: rejectedError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("unit_id", actualUnitId)
-        .eq("status", "rejected");
-
-      if (rejectedError) throw rejectedError;
-
-      // Get certified volunteers count
-      const { count: certifiedVolunteers, error: certifiedError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("unit_id", actualUnitId)
-        .eq("status", "certified");
-
-      if (certifiedError) throw certifiedError;
-
-      // Extract established year from the created_at timestamp from the view
+      const list = volunteers || [];
       const establishedYear = profileData?.created_at
         ? new Date(profileData.created_at).getFullYear().toString()
         : undefined;
 
       return {
-        totalVolunteers: totalVolunteers || 0,
-        pendingApprovals: pendingApprovals || 0,
-        approvedVolunteers: approvedVolunteers || 0,
-        rejectedVolunteers: rejectedVolunteers || 0,
-        certifiedVolunteers: certifiedVolunteers || 0,
+        totalVolunteers: list.length,
+        pendingApprovals: list.filter((v) => v.status === "pending").length,
+        approvedVolunteers: list.filter((v) => v.status === "approved").length,
+        rejectedVolunteers: list.filter((v) => v.status === "rejected").length,
+        certifiedVolunteers: list.filter((v) => v.status === "certified").length,
         establishedYear,
       };
     } catch (error: any) {

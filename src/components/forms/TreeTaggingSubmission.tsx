@@ -3,8 +3,12 @@ import { TreePine } from "lucide-react";
 import TextField from "@/components/ui/TextField";
 import TextArea from "@/components/ui/TextArea";
 import Button from "@/components/ui/Button";
+import { activitySubmissionService } from "@/services/activitySubmissionService";
+import { UseAuthContext } from "@/context/AuthContext";
+import SuccessModal from "@/components/common/SuccessModal";
+import { Alert, AlertDescription } from "@/components/shadcn/alert";
 
-interface TreeTaggingSubmissionData {
+interface TreeTaggingFormData {
   location: string;
   plantationDate: string;
   treesPlanted: string;
@@ -19,9 +23,11 @@ interface TreeTaggingSubmissionProps {
 const TreeTaggingSubmission = ({
   onSuccess,
 }: TreeTaggingSubmissionProps = {}) => {
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const { session } = UseAuthContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<TreeTaggingSubmissionData>({
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [formData, setFormData] = useState<TreeTaggingFormData>({
     location: "",
     plantationDate: "",
     treesPlanted: "",
@@ -66,21 +72,24 @@ const TreeTaggingSubmission = ({
       return;
     }
 
-    if (uploadedFiles.length === 0) {
-      alert("Please upload photos of the planted trees with tags");
+    if (!session?.user?.id) {
+      setSubmitError("You must be logged in to submit.");
       return;
     }
 
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await activitySubmissionService.submitTreeTagging(
+        {
+          treesPlanted: parseInt(formData.treesPlanted),
+          taggedTreeLinks: formData.taggedTreeLinks.filter((link) => link.trim() !== ""),
+        },
+        session.user.id
+      );
 
-      // Show success message
-      alert("Tree tagging submission successful!");
-
-      // Reset form
+      setShowSuccess(true);
       setFormData({
         location: "",
         plantationDate: "",
@@ -88,19 +97,27 @@ const TreeTaggingSubmission = ({
         taggedTreeLinks: [],
         activityDetails: "",
       });
-      setUploadedFiles([]);
 
-      // Call onSuccess callback if provided
       if (onSuccess) {
-        setTimeout(() => onSuccess(), 1000);
+        setTimeout(() => onSuccess(), 2000);
       }
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Submission failed. Please try again.");
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      setSubmitError(err.message || "Failed to submit tree tagging. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (showSuccess) {
+    return (
+      <SuccessModal
+        title="Submission Successful!"
+        message="Your tree tagging activity has been submitted for review. You'll be notified once it's approved."
+        onClose={() => setShowSuccess(false)}
+      />
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
@@ -121,6 +138,12 @@ const TreeTaggingSubmission = ({
 
       {/* Form */}
       <div className="px-8 pb-8">
+        {submitError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{submitError}</AlertDescription>
+          </Alert>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Location */}

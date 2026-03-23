@@ -1,6 +1,10 @@
 import supabase from "@/services/supabase";
 import { VolunteerProfile } from "@/types/VolunteerProfile";
 
+/** Strip characters that could manipulate PostgREST filter syntax */
+const sanitizeFilter = (value: string) =>
+  value.replace(/[%_.,()\\]/g, "");
+
 /**
  * Unit Volunteer Service - Handles volunteer management operations for unit coordinators
  * 
@@ -44,11 +48,13 @@ export const unitVolunteerService = {
         query = query.eq("semester", filters.semester);
       }
       if (filters?.course) {
-        query = query.ilike("course", `%${filters.course}%`);
+        const safeCourse = sanitizeFilter(filters.course);
+        query = query.ilike("course", `%${safeCourse}%`);
       }
       if (filters?.search) {
+        const safeSearch = sanitizeFilter(filters.search);
         query = query.or(
-          `full_name.ilike.%${filters.search}%,ktu_id.ilike.%${filters.search}%`
+          `full_name.ilike.%${safeSearch}%,ktu_id.ilike.%${safeSearch}%`
         );
       }
 

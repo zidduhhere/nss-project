@@ -176,7 +176,7 @@ export default function UnitActivity({}: UnitActivityProps) {
           </CardContent>
         </Card>
       </div>
-      <div className="mt-16">
+      <div className="fixed bottom-0 w-full">
         <Footer />
       </div>
     </div>

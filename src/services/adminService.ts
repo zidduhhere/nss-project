@@ -4,6 +4,10 @@ import { VolunteerProfile } from "@/types/VolunteerProfile";
 import { UserProfile } from "@/types/UserProfile";
 import { UserWithDetails, UserFilters } from "@/types/UserWithDetails";
 
+/** Strip characters that could manipulate PostgREST filter syntax */
+const sanitizeFilter = (value: string) =>
+  value.replace(/[%_.,()\\]/g, "");
+
 /**
  * Admin Service - Handles all admin-related operations
  * 
@@ -162,83 +166,48 @@ export const adminService = {
    */
   getSystemStats: async (): Promise<AdminStats> => {
     try {
-      // Get total volunteers count
-      const { count: totalVolunteers, error: volError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true });
-
-      if (volError) throw volError;
-
-      // Get pending approvals count
-      const { count: pendingApprovals, error: pendingError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "pending");
-
-      if (pendingError) throw pendingError;
-
-      // Get approved volunteers count
-      const { count: approvedVolunteers, error: approvedError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved");
-
-      if (approvedError) throw approvedError;
-
-      // Get rejected volunteers count
-      const { count: rejectedVolunteers, error: rejectedError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "rejected");
-
-      if (rejectedError) throw rejectedError;
-
-      // Get certified volunteers count
-      const { count: certifiedVolunteers, error: certifiedError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "certified");
-
-      if (certifiedError) throw certifiedError;
-
-      // Get total students (profiles with student role)
-      const { count: totalStudents, error: studentsError } = await supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true })
-        .eq("role", "student");
-
-      if (studentsError) throw studentsError;
-
-      // Get unique units count
-      const { data: unitsData, error: unitsError } = await supabase
-        .from("volunteers")
-        .select("unit_id")
-        .not("unit_id", "is", null);
-
-      if (unitsError) throw unitsError;
-
-      const uniqueUnits = new Set(unitsData?.map((v) => v.unit_id)).size;
-
-      // Get recent registrations (last 7 days)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-      const { count: recentRegistrations, error: recentError } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .gte("created_at", sevenDaysAgo.toISOString());
+      // Run all independent queries in parallel
+      const [volunteersResult, studentsResult, unitsResult, recentResult] =
+        await Promise.all([
+          // Single query for all volunteer statuses — aggregate client-side
+          supabase
+            .from("volunteers")
+            .select("status, unit_id"),
+          // Total students count
+          supabase
+            .from("profiles")
+            .select("*", { count: "exact", head: true })
+            .eq("role", "student"),
+          // Unique units — query nss_units directly instead of deduplicating volunteer rows
+          supabase
+            .from("nss_units")
+            .select("*", { count: "exact", head: true }),
+          // Recent registrations (last 7 days)
+          supabase
+            .from("volunteers")
+            .select("*", { count: "exact", head: true })
+            .gte("created_at", sevenDaysAgo.toISOString()),
+        ]);
 
-      if (recentError) throw recentError;
+      if (volunteersResult.error) throw volunteersResult.error;
+      if (studentsResult.error) throw studentsResult.error;
+      if (unitsResult.error) throw unitsResult.error;
+      if (recentResult.error) throw recentResult.error;
+
+      const volunteers = volunteersResult.data || [];
 
       return {
-        totalVolunteers: totalVolunteers || 0,
-        totalUnits: uniqueUnits,
-        pendingApprovals: pendingApprovals || 0,
-        approvedVolunteers: approvedVolunteers || 0,
-        certifiedVolunteers: certifiedVolunteers || 0,
-        rejectedVolunteers: rejectedVolunteers || 0,
-        totalStudents: totalStudents || 0,
-        recentRegistrations: recentRegistrations || 0,
+        totalVolunteers: volunteers.length,
+        totalUnits: unitsResult.count || 0,
+        pendingApprovals: volunteers.filter((v) => v.status === "pending").length,
+        approvedVolunteers: volunteers.filter((v) => v.status === "approved").length,
+        certifiedVolunteers: volunteers.filter((v) => v.status === "certified").length,
+        rejectedVolunteers: volunteers.filter((v) => v.status === "rejected").length,
+        totalStudents: studentsResult.count || 0,
+        recentRegistrations: recentResult.count || 0,
       };
     } catch (error: any) {
       console.error("Error fetching system stats:", error);
@@ -346,8 +315,9 @@ export const adminService = {
 
       // Apply search filter (searches across multiple fields)
       if (filters?.search) {
+        const safeSearch = sanitizeFilter(filters.search);
         query = query.or(
-          `full_name.ilike.%${filters.search}%,ktu_id.ilike.%${filters.search}%,contact_number.ilike.%${filters.search}%`
+          `full_name.ilike.%${safeSearch}%,ktu_id.ilike.%${safeSearch}%,contact_number.ilike.%${safeSearch}%`
         );
       }
 
@@ -385,14 +355,13 @@ export const adminService = {
   getUniqueUnits: async (): Promise<string[]> => {
     try {
       const { data, error } = await supabase
-        .from("volunteers")
-        .select("unit_id")
-        .not("unit_id", "is", null);
+        .from("nss_units")
+        .select("id")
+        .order("id", { ascending: true });
 
       if (error) throw error;
 
-      const uniqueUnits = Array.from(new Set(data?.map((v) => v.unit_id).filter(Boolean))) as string[];
-      return uniqueUnits.sort();
+      return (data?.map((u) => u.id) || []) as string[];
     } catch (error: any) {
       console.error("Error fetching unique units:", error);
       throw new Error(error.message || "Failed to fetch units");
@@ -983,8 +952,9 @@ export const adminService = {
 
       // Apply search filter at database level using OR condition
       if (filters?.search) {
+        const safeSearch = sanitizeFilter(filters.search);
         query = query.or(
-          `email.ilike.%${filters.search}%,full_name.ilike.%${filters.search}%,unit_number.ilike.%${filters.search}%,college_name.ilike.%${filters.search}%,college_district.ilike.%${filters.search}%`
+          `email.ilike.%${safeSearch}%,full_name.ilike.%${safeSearch}%,unit_number.ilike.%${safeSearch}%,college_name.ilike.%${safeSearch}%,college_district.ilike.%${safeSearch}%`
         );
       }
 
