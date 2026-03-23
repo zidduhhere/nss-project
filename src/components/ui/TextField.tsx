@@ -83,6 +83,7 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement, CombinedPro
                             type="button"
                             onClick={onTogglePassword}
                             className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors p-1 text-black hover:text-gray-700"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
                         >
                             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                         </button>

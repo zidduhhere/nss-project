@@ -78,8 +78,8 @@ export const unitProfileService = {
         po_address: data.po_address,
         po_designation: data.po_designation,
         // Get college name from the colleges table via college_id lookup
-        college_name: data.college_id, // This will need to be resolved via colleges table
-        college_district: data.college_id, // This will need to be resolved via colleges table
+        college_name: null, // Will be resolved via colleges table lookup below
+        college_district: null, // Will be resolved via colleges table lookup below
       };
 
       // If we have college_id, fetch college name and district

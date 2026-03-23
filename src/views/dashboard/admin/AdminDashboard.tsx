@@ -9,14 +9,111 @@ import {
   Building2,
   RefreshCw,
   AlertCircle,
-  Loader2,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
 import DashboardNavigation from '@/components/common/DashboardNavigation';
 import Footer from '@/components/ui/Footer';
-import StatCard from '@/components/ui/StatCard';
 import { useSystemStats, useRecentRegistrations } from '@/hooks/useAdminService';
-import ErrorPop from '@/components/common/ErrorPop';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/shadcn/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
+import { Badge } from '@/components/shadcn/badge';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { Alert, AlertTitle, AlertDescription } from '@/components/shadcn/alert';
+import { cn } from '@/lib/utils';
+
+const StatCard = ({
+  title,
+  value,
+  description,
+  icon: Icon,
+  iconBg,
+  iconColor,
+  onClick,
+}: {
+  title: string;
+  value: string | number;
+  description?: string;
+  icon: React.ElementType;
+  iconBg: string;
+  iconColor: string;
+  onClick?: () => void;
+}) => (
+  <Card
+    className={cn(
+      'transition-all duration-200',
+      onClick && 'cursor-pointer hover:shadow-md hover:-translate-y-0.5'
+    )}
+    onClick={onClick}
+  >
+    <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardDescription className="text-sm font-medium">{title}</CardDescription>
+      <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center', iconBg)}>
+        <Icon className={cn('h-5 w-5', iconColor)} />
+      </div>
+    </CardHeader>
+    <CardContent>
+      <div className="text-3xl font-bold tracking-tight">{value}</div>
+      {description && (
+        <p className="text-xs text-gray-500 mt-1">{description}</p>
+      )}
+    </CardContent>
+  </Card>
+);
+
+const DashboardSkeleton = () => (
+  <div className="container mx-auto px-4 py-8">
+    <div className="mb-8">
+      <Skeleton className="h-9 w-56 mb-2" />
+      <Skeleton className="h-5 w-72" />
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Card key={i}>
+          <CardHeader className="pb-2">
+            <Skeleton className="h-4 w-28" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-8 w-16 mb-1" />
+            <Skeleton className="h-3 w-20" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Card key={i}>
+          <CardHeader className="pb-2">
+            <Skeleton className="h-4 w-24" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-7 w-14" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-6 w-48" />
+      </CardHeader>
+      <CardContent>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full mb-2" />
+        ))}
+      </CardContent>
+    </Card>
+  </div>
+);
+
+const getStatusBadgeVariant = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'success' as const;
+    case 'rejected':
+      return 'danger' as const;
+    default:
+      return 'warning' as const;
+  }
+};
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -49,12 +146,7 @@ const AdminDashboard = () => {
     return (
       <div className="font-isans min-h-screen bg-gray-50">
         <DashboardNavigation mode="admin" />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center justify-center h-96">
-            <Loader2 className="w-12 h-12 text-primary-600 animate-spin mb-4" />
-            <p className="text-gray-600 text-lg">Loading dashboard...</p>
-          </div>
-        </div>
+        <DashboardSkeleton />
       </div>
     );
   }
@@ -63,238 +155,223 @@ const AdminDashboard = () => {
     <div className="font-isans min-h-screen bg-gray-50">
       <DashboardNavigation mode="admin" />
 
-      {statsError && (
-        <ErrorPop
-          error={statsError}
-          onCloseClick={() => {}}
-        />
-      )}
-
       <div className="container mx-auto px-4 py-8">
+        {/* Error Alert */}
+        {statsError && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{statsError}</AlertDescription>
+          </Alert>
+        )}
+
         {/* Header */}
         <div className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-2">System overview and management</p>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-500 mt-1">
+              System overview and management
+            </p>
           </div>
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw className={`w-4 h-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span className="text-sm font-medium text-gray-700">
-              {isRefreshing ? 'Refreshing...' : 'Refresh'}
-            </span>
+            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Primary Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
-            titleStat={String(stats?.totalVolunteers || 0)}
-            subtitle="Total Volunteers"
+            title="Total Volunteers"
+            value={stats?.totalVolunteers || 0}
             description={stats?.recentRegistrations ? `+${stats.recentRegistrations} this week` : undefined}
             icon={Users}
-            iconBgColor="bg-blue-500"
-            iconColor="text-white"
+            iconBg="bg-blue-100"
+            iconColor="text-blue-600"
           />
-          <div 
-            className="cursor-pointer"
+          <StatCard
+            title="Pending Approvals"
+            value={stats?.pendingApprovals || 0}
+            icon={Clock}
+            iconBg="bg-yellow-100"
+            iconColor="text-yellow-600"
             onClick={() => navigate('/dashboard/admin/volunteers?status=pending')}
-          >
-            <StatCard
-              titleStat={String(stats?.pendingApprovals || 0)}
-              subtitle="Pending Approvals"
-              icon={Clock}
-              iconBgColor="bg-yellow-500"
-              iconColor="text-white"
-            />
-          </div>
+          />
           <StatCard
-            titleStat={String(stats?.approvedVolunteers || 0)}
-            subtitle="Approved"
+            title="Approved"
+            value={stats?.approvedVolunteers || 0}
             icon={UserCheck}
-            iconBgColor="bg-green-500"
-            iconColor="text-white"
+            iconBg="bg-tree-100"
+            iconColor="text-tree-600"
           />
           <StatCard
-            titleStat={String(stats?.totalUnits || 0)}
-            subtitle="Total Units"
+            title="Total Units"
+            value={stats?.totalUnits || 0}
             icon={Building2}
-            iconBgColor="bg-purple-500"
-            iconColor="text-white"
+            iconBg="bg-purple-100"
+            iconColor="text-purple-600"
           />
         </div>
 
-        {/* Secondary Stats */}
+        {/* Secondary Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Total Students</p>
-                <p className="text-2xl font-bold text-gray-900">{stats?.totalStudents || 0}</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardDescription className="text-sm font-medium">Total Students</CardDescription>
+              <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <Users className="h-5 w-5 text-blue-600" />
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.totalStudents || 0}</div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Rejected</p>
-                <p className="text-2xl font-bold text-gray-900">{stats?.rejectedVolunteers || 0}</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardDescription className="text-sm font-medium">Rejected</CardDescription>
+              <div className="h-10 w-10 rounded-lg bg-blood-100 flex items-center justify-center">
+                <XCircle className="h-5 w-5 text-blood-600" />
               </div>
-              <div className="w-12 h-12 bg-blood-100 rounded-lg flex items-center justify-center">
-                <XCircle className="w-6 h-6 text-blood-600" />
-              </div>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.rejectedVolunteers || 0}</div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Recent (7 days)</p>
-                <p className="text-2xl font-bold text-gray-900">{stats?.recentRegistrations || 0}</p>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardDescription className="text-sm font-medium">Recent (7 days)</CardDescription>
+              <div className="h-10 w-10 rounded-lg bg-tree-100 flex items-center justify-center">
+                <TreePine className="h-5 w-5 text-tree-600" />
               </div>
-              <div className="w-12 h-12 bg-tree-100 rounded-lg flex items-center justify-center">
-                <TreePine className="w-6 h-6 text-tree-600" />
-              </div>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.recentRegistrations || 0}</div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Recent Registrations */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Registrations</h2>
+        {/* Recent Registrations Table */}
+        <Card className="mb-8">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-xl">Recent Registrations</CardTitle>
             <button
               onClick={() => navigate('/dashboard/admin/volunteers')}
-              className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1"
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
             >
               View All
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-4 w-4" />
             </button>
-          </div>
-
-          {registrationsLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
-            </div>
-          ) : registrationsError ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <AlertCircle className="w-12 h-12 text-red-500 mb-2" />
-              <p className="text-gray-600">{registrationsError}</p>
-            </div>
-          ) : registrations.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No recent registrations
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      KTU ID
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Course
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+          </CardHeader>
+          <CardContent>
+            {registrationsLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            ) : registrationsError ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Failed to load registrations</AlertTitle>
+                <AlertDescription>{registrationsError}</AlertDescription>
+              </Alert>
+            ) : registrations.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                <Users className="h-10 w-10 mb-3 text-gray-300" />
+                <p className="text-sm">No recent registrations</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>KTU ID</TableHead>
+                    <TableHead>Course</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {registrations.map((registration) => (
-                    <tr key={registration.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {registration.full_name}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-sm text-gray-600">{registration.ktu_id}</div>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-sm text-gray-600">{registration.course}</div>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            registration.status === 'approved'
-                              ? 'bg-tree-100 text-tree-800'
-                              : registration.status === 'rejected'
-                              ? 'bg-blood-100 text-blood-800'
-                              : 'bg-nss-100 text-nss-800'
-                          }`}
-                        >
+                    <TableRow key={registration.id}>
+                      <TableCell className="font-medium">
+                        {registration.full_name}
+                      </TableCell>
+                      <TableCell className="text-gray-600">
+                        {registration.ktu_id}
+                      </TableCell>
+                      <TableCell className="text-gray-600">
+                        {registration.course}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusBadgeVariant(registration.status)}>
                           {registration.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-600">
                         {new Date(registration.created_at).toLocaleDateString()}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <button
-            onClick={() => navigate('/dashboard/admin/volunteers')}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Manage Volunteers</h3>
-            <p className="text-sm text-gray-600">View and manage all volunteer registrations</p>
-          </button>
-
-          <button
-            onClick={() => navigate('/dashboard/admin/users')}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-nss-100 rounded-lg flex items-center justify-center group-hover:bg-nss-200 transition-colors">
-                <Users className="w-6 h-6 text-nss-600" />
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Manage Users</h3>
-            <p className="text-sm text-gray-600">View and manage all system users</p>
-          </button>
-
-          <button
-            onClick={() => navigate('/dashboard/admin/profile')}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow text-left group"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <UserCheck className="w-6 h-6 text-green-600" />
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Admin Profile</h3>
-            <p className="text-sm text-gray-600">View and edit your admin profile</p>
-          </button>
+          {[
+            {
+              label: 'Manage Volunteers',
+              description: 'View and manage all volunteer registrations',
+              icon: Users,
+              iconBg: 'bg-blue-100 group-hover:bg-blue-200',
+              iconColor: 'text-blue-600',
+              path: '/dashboard/admin/volunteers',
+            },
+            {
+              label: 'Manage Users',
+              description: 'View and manage all system users',
+              icon: Users,
+              iconBg: 'bg-nss-100 group-hover:bg-nss-200',
+              iconColor: 'text-nss-600',
+              path: '/dashboard/admin/users',
+            },
+            {
+              label: 'Admin Profile',
+              description: 'View and edit your admin profile',
+              icon: UserCheck,
+              iconBg: 'bg-green-100 group-hover:bg-green-200',
+              iconColor: 'text-green-600',
+              path: '/dashboard/admin/profile',
+            },
+          ].map((action) => (
+            <Card
+              key={action.path}
+              className="group cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+              onClick={() => navigate(action.path)}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between mb-3">
+                  <div className={cn('h-12 w-12 rounded-lg flex items-center justify-center transition-colors', action.iconBg)}>
+                    <action.icon className={cn('h-6 w-6', action.iconColor)} />
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </div>
+                <CardTitle className="text-lg">{action.label}</CardTitle>
+                <CardDescription>{action.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
         </div>
       </div>
 

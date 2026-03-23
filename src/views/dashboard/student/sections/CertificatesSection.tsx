@@ -26,8 +26,8 @@ const statusConfig = {
 
 function CertificateCard({ certificate }: { certificate: Certificate }) {
     const StatusIcon = statusConfig[certificate.status].icon;
-    const points = certificate.points || Math.floor(Math.random() * 50000) + 10000; // Random points for demo
-    const percentageChange = certificate.percentageChange || (Math.random() > 0.5 ? Math.floor(Math.random() * 100) + 1 : -(Math.floor(Math.random() * 100) + 1));
+    const points = certificate.points || 0;
+    const percentageChange = certificate.percentageChange || 0;
     const isPositiveChange = percentageChange > 0;
 
     return (

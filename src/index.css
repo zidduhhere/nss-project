@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 @font-face {
     font-family: 'Instrument Sans';
     src: url('./assets/fonts/instrument-sans.ttf') format('truetype');
@@ -9,19 +14,9 @@
 html {
     scrollbar-color: white;
     scroll-behavior: smooth;
-    ;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-
-@theme {
-    font-family: 'Instrument Sans', sans-serif;
-    --font-isans: 'Instrument Sans', sans-serif;
-
-}
 
 @layer base {
     :root {
@@ -33,7 +28,31 @@ html {
         --nss-surface: #ffffff;
         --nss-text: #0F2027;
         --nss-text-secondary: #475569;
+
+        /* shadcn CSS variables - mapped to NSS theme */
+        --background: 210 20% 98%;
+        --foreground: 200 40% 10%;
+        --card: 0 0% 100%;
+        --card-foreground: 200 40% 10%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 200 40% 10%;
+        --primary: 197 40% 25%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 210 40% 96%;
+        --secondary-foreground: 200 40% 10%;
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+        --accent: 210 40% 96%;
+        --accent-foreground: 200 40% 10%;
+        --destructive: 355 85% 41%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 197 40% 25%;
+        --radius: 0.75rem;
     }
+
+
 }
 
 @layer components {
@@ -42,16 +61,16 @@ html {
 
     /* NSS Button Styles */
     .btn-nss-primary {
-        @apply bg-gradient-to-r from-nss-500 to-nss-600 hover: hover:to-nss-700 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+        @apply bg-gradient-to-r from-nss-500 to-nss-600 hover:to-nss-700 text-white font-medium py-2 px-4 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
     }
 
     .btn-nss-secondary {
-        @apply bg-nss-100 hover: bg-nss-200 text-nss-700 font-medium py-2 px-4 rounded-lg border border-nss-300 transition-all duration-200;
+        @apply bg-nss-100 hover:bg-nss-200 text-nss-700 font-medium py-2 px-4 rounded-lg border border-nss-300 transition-all duration-200;
     }
 
     /* NSS Card Styles */
     .card-nss {
-        @apply bg-white border border-nss-200 rounded-xl shadow-lg hover: shadow-xl transition-all duration-200;
+        @apply bg-white border border-nss-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200;
     }
 
     .card-nss-gradient {

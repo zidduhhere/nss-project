@@ -46,15 +46,12 @@ export const useVolunteerRegistration = () => {
       if (err instanceof Error) {
         if (err.message.includes("volunteers_student_id_key")) {
           console.error(err);
-          
-          setError(
-            "You have already registered as a volunteer."
-          );
-        }
-        if (err.message.includes("volunteers_ktu_id_key")) {
+          setError("You have already registered as a volunteer.");
+        } else if (err.message.includes("volunteers_ktu_id_key")) {
           setError("A volunteer with this KTU ID already exists.");
+        } else {
+          setError(err.message);
         }
-        setError(err.message);
       }
       throw err;
     } finally {

@@ -1131,12 +1131,12 @@ export const adminService = {
       // Get students with volunteer applications
       const { data: studentsWithApps, error: appsError } = await supabase
         .from("volunteers")
-        .select("id");
+        .select("id, student_id");
 
       if (appsError) throw appsError;
 
       const uniqueStudentsWithApps = new Set(
-        studentsWithApps?.map((v) => v.id).filter(Boolean)
+        studentsWithApps?.map((v) => v.student_id).filter(Boolean)
       ).size;
 
       return {
@@ -1177,12 +1177,21 @@ export const adminService = {
    *   console.error('Promotion failed:', error.message);
    * }
    */
-  promoteStudent: async (userId: string): Promise<UserProfile> => {
+  promoteStudent: async (
+    userId: string,
+    unitConfig: {
+      unitNumber: string;
+      collegeId: string;
+      poName?: string;
+      poEmail?: string;
+      poPhone?: string;
+    }
+  ): Promise<UserProfile> => {
     try {
       // First check if user exists and is a student
       const { data: user, error: fetchError } = await supabase
         .from("profiles")
-        .select("id, full_name, role")
+        .select("id, full_name, role, email")
         .eq("id", userId)
         .single();
 
@@ -1198,10 +1207,47 @@ export const adminService = {
         );
       }
 
-      // Update role to unit
+      // Check if unit number already exists
+      const { data: existingUnit } = await supabase
+        .from("nss_units")
+        .select("id")
+        .eq("unit_number", unitConfig.unitNumber)
+        .maybeSingle();
+
+      let unitId: string;
+
+      if (existingUnit) {
+        // Use existing unit
+        unitId = existingUnit.id;
+      } else {
+        // Create new nss_units entry
+        const { data: newUnit, error: unitError } = await supabase
+          .from("nss_units")
+          .insert({
+            unit_number: unitConfig.unitNumber,
+            college_id: unitConfig.collegeId,
+            po_name: unitConfig.poName || user.full_name || null,
+            po_email: unitConfig.poEmail || user.email || null,
+            po_phone: unitConfig.poPhone || null,
+            created_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
+
+        if (unitError) throw unitError;
+        if (!newUnit) throw new Error("Failed to create unit entry");
+
+        unitId = newUnit.id;
+      }
+
+      // Update profile: set role to 'unit' and link to the nss_units entry
       const { data, error } = await supabase
         .from("profiles")
-        .update({ role: "unit", updated_at: new Date().toISOString() })
+        .update({
+          role: "unit",
+          unit_id: unitId,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", userId)
         .select()
         .single();

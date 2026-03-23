@@ -179,11 +179,11 @@ const ImagePreviewFileUpload: React.FC<ImagePreviewFileUploadProps> = React.forw
     const uploadedFile = uploadedFiles.length > 0 ? uploadedFiles[0] : null;
 
     return (
-        <div className={`space-y-4 ${className}`}>
-            <label className="block text-sm font-medium text-gray-900">
+        <div className={`space-y-6 ${className}`}>
+            <label className="block text-base font-semibold text-gray-900 mb-2">
                 {label}
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center">
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center">
                 <input
                     ref={ref}
                     type="file"
@@ -206,7 +206,7 @@ const ImagePreviewFileUpload: React.FC<ImagePreviewFileUploadProps> = React.forw
                         </button>
 
                         {uploadedFile.type.startsWith('image/') ? (
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                                 <img
                                     src={URL.createObjectURL(uploadedFile)}
                                     alt={uploadedFile.name}
@@ -223,7 +223,7 @@ const ImagePreviewFileUpload: React.FC<ImagePreviewFileUploadProps> = React.forw
                                 </p>
                             </div>
                         ) : (
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                                 <div className="flex items-center justify-center h-32 bg-gray-100 rounded-lg">
                                     <FileText className="w-12 h-12 text-gray-500" />
                                 </div>
@@ -241,10 +241,10 @@ const ImagePreviewFileUpload: React.FC<ImagePreviewFileUploadProps> = React.forw
                     /* Show upload prompt if no file */
                     <label htmlFor={id} className="cursor-pointer block">
                         <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <p className={`font-medium ${colorClasses[uploadButtonColor]}`}>
+                        <p className={`font-medium text-lg ${colorClasses[uploadButtonColor]} mb-2`}>
                             {uploadText}
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-gray-500 mt-2">
                             {supportedFormats} up to {maxSize}
                         </p>
                     </label>

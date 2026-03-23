@@ -30,9 +30,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         };
 
         const sizeStyles = {
-            sm: 'py-2 px-3 text-sm rounded-full',
-            md: 'py-3 px-4 text-base rounded-full',
-            lg: 'py-4 px-6 text-lg rounded-full'
+            sm: 'py-2 px-4 text-sm rounded-full', // increased px
+            md: 'py-3 px-6 text-base rounded-full', // increased px
+            lg: 'py-4 px-8 text-lg rounded-full' // increased px
         };
 
         const buttonClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
@@ -45,7 +45,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 {...props}
             >
                 {isLoading ? (
-                    <div className="flex items-center justify-center space-x-2 font-isans">
+                    <div className="flex flex-col items-center justify-center gap-2 font-isans">
                         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                         <span>{loadingText}</span>
                     </div>

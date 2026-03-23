@@ -1,291 +1,409 @@
-import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { UnitInfoCard } from '../../../components/common';
-import { Table, Footer } from '../../../components/ui';
-import { FileText, Download, Eye, CheckCircle, XCircle, Clock, Filter, Search } from 'lucide-react';
-
-interface Submission {
-    id: string;
-    studentName: string;
-    studentId: string;
-    submissionType: 'Blood Donation' | 'Tree Tagging';
-    submittedDate: string;
-    status: 'Pending' | 'Approved' | 'Rejected';
-    fileName: string;
-    description?: string;
-}
-
-const demoSubmissions: Submission[] = [
-    {
-        id: "1",
-        studentName: "Arjun Krishnan",
-        studentId: "KTU2021CSE001",
-        submissionType: "Blood Donation",
-        submittedDate: "2025-08-28",
-        status: "Pending",
-        fileName: "blood_donation_cert_001.pdf",
-        description: "Blood donation camp at Thrissur General Hospital"
-    },
-    {
-        id: "2",
-        studentName: "Priya Nair",
-        studentId: "KTU2021ECE015",
-        submissionType: "Tree Tagging",
-        submittedDate: "2025-08-27",
-        status: "Approved",
-        fileName: "tree_tagging_002.jpg",
-        description: "Tree tagging activity in college premises"
-    },
-    {
-        id: "3",
-        studentName: "Rohit Menon",
-        studentId: "KTU2020ME025",
-        submissionType: "Blood Donation",
-        submittedDate: "2025-08-26",
-        status: "Rejected",
-        fileName: "blood_cert_invalid.pdf",
-        description: "Invalid certificate format"
-    },
-    {
-        id: "4",
-        studentName: "Anjali Pillai",
-        studentId: "KTU2021IT008",
-        submissionType: "Tree Tagging",
-        submittedDate: "2025-08-25",
-        status: "Approved",
-        fileName: "tree_tag_004.jpg",
-        description: "Community tree planting drive"
-    },
-    {
-        id: "5",
-        studentName: "Kiran Kumar",
-        studentId: "KTU2022CSE012",
-        submissionType: "Blood Donation",
-        submittedDate: "2025-08-24",
-        status: "Pending",
-        fileName: "blood_donation_005.pdf",
-        description: "Blood donation at Kerala Blood Bank"
-    }
-];
+import DashboardNavigation from "../../../components/common/DashboardNavigation";
+import { UnitInfoCard } from "../../../components/common";
+import { Footer } from "../../../components/ui";
+import {
+  FileText,
+  Download,
+  Eye,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Search,
+  ExternalLink,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shadcn/card";
+import { Badge } from "@/components/shadcn/badge";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/shadcn/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/shadcn/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/shadcn/dialog";
+import { Skeleton } from "@/components/shadcn/skeleton";
+import { Alert, AlertDescription } from "@/components/shadcn/alert";
+import { Separator } from "@/components/shadcn/separator";
+import { useUnitSubmissions, UnitSubmission } from "@/hooks/useUnitSubmissions";
+import { useState } from "react";
 
 interface UnitSubmissionsProps {
-    user?: { name?: string; role?: string } | null;
+  user?: { name?: string; role?: string } | null;
 }
 
-export default function UnitSubmissions({ }: UnitSubmissionsProps) {
+export default function UnitSubmissions({}: UnitSubmissionsProps) {
+  const {
+    submissions,
+    isLoading,
+    error,
+    stats,
+    filters,
+    setFilters,
+    approveSubmission,
+    rejectSubmission,
+  } = useUnitSubmissions();
 
+  const [selectedSubmission, setSelectedSubmission] = useState<UnitSubmission | null>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'Approved':
-                return <CheckCircle className="h-4 w-4 text-tree-500" />;
-            case 'rejected':
-                return <XCircle className="h-4 w-4 text-blood-500" />;
-            default:
-                return <Clock className="h-4 w-4 text-nss-500" />;
-        }
-    };
+  const handleApprove = async (submission: UnitSubmission) => {
+    setActionLoading(submission.id);
+    await approveSubmission(submission.id, submission.submission_type);
+    setActionLoading(null);
+  };
 
-    const getStatusBadge = (status: string) => {
-        const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-        switch (status) {
-            case 'Approved':
-                return `${baseClasses} bg-tree-100 text-tree-800`;
-            case 'rejected':
-                return `${baseClasses} bg-blood-100 text-blood-800`;
-            default:
-                return `${baseClasses} bg-nss-100 text-nss-800`;
-        }
-    };
+  const handleReject = async (submission: UnitSubmission) => {
+    setActionLoading(submission.id);
+    await rejectSubmission(submission.id, submission.submission_type);
+    setActionLoading(null);
+  };
 
-    const submissionColumns = [
-        {
-            key: 'studentName' as keyof Submission,
-            header: 'Student',
-            width: '20%',
-            render: (value: string, item: Submission) => (
-                <div>
-                    <div className="font-medium text-gray-900">{value}</div>
-                    <div className="text-sm text-gray-500">{item.studentId}</div>
-                </div>
-            )
-        },
-        {
-            key: 'submissionType' as keyof Submission,
-            header: 'Type',
-            width: '15%',
-            render: (value: string) => (
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${value === 'Blood Donation'
-                    ? 'bg-blood-100 text-blood-800'
-                    : 'bg-tree-100 text-tree-800'
-                    }`}>
-                    {value}
-                </span>
-            )
-        },
-        {
-            key: 'fileName' as keyof Submission,
-            header: 'File',
-            width: '20%',
-            render: (value: string) => (
-                <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600 truncate">{value}</span>
-                </div>
-            )
-        },
-        {
-            key: 'submittedDate' as keyof Submission,
-            header: 'Submitted',
-            width: '12%',
-            render: (value: string) => (
-                <span className="text-sm text-gray-600">
-                    {new Date(value).toLocaleDateString()}
-                </span>
-            )
-        },
-        {
-            key: 'status' as keyof Submission,
-            header: 'Status',
-            width: '12%',
-            render: (value: string) => (
-                <div className="flex items-center space-x-2">
-                    {getStatusIcon(value)}
-                    <span className={getStatusBadge(value)}>{value}</span>
-                </div>
-            )
-        },
-        {
-            key: 'id' as keyof Submission,
-            header: 'Actions',
-            width: '21%',
-            render: (value: string, item: Submission) => (
-                <div className="flex space-x-2">
-                    <button className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1">
-                        <Eye className="h-3 w-3" />
-                        <span>View</span>
-                    </button>
-                    <button className="text-tree-600 hover:text-tree-800 text-sm font-medium flex items-center space-x-1">
-                        <Download className="h-3 w-3" />
-                        <span>Download</span>
-                    </button>
-                    {item.status === 'Pending' && (
-                        <>
-                            <button className="text-tree-600 hover:text-tree-800 text-sm font-medium">
-                                Approve
-                            </button>
-                            <button className="text-blood-600 hover:text-blood-800 text-sm font-medium">
-                                Reject
-                            </button>
-                        </>
-                    )}
-                </div>
-            )
-        }
-    ];
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "approved":
+        return <Badge className="bg-tree-100 text-tree-800 hover:bg-tree-200 border-0">Approved</Badge>;
+      case "rejected":
+        return <Badge className="bg-blood-100 text-blood-800 hover:bg-blood-200 border-0">Rejected</Badge>;
+      default:
+        return <Badge className="bg-nss-100 text-nss-800 hover:bg-nss-200 border-0">Pending</Badge>;
+    }
+  };
 
-    const stats = [
-        {
-            label: 'Total Submissions',
-            value: demoSubmissions.length,
-            icon: FileText,
-            color: 'bg-nss-500'
-        },
-        {
-            label: 'Pending Review',
-            value: demoSubmissions.filter(s => s.status === 'Pending').length,
-            icon: Clock,
-            color: 'bg-nss-500'
-        },
-        {
-            label: 'Approved',
-            value: demoSubmissions.filter(s => s.status === 'Approved').length,
-            icon: CheckCircle,
-            color: 'bg-nss-500'
-        },
-        {
-            label: 'Rejected',
-            value: demoSubmissions.filter(s => s.status === 'Rejected').length,
-            icon: XCircle,
-            color: 'bg-nss-500'
-        }
-    ];
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "approved":
+        return <CheckCircle className="h-4 w-4 text-tree-500" />;
+      case "rejected":
+        return <XCircle className="h-4 w-4 text-blood-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-nss-500" />;
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <DashboardNavigation mode="unit" />
-            <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6">
-                {/* Header */}
-                <div className="hidden lg:flex items-end justify-end gap-6">
-                    {/* Unit Info Card */}
-                    <UnitInfoCard className="w-full lg:w-80 flex-shrink-0" />
-                </div>
+  const statCards = [
+    { label: "Total Submissions", value: stats.total, icon: FileText, color: "text-nss-500" },
+    { label: "Pending Review", value: stats.pending, icon: Clock, color: "text-amber-500" },
+    { label: "Approved", value: stats.approved, icon: CheckCircle, color: "text-tree-500" },
+    { label: "Rejected", value: stats.rejected, icon: XCircle, color: "text-blood-500" },
+  ];
 
-                {/* Statistics Cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-                    {stats.map((stat, index) => (
-                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs sm:text-sm font-medium text-gray-600">{stat.label}</p>
-                                    <p className="text-xl sm:text-2xl font-bold text-gray-900">{stat.value}</p>
-                                </div>
-                                <div className={`h-10 w-10 sm:h-12 sm:w-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Filters */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
-                            <div className="relative flex-1 sm:flex-none">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Search submissions..."
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
-                                />
-                            </div>
-                            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto">
-                                <option value="">All Types</option>
-                                <option value="blood">Blood Donation</option>
-                                <option value="tree">Tree Tagging</option>
-                            </select>
-                            <select className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto">
-                                <option value="">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
-                        </div>
-                        <div className="flex gap-2 w-full sm:w-auto">
-                            <button className="flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex-1 sm:flex-none">
-                                <Filter className="h-4 w-4" />
-                                <span>Filter</span>
-                            </button>
-                            <button className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex-1 sm:flex-none">
-                                <Download className="h-4 w-4" />
-                                <span>Export</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Submissions Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                    <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
-                        <h3 className="text-base sm:text-lg font-semibold text-gray-900">Student Submissions</h3>
-                        <p className="text-xs sm:text-sm text-gray-600 mt-1">Review and approve certificate submissions</p>
-                    </div>
-                    <Table data={demoSubmissions} columns={submissionColumns} />
-                </div>
-            </div>
-            <div className="mt-16">
-                <Footer />
-            </div>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <DashboardNavigation mode="unit" />
+      <div className="space-y-6 px-4 sm:px-6 pb-6">
+        {/* Header */}
+        <div className="hidden lg:flex items-end justify-end gap-6">
+          <UnitInfoCard className="w-full lg:w-80 flex-shrink-0" />
         </div>
-    );
+
+        {/* Error Alert */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <Skeleton className="h-4 w-24 mb-2" />
+                    <Skeleton className="h-8 w-16" />
+                  </CardContent>
+                </Card>
+              ))
+            : statCards.map((stat, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                        <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                      </div>
+                      <div className={`h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center`}>
+                        <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name, KTU ID, or details..."
+                  className="pl-10"
+                  value={filters.search}
+                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                />
+              </div>
+              <Select
+                value={filters.type}
+                onValueChange={(val) => setFilters({ ...filters, type: val === "all" ? "" : val })}
+              >
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="Blood Donation">Blood Donation</SelectItem>
+                  <SelectItem value="Tree Tagging">Tree Tagging</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select
+                value={filters.status}
+                onValueChange={(val) => setFilters({ ...filters, status: val === "all" ? "" : val })}
+              >
+                <SelectTrigger className="w-full sm:w-[160px]">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Submissions Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Student Submissions</CardTitle>
+            <CardDescription>Review and approve certificate submissions</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {isLoading ? (
+              <div className="p-6 space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            ) : submissions.length === 0 ? (
+              <div className="p-12 text-center text-muted-foreground">
+                <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                <p className="text-lg font-medium">No submissions found</p>
+                <p className="text-sm mt-1">Submissions from your unit's volunteers will appear here.</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Details</TableHead>
+                    <TableHead>Submitted</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {submissions.map((submission) => (
+                    <TableRow key={submission.id}>
+                      <TableCell>
+                        <div>
+                          <p className="font-medium">{submission.student_name}</p>
+                          <p className="text-sm text-muted-foreground">{submission.student_ktu_id}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={
+                            submission.submission_type === "Blood Donation"
+                              ? "border-blood-300 text-blood-700"
+                              : "border-tree-300 text-tree-700"
+                          }
+                        >
+                          {submission.submission_type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[200px] truncate">
+                        {submission.details}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(submission.submitted_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1.5">
+                          {getStatusIcon(submission.status)}
+                          {getStatusBadge(submission.status)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedSubmission(submission)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          {submission.certificate_url && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => window.open(submission.certificate_url!, "_blank")}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {submission.status === "pending" && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-tree-600 hover:text-tree-800 hover:bg-tree-50"
+                                disabled={actionLoading === submission.id}
+                                onClick={() => handleApprove(submission)}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-blood-600 hover:text-blood-800 hover:bg-blood-50"
+                                disabled={actionLoading === submission.id}
+                                onClick={() => handleReject(submission)}
+                              >
+                                Reject
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Submission Detail Dialog */}
+      <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Submission Details</DialogTitle>
+          </DialogHeader>
+          {selectedSubmission && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-lg">{selectedSubmission.student_name}</p>
+                  <p className="text-sm text-muted-foreground">{selectedSubmission.student_ktu_id}</p>
+                </div>
+                {getStatusBadge(selectedSubmission.status)}
+              </div>
+              <Separator />
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-muted-foreground">Type</p>
+                  <p className="font-medium">{selectedSubmission.submission_type}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Date</p>
+                  <p className="font-medium">
+                    {new Date(selectedSubmission.submitted_date).toLocaleDateString()}
+                  </p>
+                </div>
+                {selectedSubmission.hospital_name && (
+                  <div>
+                    <p className="text-muted-foreground">Hospital</p>
+                    <p className="font-medium">{selectedSubmission.hospital_name}</p>
+                  </div>
+                )}
+                {selectedSubmission.type_donated && (
+                  <div>
+                    <p className="text-muted-foreground">Type Donated</p>
+                    <p className="font-medium">{selectedSubmission.type_donated}</p>
+                  </div>
+                )}
+                {selectedSubmission.trees_planted && (
+                  <div>
+                    <p className="text-muted-foreground">Trees Planted</p>
+                    <p className="font-medium">{selectedSubmission.trees_planted}</p>
+                  </div>
+                )}
+              </div>
+              {selectedSubmission.donation_case && (
+                <>
+                  <Separator />
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Case Description</p>
+                    <p className="text-sm">{selectedSubmission.donation_case}</p>
+                  </div>
+                </>
+              )}
+              {selectedSubmission.certificate_url && (
+                <>
+                  <Separator />
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => window.open(selectedSubmission.certificate_url!, "_blank")}
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Certificate
+                  </Button>
+                </>
+              )}
+              {selectedSubmission.status === "pending" && (
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    className="flex-1 bg-tree-600 hover:bg-tree-700"
+                    onClick={() => {
+                      handleApprove(selectedSubmission);
+                      setSelectedSubmission(null);
+                    }}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    className="flex-1"
+                    onClick={() => {
+                      handleReject(selectedSubmission);
+                      setSelectedSubmission(null);
+                    }}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <div className="mt-16">
+        <Footer />
+      </div>
+    </div>
+  );
 }

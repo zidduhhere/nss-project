@@ -23,6 +23,12 @@ import { useUserRoleManagement } from '@/hooks/useAdminService';
 import { UserWithDetails } from '@/types/UserWithDetails';
 import { AdminUsersHandlers } from '@/handlers/adminUsersHandlers';
 import { adminService } from '@/services/adminService';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/shadcn/dialog';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { Button } from '@/components/shadcn/button';
+import { Alert, AlertDescription } from '@/components/shadcn/alert';
+import { useGeneralServices } from '@/hooks/useGeneralHook';
 
 const AdminUsers = () => {
   // User management hook
@@ -48,11 +54,25 @@ const AdminUsers = () => {
     resetUpdateState,
   } = useUserRoleManagement();
 
+  // College data for promotion dialog
+  const { colleges } = useGeneralServices();
+
   // Local UI state
   const [selectedUser, setSelectedUser] = useState<UserWithDetails | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Promotion dialog state
+  const [isPromoteDialogOpen, setIsPromoteDialogOpen] = useState(false);
+  const [promoteForm, setPromoteForm] = useState({
+    unitNumber: '',
+    collegeId: '',
+    poName: '',
+    poEmail: '',
+    poPhone: '',
+  });
+  const [promoteError, setPromoteError] = useState<string | null>(null);
 
   // Filter options state
   const [searchQuery, setSearchQuery] = useState('');
@@ -326,21 +346,20 @@ const AdminUsers = () => {
                 <div className="mt-6 pt-6 border-t border-gray-200 flex gap-3">
                   {selectedUser.role === 'student' && (
                     <button
-                      onClick={async () => {
-                        try {
-                          await promoteStudent(selectedUser.id);
-                        } catch (err) {
-                          console.error('Promotion failed:', err);
-                        }
+                      onClick={() => {
+                        setPromoteForm({
+                          unitNumber: '',
+                          collegeId: selectedUser.college_id || '',
+                          poName: selectedUser.full_name || '',
+                          poEmail: selectedUser.email || '',
+                          poPhone: '',
+                        });
+                        setPromoteError(null);
+                        setIsPromoteDialogOpen(true);
                       }}
-                      disabled={isUpdating}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 font-medium"
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                     >
-                      {isUpdating ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <ArrowUp className="w-4 h-4" />
-                      )}
+                      <ArrowUp className="w-4 h-4" />
                       <span>Promote to Unit</span>
                     </button>
                   )}
@@ -559,6 +578,120 @@ const AdminUsers = () => {
       <div className="mt-16">
         <Footer />
       </div>
+
+      {/* Promotion Dialog */}
+      <Dialog open={isPromoteDialogOpen} onOpenChange={setIsPromoteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Promote Student to Unit</DialogTitle>
+            <DialogDescription>
+              Configure the NSS unit details for {selectedUser?.full_name || 'this student'}.
+              This will create a unit account and assign them as Program Officer.
+            </DialogDescription>
+          </DialogHeader>
+
+          {promoteError && (
+            <Alert variant="destructive">
+              <AlertDescription>{promoteError}</AlertDescription>
+            </Alert>
+          )}
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="unitNumber">Unit Number *</Label>
+              <Input
+                id="unitNumber"
+                placeholder="e.g., NSS-UNIT-101"
+                value={promoteForm.unitNumber}
+                onChange={(e) => setPromoteForm({ ...promoteForm, unitNumber: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="collegeId">College *</Label>
+              <select
+                id="collegeId"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-nss-500 focus:border-transparent"
+                value={promoteForm.collegeId}
+                onChange={(e) => setPromoteForm({ ...promoteForm, collegeId: e.target.value })}
+              >
+                <option value="">Select a college</option>
+                {colleges.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} ({c.district})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="poName">Program Officer Name</Label>
+              <Input
+                id="poName"
+                placeholder="PO full name"
+                value={promoteForm.poName}
+                onChange={(e) => setPromoteForm({ ...promoteForm, poName: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="poEmail">PO Email</Label>
+                <Input
+                  id="poEmail"
+                  type="email"
+                  placeholder="po@college.edu"
+                  value={promoteForm.poEmail}
+                  onChange={(e) => setPromoteForm({ ...promoteForm, poEmail: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="poPhone">PO Phone</Label>
+                <Input
+                  id="poPhone"
+                  type="tel"
+                  placeholder="9876543210"
+                  value={promoteForm.poPhone}
+                  onChange={(e) => setPromoteForm({ ...promoteForm, poPhone: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPromoteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white"
+              disabled={isUpdating || !promoteForm.unitNumber || !promoteForm.collegeId}
+              onClick={async () => {
+                if (!selectedUser) return;
+                setPromoteError(null);
+                try {
+                  await promoteStudent(selectedUser.id, {
+                    unitNumber: promoteForm.unitNumber,
+                    collegeId: promoteForm.collegeId,
+                    poName: promoteForm.poName || undefined,
+                    poEmail: promoteForm.poEmail || undefined,
+                    poPhone: promoteForm.poPhone || undefined,
+                  });
+                  setIsPromoteDialogOpen(false);
+                } catch (err: any) {
+                  setPromoteError(err.message || 'Promotion failed');
+                }
+              }}
+            >
+              {isUpdating ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <ArrowUp className="w-4 h-4 mr-2" />
+              )}
+              Promote to Unit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

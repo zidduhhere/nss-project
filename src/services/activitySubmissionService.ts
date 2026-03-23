@@ -32,7 +32,7 @@ export const activitySubmissionService = {
                     .from('blood-donation-certificates')
                     .getPublicUrl(uploadData.path);
 
-                certificateUrl = publicURL;
+                certificateUrl = publicURL.publicUrl;
             }
 
             const { data: insertData, error: insertError } = await supabase

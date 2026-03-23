@@ -41,7 +41,7 @@ const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
                         {...props}
                     >
                         {placeholder && (
-                            <option value={placeholder} defaultChecked>
+                            <option value="" disabled>
                                 {placeholder}
                             </option>
                         )}

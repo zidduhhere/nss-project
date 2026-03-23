@@ -8,7 +8,7 @@ export const activityStatusServices = {
     approveActivity: async (id: string, activityType: ActivityType) => {
         try {
             const { data, error } = await supabase
-                .from(activityType === ActivityType.BloodDonation ? 'blood_donations' : 'tree_tagging')
+                .from(activityType === ActivityType.BloodDonation ? 'blood_donation_submissions' : 'tree_tagging_submissions')
                 .update({ status: 'approved' })
                 .eq('id', id);
 
@@ -28,7 +28,7 @@ export const activityStatusServices = {
     rejectActivity: async (id: string, activityType: ActivityType) => {
         try {
             const { data, error } = await supabase
-                .from(activityType === ActivityType.BloodDonation ? 'blood_donations' : 'tree_tagging')
+                .from(activityType === ActivityType.BloodDonation ? 'blood_donation_submissions' : 'tree_tagging_submissions')
                 .update({ status: 'rejected' })
                 .eq('id', id);
 
@@ -48,7 +48,7 @@ export const activityStatusServices = {
     certifyActivity: async (id: string, activityType: ActivityType) => {
         try {
             const { data, error } = await supabase
-                .from(activityType === ActivityType.BloodDonation ? 'blood_donations' : 'tree_tagging')
+                .from(activityType === ActivityType.BloodDonation ? 'blood_donation_submissions' : 'tree_tagging_submissions')
                 .update({ is_certified: true })
                 .eq('id', id);
 
@@ -68,7 +68,7 @@ export const activityStatusServices = {
     changeToPending: async (id: string, activityType: ActivityType) => {
         try {
             const { data, error } = await supabase
-                .from(activityType === ActivityType.BloodDonation ? 'blood_donations' : 'tree_tagging')
+                .from(activityType === ActivityType.BloodDonation ? 'blood_donation_submissions' : 'tree_tagging_submissions')
                 .update({ status: 'pending' })
                 .eq('id', id);
 

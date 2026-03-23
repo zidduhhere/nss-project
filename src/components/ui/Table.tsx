@@ -32,7 +32,7 @@ export function Table<T>({
             return (
                 <tbody>
                     <tr>
-                        <td colSpan={columns.length} className="px-6 py-12 text-center">
+                        <td colSpan={columns.length} className="px-8 py-16 text-center">
                             <div className="flex items-center justify-center space-x-3">
                                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
                                 <span className="text-gray-500">Loading...</span>
@@ -47,7 +47,7 @@ export function Table<T>({
             return (
                 <tbody>
                     <tr>
-                        <td colSpan={columns.length} className="px-6 py-12 text-center text-gray-500">
+                        <td colSpan={columns.length} className="px-8 py-16 text-center text-gray-500">
                             {emptyMessage}
                         </td>
                     </tr>
@@ -62,7 +62,7 @@ export function Table<T>({
                         {columns.map((column) => (
                             <td
                                 key={String(column.key)}
-                                className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                                className="px-8 py-4 whitespace-nowrap text-sm text-gray-900"
                                 style={{ width: column.width }}
                             >
                                 {column.render

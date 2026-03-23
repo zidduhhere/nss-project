@@ -435,16 +435,25 @@ export const useUserRoleManagement = () => {
    * @param {string} userId - The UUID of the student user to promote
    * @returns {Promise<UserProfile>} The updated user profile
    */
-  const promoteStudent = async (userId: string): Promise<UserProfile> => {
+  const promoteStudent = async (
+    userId: string,
+    unitConfig: {
+      unitNumber: string;
+      collegeId: string;
+      poName?: string;
+      poEmail?: string;
+      poPhone?: string;
+    }
+  ): Promise<UserProfile> => {
     setIsUpdating(true);
     setUpdateError(null);
     setUpdateSuccess(false);
     setSuccessMessage(null);
 
     try {
-      const updatedUser = await adminService.promoteStudent(userId);
+      const updatedUser = await adminService.promoteStudent(userId, unitConfig);
       setUpdateSuccess(true);
-      setSuccessMessage(`${updatedUser.full_name || 'User'} has been promoted to unit account`);
+      setSuccessMessage(`${updatedUser.full_name || 'User'} has been promoted to unit account (${unitConfig.unitNumber})`);
       return updatedUser;
     } catch (err: any) {
       const errorMessage = err.message || "Failed to promote student";

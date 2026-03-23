@@ -7,6 +7,7 @@ import ProfilePlaceholder from "../ui/ProfilePlaceholder";
 import images from "@/assets/images";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { UseAuthContext } from "@/context/AuthContext";
 
 interface NavbarProps {
   user?: {
@@ -43,7 +44,8 @@ export default function Navbar({}: NavbarProps) {
   });
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const { session, logoutUser, role } = UseAuthContext();
+  const isLoggedIn = !!session;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,8 +91,7 @@ export default function Navbar({}: NavbarProps) {
                 {navLinks.map((link) => {
                   const active = location.pathname === link.path;
                   return (
-                    <button
-                      key={link.name}
+                    <button type="button"                      key={link.name}
                       onClick={() => navigate(link.path)}
                       className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                         active
@@ -104,8 +105,7 @@ export default function Navbar({}: NavbarProps) {
                 })}
                 {/* More dropdown */}
                 <div className="relative" ref={moreRef}>
-                  <button
-                    onClick={() => setMoreOpen((o) => !o)}
+                  <button type="button"                    onClick={() => setMoreOpen((o) => !o)}
                     className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                       moreLinks.some((l) => l.path === location.pathname)
                         ? "text-white bg-white/10"
@@ -117,8 +117,7 @@ export default function Navbar({}: NavbarProps) {
                   {moreOpen && (
                     <div className="absolute right-0 mt-2 w-52 bg-black border border-white/10 rounded-xl shadow-lg py-2 z-50">
                       {moreLinks.map((l) => (
-                        <button
-                          key={l.path}
+                        <button type="button"                          key={l.path}
                           onClick={() => {
                             navigate(l.path);
                             setMoreOpen(false);
@@ -142,6 +141,13 @@ export default function Navbar({}: NavbarProps) {
             <div className="hidden lg:flex items-center space-x-3">
               {isLoggedIn ? (
                 <div className="hidden lg:flex items-center space-x-3">
+                  <ProfilePlaceholder size="sm" />
+                  <OutlinedButton onClick={async () => { await logoutUser(); navigate("/home"); }} size="md">
+                    Logout
+                  </OutlinedButton>
+                </div>
+              ) : (
+                <div className="hidden lg:flex items-center space-x-3">
                   <OutlinedButton onClick={() => navigate("/login")} size="md">
                     Sign In
                   </OutlinedButton>
@@ -153,20 +159,12 @@ export default function Navbar({}: NavbarProps) {
                     Sign Up
                   </FilledButton>
                 </div>
-              ) : (
-                <div className="hidden lg:flex items-center space-x-3">
-                  <ProfilePlaceholder size="sm" />
-                  <OutlinedButton onClick={() => navigate("/login")} size="md">
-                    Logout
-                  </OutlinedButton>
-                </div>
               )}
             </div>
 
             {/* Drawer trigger (shown on mobile & tablet) */}
             <div className="lg:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              <button type="button"                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-white/70 hover:text-white p-2"
               >
                 {isMobileMenuOpen ? (
@@ -200,8 +198,7 @@ export default function Navbar({}: NavbarProps) {
                   </div>
                   <span className="text-white font-semibold">Menu</span>
                 </div>
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
+                <button type="button"                  onClick={() => setIsMobileMenuOpen(false)}
                   className="text-white/70 hover:text-white p-2"
                 >
                   <X className="h-6 w-6" />
@@ -213,8 +210,7 @@ export default function Navbar({}: NavbarProps) {
                 {navLinks.map((link) => {
                   const active = location.pathname === link.path;
                   return (
-                    <button
-                      key={link.name}
+                    <button type="button"                      key={link.name}
                       onClick={() => {
                         navigate(link.path);
                         setIsMobileMenuOpen(false);
@@ -237,8 +233,7 @@ export default function Navbar({}: NavbarProps) {
                   {moreLinks.map((l) => {
                     const active = location.pathname === l.path;
                     return (
-                      <button
-                        key={l.name}
+                      <button type="button"                        key={l.name}
                         onClick={() => {
                           navigate(l.path);
                           setIsMobileMenuOpen(false);
@@ -258,27 +253,43 @@ export default function Navbar({}: NavbarProps) {
 
               {/* Action Buttons */}
               <div className="p-6 border-t border-white/10 space-y-3">
-                <OutlinedButton
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    navigate("/login");
-                  }}
-                  size="lg"
-                  className="w-full"
-                >
-                  Sign In
-                </OutlinedButton>
-                <FilledButton
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    navigate("/register");
-                  }}
-                  size="lg"
-                  variant="lightNss"
-                  className="w-full"
-                >
-                  Sign Up
-                </FilledButton>
+                {isLoggedIn ? (
+                  <OutlinedButton
+                    onClick={async () => {
+                      setIsMobileMenuOpen(false);
+                      await logoutUser();
+                      navigate("/home");
+                    }}
+                    size="lg"
+                    className="w-full"
+                  >
+                    Logout
+                  </OutlinedButton>
+                ) : (
+                  <>
+                    <OutlinedButton
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        navigate("/login");
+                      }}
+                      size="lg"
+                      className="w-full"
+                    >
+                      Sign In
+                    </OutlinedButton>
+                    <FilledButton
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        navigate("/register");
+                      }}
+                      size="lg"
+                      variant="lightNss"
+                      className="w-full"
+                    >
+                      Sign Up
+                    </FilledButton>
+                  </>
+                )}
               </div>
             </div>
           </div>

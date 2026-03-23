@@ -1,5 +1,15 @@
 import { Award, TrendingUp, Clock, CheckCircle } from 'lucide-react';
-import { Certificate } from './mockData';
+
+interface Certificate {
+    id: string;
+    type: "Blood Donation" | "Tree Plantation" | "Community Service" | "Environmental";
+    reason: string;
+    status: "pending" | "approved" | "rejected";
+    verifiedBy?: string;
+    submissionDate: string;
+    college: string;
+    details: string;
+}
 
 interface StatsSectionProps {
     certificates: Certificate[];

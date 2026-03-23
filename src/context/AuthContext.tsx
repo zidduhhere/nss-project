@@ -19,59 +19,58 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 
     useEffect(() => {
+        let isMounted = true;
+
         const fetchSessionAndSetRole = async () => {
-            setLoading(true); // Set loading to true at the start
+            setLoading(true);
             try {
                 const { data } = await supabase.auth.getSession();
-                if (data.session) {
+                if (data.session && isMounted) {
                     setSession(data.session);
                     const fetched_role = (await supabase.from("profiles").select("role, unit_id").eq("id", data.session.user.id).single());
                     const roleName = fetched_role.data?.role;
                     const unitId = fetched_role.data?.unit_id;
 
-
-                    if (roleName) {
-                        
+                    if (roleName && isMounted) {
                         setRole({role: roleName, unit_id: unitId} as RoleResult);
                     }
-                    else {
+                    else if (isMounted) {
                         setRole(null);
                         setSession(null);
                         throw new Error("User role not found. Contact admin.");
                     }
                 }
-
-
-                 const authListener = supabase.auth.onAuthStateChange((_event, session) => {
-                    setSession(session);
-                    if (!session) {
-                        setRole(null);
-                    }
-                    else {
-                        //Fetch role when session changes
-                        supabase.from("profiles").select("role, unit_id").eq("id", session.user.id).single().then(({data}) => {
-                            const roleName = data?.role;
-                            const unitId = data?.unit_id;
-                            if (roleName) {
-                                setRole({role: roleName, unit_id: unitId} as RoleResult);
-                            }
-                        });
-                    }
-                });
-
-
-                // Return cleanup function
-                return () => {
-                    authListener.data.subscription.unsubscribe();
-                };
             } catch (e) {
                 console.error("Error fetching session:", e);
-                // Handle error appropriately
             } finally {
-                setLoading(false); // Set loading to false when done
+                if (isMounted) setLoading(false);
             }
         };
+
         fetchSessionAndSetRole();
+
+        const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (!isMounted) return;
+            setSession(session);
+            if (!session) {
+                setRole(null);
+            }
+            else {
+                supabase.from("profiles").select("role, unit_id").eq("id", session.user.id).single().then(({data}) => {
+                    if (!isMounted) return;
+                    const roleName = data?.role;
+                    const unitId = data?.unit_id;
+                    if (roleName) {
+                        setRole({role: roleName, unit_id: unitId} as RoleResult);
+                    }
+                });
+            }
+        });
+
+        return () => {
+            isMounted = false;
+            authListener.subscription.unsubscribe();
+        };
     }, []);
 
     const signUpUser = async (student: FormFields) => {
@@ -154,11 +153,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             
             //assign the role to the state variable by checking the unit condition
-            if(role ) {
+            if(role) {
                 setRole({ role: role.role, unit_id: role.unit_id } as const);
             }
             else {
-                setRole(role);
+                setRole(null);
             }
             
             //Throws an error if role is null or undefined

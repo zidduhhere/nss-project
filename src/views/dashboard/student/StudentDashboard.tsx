@@ -2,7 +2,6 @@ import { Footer } from "@/components/ui";
 import DashboardHeader from "./sections/DashboardHeader";
 import { useStudentDashboard } from "@/hooks/useStudentDashboard";
 import {
-  LoadingSpinner,
   DashboardHeader as CommonDashboardHeader,
 } from "@/components/common";
 import {
@@ -20,7 +19,11 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { FilledButton } from "@/components/ui";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/shadcn/card";
+import { Badge } from "@/components/shadcn/badge";
+import { Alert, AlertTitle, AlertDescription } from "@/components/shadcn/alert";
+import { Skeleton } from "@/components/shadcn/skeleton";
+import { cn } from "@/lib/utils";
 
 interface StudentDashboardProps {
   onLogout: () => void;
@@ -41,8 +44,44 @@ export default function StudentDashboard({}: StudentDashboardProps) {
     return (
       <div className="min-h-screen bg-gray-50">
         <DashboardHeader />
-        <div className="flex items-center justify-center h-96">
-          <LoadingSpinner size="lg" message="Loading dashboard..." />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <div className="space-y-3 mb-10">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-5 w-96" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Skeleton className="h-12 w-12 rounded-lg" />
+                    <Skeleton className="h-5 w-5 rounded" />
+                  </div>
+                  <Skeleton className="h-8 w-16 mb-2" />
+                  <Skeleton className="h-4 w-24" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+            <Card className="lg:col-span-2">
+              <CardContent className="p-6 space-y-4">
+                <Skeleton className="h-6 w-40 mb-4" />
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-20 w-full rounded-lg" />
+                ))}
+              </CardContent>
+            </Card>
+            <div className="space-y-6">
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <Skeleton className="h-6 w-32 mb-2" />
+                  <Skeleton className="h-12 w-full rounded-lg" />
+                  <Skeleton className="h-12 w-full rounded-lg" />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -53,32 +92,37 @@ export default function StudentDashboard({}: StudentDashboardProps) {
       <div className="min-h-screen bg-gray-50">
         <DashboardHeader />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div className="bg-blood-50 border border-blood-200 text-blood-700 px-4 py-3 rounded-lg">
-            <p className="font-semibold">Error loading dashboard</p>
-            <p className="text-sm">{error}</p>
-            <button
-              onClick={refetch}
-              className="mt-2 text-sm underline hover:no-underline"
-            >
-              Try again
-            </button>
-          </div>
+          <Alert variant="destructive" className="border-blood-200 bg-blood-50">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="text-blood-700 font-semibold">
+              Error loading dashboard
+            </AlertTitle>
+            <AlertDescription className="text-blood-600">
+              <p>{error}</p>
+              <button
+                onClick={refetch}
+                className="mt-2 text-sm font-medium underline hover:no-underline"
+              >
+                Try again
+              </button>
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );
   }
 
-  const getStatusColor = (status: string | null) => {
+  const getStatusVariant = (status: string | null) => {
     switch (status) {
       case "approved":
       case "certified":
-        return "bg-tree-100 text-tree-800";
+        return "success" as const;
       case "pending":
-        return "bg-nss-100 text-nss-800";
+        return "warning" as const;
       case "rejected":
-        return "bg-blood-100 text-blood-800";
+        return "danger" as const;
       default:
-        return "bg-white text-black border border-gray-300";
+        return "outline" as const;
     }
   };
 
@@ -86,11 +130,11 @@ export default function StudentDashboard({}: StudentDashboardProps) {
     switch (status) {
       case "approved":
       case "certified":
-        return <CheckCircle2 className="h-4 w-4" />;
+        return <CheckCircle2 className="h-3.5 w-3.5" />;
       case "pending":
-        return <Clock className="h-4 w-4" />;
+        return <Clock className="h-3.5 w-3.5" />;
       case "rejected":
-        return <AlertCircle className="h-4 w-4" />;
+        return <AlertCircle className="h-3.5 w-3.5" />;
       default:
         return null;
     }
@@ -105,12 +149,42 @@ export default function StudentDashboard({}: StudentDashboardProps) {
     });
   };
 
+  const statCards = [
+    {
+      label: "Total Activities",
+      value: stats?.totalActivities || 0,
+      icon: FileText,
+      gradient: "from-nss-500 to-nss-600",
+      trend: <TrendingUp className="h-5 w-5 text-tree-500" />,
+    },
+    {
+      label: "Blood Donations",
+      value: stats?.bloodDonationCount || 0,
+      icon: Heart,
+      gradient: "from-red-500 to-red-600",
+      trend: null,
+    },
+    {
+      label: "Tree Tagging",
+      value: stats?.treeTaggingCount || 0,
+      icon: TreePine,
+      gradient: "from-green-500 to-green-600",
+      trend: null,
+    },
+    {
+      label: "Pending Review",
+      value: stats?.pendingSubmissions || 0,
+      icon: Clock,
+      gradient: "from-yellow-500 to-yellow-600",
+      trend: null,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-        {/* Page Header */}
         <CommonDashboardHeader
           title="My Dashboard"
           subtitle="Track your NSS journey and activities"
@@ -128,270 +202,233 @@ export default function StudentDashboard({}: StudentDashboardProps) {
           className="mb-8"
         />
 
-        {/* Volunteer Registration Status Banner */}
         {!stats?.isRegistered ? (
-          <div className="mb-8 bg-gradient-to-r from-nss-500 to-nss-600 rounded-2xl shadow-lg p-6 sm:p-8 text-white width-fit">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-              <div className="flex-1">
-                <h3 className="text-xl sm:text-2xl font-bold mb-2 flex items-center gap-2">
-                  <AlertCircle className="h-6 w-6" />
-                  Complete Your Volunteer Registration
-                </h3>
-                <p className="text-nss-100 text-sm sm:text-base">
-                  Register as an NSS volunteer to start tracking your activities
-                  and earning recognition for your service.
-                </p>
-              </div>
-              <FilledButton
-                variant="lightNss"
-                onClick={() =>
-                  navigate("/dashboard/student/volunteer-registration")
-                }
-                className="flex items-center gap-2 whitespace-nowrap bg-white hover:bg-gray-50"
-              >
-                <Plus className="h-4 w-4" />
-                Register Now
-              </FilledButton>
-            </div>
-          </div>
-        ) : stats.volunteerStatus === "pending" ? (
-          <div className="mb-8 bg-nss-50 border-l-4 border-nss-400 rounded-lg p-4 sm:p-6">
-            <div className="flex items-start gap-3">
-              <Clock className="h-6 w-6 text-nss-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-nss-900 mb-1">
-                  Registration Pending
-                </h3>
-                <p className="text-sm text-nss-800">
-                  Your volunteer registration is under review by your unit
-                  coordinator. You'll be notified once it's approved.
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : stats.volunteerStatus === "approved" ? (
-          <div className="mb-8 bg-tree-50 border-l-4 border-tree-400 rounded-lg p-4 sm:p-6">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="h-6 w-6 text-tree-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-tree-900 mb-1">
-                  Registration Approved!
-                </h3>
-                <p className="text-sm text-tree-800">
-                  Your volunteer registration has been approved. Start
-                  submitting your activities to earn certification.
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : stats.volunteerStatus === "certified" ? (
-          <div className="mb-8 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl shadow-lg p-4 sm:p-6 text-white">
-            <div className="flex items-center gap-3">
-              <Award className="h-8 w-8 flex-shrink-0" />
-              <div>
-                <h3 className="text-lg sm:text-xl font-bold mb-1">
-                  Certified NSS Volunteer
-                </h3>
-                <p className="text-sm text-green-50">
-                  Congratulations! You are now a certified NSS volunteer. Keep
-                  up the great work!
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-          {/* Total Activities Card */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-br from-nss-500 to-nss-600 rounded-lg">
-                <FileText className="h-6 w-6 text-white" />
-              </div>
-              <TrendingUp className="h-5 w-5 text-tree-500" />
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-              {stats?.totalActivities || 0}
-            </h3>
-            <p className="text-sm text-gray-600">Total Activities</p>
-          </div>
-
-          {/* Blood Donation Card */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-lg">
-                <Heart className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-              {stats?.bloodDonationCount || 0}
-            </h3>
-            <p className="text-sm text-gray-600">Blood Donations</p>
-          </div>
-
-          {/* Tree Tagging Card */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-lg">
-                <TreePine className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-              {stats?.treeTaggingCount || 0}
-            </h3>
-            <p className="text-sm text-gray-600">Tree Tagging</p>
-          </div>
-
-          {/* Pending Submissions Card */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg">
-                <Clock className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-              {stats?.pendingSubmissions || 0}
-            </h3>
-            <p className="text-sm text-gray-600">Pending Review</p>
-          </div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Recent Activities Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-nss-600" />
-                  Recent Activities
-                </h2>
+          <Card className="mb-8 border-0 bg-gradient-to-r from-nss-500 to-nss-600 shadow-lg overflow-hidden">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 flex items-center gap-2 text-white">
+                    <AlertCircle className="h-6 w-6" />
+                    Complete Your Volunteer Registration
+                  </h3>
+                  <p className="text-nss-100 text-sm sm:text-base">
+                    Register as an NSS volunteer to start tracking your activities
+                    and earning recognition for your service.
+                  </p>
+                </div>
                 <button
-                  onClick={() => navigate("/dashboard/student/profile")}
-                  className="text-sm text-nss-600 hover:text-nss-700 flex items-center gap-1"
+                  onClick={() =>
+                    navigate("/dashboard/student/volunteer-registration")
+                  }
+                  className="flex items-center gap-2 whitespace-nowrap bg-white hover:bg-gray-50 text-nss-700 font-medium px-5 py-2.5 rounded-lg transition-colors shadow-sm"
                 >
-                  View All <ArrowRight className="h-4 w-4" />
+                  <Plus className="h-4 w-4" />
+                  Register Now
                 </button>
               </div>
-
-              {recentActivities.length === 0 ? (
-                <div className="text-center py-12">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600 mb-4">
-                    No activities submitted yet
+            </CardContent>
+          </Card>
+        ) : stats.volunteerStatus === "pending" ? (
+          <Alert className="mb-8 border-l-4 border-l-nss-400 bg-nss-50 border-nss-200">
+            <Clock className="h-5 w-5 text-nss-600" />
+            <AlertTitle className="font-semibold text-nss-900">
+              Registration Pending
+            </AlertTitle>
+            <AlertDescription className="text-sm text-nss-800">
+              Your volunteer registration is under review by your unit
+              coordinator. You'll be notified once it's approved.
+            </AlertDescription>
+          </Alert>
+        ) : stats.volunteerStatus === "approved" ? (
+          <Alert className="mb-8 border-l-4 border-l-tree-400 bg-tree-50 border-tree-200">
+            <CheckCircle2 className="h-5 w-5 text-tree-600" />
+            <AlertTitle className="font-semibold text-tree-900">
+              Registration Approved!
+            </AlertTitle>
+            <AlertDescription className="text-sm text-tree-800">
+              Your volunteer registration has been approved. Start
+              submitting your activities to earn certification.
+            </AlertDescription>
+          </Alert>
+        ) : stats.volunteerStatus === "certified" ? (
+          <Card className="mb-8 border-0 bg-gradient-to-r from-green-500 to-green-600 shadow-lg">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center gap-3 text-white">
+                <Award className="h-8 w-8 flex-shrink-0" />
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold mb-1">
+                    Certified NSS Volunteer
+                  </h3>
+                  <p className="text-sm text-green-50">
+                    Congratulations! You are now a certified NSS volunteer. Keep
+                    up the great work!
                   </p>
-                  <FilledButton
-                    variant="primary"
-                    onClick={() => navigate("/dashboard/student/submit")}
-                    className="flex items-center gap-2 mx-auto"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Submit Activity
-                  </FilledButton>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {recentActivities.map((activity) => (
-                    <div
-                      key={activity.id}
-                      className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                      <div
-                        className={`p-2 rounded-lg ${
-                          activity.type === "blood-donation"
-                            ? "bg-red-100"
-                            : "bg-green-100"
-                        }`}
-                      >
-                        {activity.type === "blood-donation" ? (
-                          <Heart className="h-5 w-5 text-blood-600" />
-                        ) : (
-                          <TreePine className="h-5 w-5 text-tree-600" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="font-semibold text-gray-900 text-sm">
-                            {activity.title}
-                          </h3>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                              activity.status
-                            )}`}
-                          >
-                            {getStatusIcon(activity.status)}
-                            {activity.status}
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {formatDate(activity.date)}
-                          </span>
-                          {activity.location && (
-                            <span className="truncate">
-                              {activity.location}
-                            </span>
-                          )}
-                          {activity.count && (
-                            <span className="font-medium">
-                              {activity.count} trees
-                            </span>
-                          )}
-                        </div>
-                      </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          {statCards.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Card
+                key={item.label}
+                className="hover:shadow-md transition-shadow duration-200"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={cn("p-3 rounded-lg bg-gradient-to-br", item.gradient)}>
+                      <Icon className="h-5 w-5 text-white" />
                     </div>
-                  ))}
+                    {item.trend}
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                    {item.value}
+                  </p>
+                  <p className="text-sm text-gray-500">{item.label}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="lg:col-span-2">
+            <Card className="shadow-md">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-nss-600" />
+                    Recent Activities
+                  </CardTitle>
+                  <button
+                    onClick={() => navigate("/dashboard/student/profile")}
+                    className="text-sm text-nss-600 hover:text-nss-700 font-medium flex items-center gap-1 transition-colors"
+                  >
+                    View All <ArrowRight className="h-4 w-4" />
+                  </button>
                 </div>
-              )}
-            </div>
+              </CardHeader>
+              <CardContent>
+                {recentActivities.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                      <FileText className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 mb-4">
+                      No activities submitted yet
+                    </p>
+                    <button
+                      onClick={() => navigate("/dashboard/student/submit")}
+                      className="inline-flex items-center gap-2 bg-nss-600 hover:bg-nss-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Submit Activity
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {recentActivities.map((activity) => (
+                      <div
+                        key={activity.id}
+                        className="flex items-start gap-4 p-4 rounded-lg bg-gray-50/80 hover:bg-gray-100/80 transition-colors border border-gray-100"
+                      >
+                        <div
+                          className={cn(
+                            "p-2.5 rounded-lg flex-shrink-0",
+                            activity.type === "blood-donation"
+                              ? "bg-red-100"
+                              : "bg-green-100"
+                          )}
+                        >
+                          {activity.type === "blood-donation" ? (
+                            <Heart className="h-4 w-4 text-blood-600" />
+                          ) : (
+                            <TreePine className="h-4 w-4 text-tree-600" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-1.5">
+                            <h3 className="font-medium text-gray-900 text-sm">
+                              {activity.title}
+                            </h3>
+                            <Badge
+                              variant={getStatusVariant(activity.status)}
+                              className="gap-1 flex-shrink-0"
+                            >
+                              {getStatusIcon(activity.status)}
+                              {activity.status}
+                            </Badge>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(activity.date)}
+                            </span>
+                            {activity.location && (
+                              <span className="truncate">
+                                {activity.location}
+                              </span>
+                            )}
+                            {activity.count && (
+                              <span className="font-medium text-gray-600">
+                                {activity.count} trees
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Quick Actions & Activity Summary */}
           <div className="space-y-6">
-            {/* Quick Actions Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">
-                Quick Actions
-              </h2>
-              <div className="space-y-3">
+            <Card className="shadow-md">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 <button
                   onClick={() => navigate("/dashboard/student/submit")}
-                  className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-nss-500 to-nss-600 text-white rounded-lg hover:from-nss-600 hover:to-nss-700 transition-all"
+                  className="w-full flex items-center gap-3 p-3.5 bg-gradient-to-r from-nss-500 to-nss-600 text-white rounded-lg hover:from-nss-600 hover:to-nss-700 transition-all shadow-sm"
                 >
                   <Plus className="h-5 w-5" />
                   <span className="font-medium">Submit Activity</span>
                 </button>
                 <button
                   onClick={() => navigate("/dashboard/student/profile")}
-                  className="w-full flex items-center gap-3 p-4 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center gap-3 p-3.5 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <UserCheck className="h-5 w-5" />
                   <span className="font-medium">View Profile</span>
                 </button>
                 {!stats?.isRegistered && (
                   <button
-                    onClick={() => navigate("/dashboard/student/volunteer-registration")}
-                    className="w-full flex items-center gap-3 p-4 bg-tree-100 text-tree-700 rounded-lg hover:bg-tree-200 transition-colors"
+                    onClick={() =>
+                      navigate("/dashboard/student/volunteer-registration")
+                    }
+                    className="w-full flex items-center gap-3 p-3.5 bg-tree-50 text-tree-700 border border-tree-200 rounded-lg hover:bg-tree-100 transition-colors"
                   >
                     <Award className="h-5 w-5" />
                     <span className="font-medium">Register as Volunteer</span>
                   </button>
                 )}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Activity Summary Card */}
             {activitySummary && (stats?.totalActivities || 0) > 0 && (
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">
-                  Activity Summary
-                </h2>
-                <div className="space-y-4">
-                  {/* Blood Donation Summary */}
+              <Card className="shadow-md">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Activity Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
                   <div>
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-2.5">
                       <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
                         <Heart className="h-4 w-4 text-blood-600" />
                         Blood Donation
@@ -400,24 +437,26 @@ export default function StudentDashboard({}: StudentDashboardProps) {
                         {activitySummary.bloodDonation.total}
                       </span>
                     </div>
-                    <div className="flex gap-2 text-xs">
-                      <span className="px-2 py-1 bg-tree-100 text-tree-700 rounded">
-                        ✓ {activitySummary.bloodDonation.approved}
-                      </span>
-                      <span className="px-2 py-1 bg-nss-100 text-nss-700 rounded">
-                        ⏳ {activitySummary.bloodDonation.pending}
-                      </span>
+                    <div className="flex gap-2">
+                      <Badge variant="success" className="gap-1 text-xs">
+                        <CheckCircle2 className="h-3 w-3" />
+                        {activitySummary.bloodDonation.approved}
+                      </Badge>
+                      <Badge variant="warning" className="gap-1 text-xs">
+                        <Clock className="h-3 w-3" />
+                        {activitySummary.bloodDonation.pending}
+                      </Badge>
                       {activitySummary.bloodDonation.rejected > 0 && (
-                        <span className="px-2 py-1 bg-red-100 text-red-700 rounded">
-                          ✗ {activitySummary.bloodDonation.rejected}
-                        </span>
+                        <Badge variant="danger" className="gap-1 text-xs">
+                          <AlertCircle className="h-3 w-3" />
+                          {activitySummary.bloodDonation.rejected}
+                        </Badge>
                       )}
                     </div>
                   </div>
 
-                  {/* Tree Tagging Summary */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
+                  <div className="border-t border-gray-100 pt-4">
+                    <div className="flex items-center justify-between mb-2.5">
                       <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
                         <TreePine className="h-4 w-4 text-tree-600" />
                         Tree Tagging
@@ -426,31 +465,33 @@ export default function StudentDashboard({}: StudentDashboardProps) {
                         {activitySummary.treeTagging.total}
                       </span>
                     </div>
-                    <div className="flex gap-2 text-xs">
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
-                        ✓ {activitySummary.treeTagging.approved}
-                      </span>
-                      <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded">
-                        ⏳ {activitySummary.treeTagging.pending}
-                      </span>
+                    <div className="flex gap-2">
+                      <Badge variant="success" className="gap-1 text-xs">
+                        <CheckCircle2 className="h-3 w-3" />
+                        {activitySummary.treeTagging.approved}
+                      </Badge>
+                      <Badge variant="warning" className="gap-1 text-xs">
+                        <Clock className="h-3 w-3" />
+                        {activitySummary.treeTagging.pending}
+                      </Badge>
                       {activitySummary.treeTagging.rejected > 0 && (
-                        <span className="px-2 py-1 bg-red-100 text-red-700 rounded">
-                          ✗ {activitySummary.treeTagging.rejected}
-                        </span>
+                        <Badge variant="danger" className="gap-1 text-xs">
+                          <AlertCircle className="h-3 w-3" />
+                          {activitySummary.treeTagging.rejected}
+                        </Badge>
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
 
-            {/* Volunteer Info Card */}
             {stats?.isRegistered && (
-              <div className="bg-gradient-to-br from-nss-50 to-nss-100 rounded-2xl shadow-lg border border-nss-200 p-6">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">
-                  Volunteer Info
-                </h2>
-                <div className="space-y-3">
+              <Card className="shadow-md bg-gradient-to-br from-nss-50 to-nss-100/50 border-nss-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Volunteer Info</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600">Unit Number</span>
                     <span className="font-semibold text-gray-900">
@@ -473,17 +514,16 @@ export default function StudentDashboard({}: StudentDashboardProps) {
                   </div>
                   <div className="flex justify-between items-center text-sm pt-3 border-t border-nss-200">
                     <span className="text-gray-600">Status</span>
-                    <span
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        stats.volunteerStatus
-                      )}`}
+                    <Badge
+                      variant={getStatusVariant(stats.volunteerStatus)}
+                      className="gap-1"
                     >
                       {getStatusIcon(stats.volunteerStatus)}
                       {stats.volunteerStatus?.toUpperCase()}
-                    </span>
+                    </Badge>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
           </div>
         </div>

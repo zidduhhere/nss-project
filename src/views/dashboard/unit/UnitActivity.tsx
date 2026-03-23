@@ -1,240 +1,184 @@
-import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { Calendar, Users, MapPin, Clock, Plus, Edit, Trash2, Eye } from 'lucide-react';
-
-interface Activity {
-    id: string;
-    title: string;
-    type: 'Blood Donation' | 'Tree Tagging' | 'Community Service' | 'Awareness Program';
-    date: string;
-    time: string;
-    location: string;
-    description: string;
-    maxParticipants: number;
-    registeredParticipants: number;
-    status: 'Upcoming' | 'Ongoing' | 'Completed' | 'Cancelled';
-    organizer: string;
-}
-
-const demoActivities: Activity[] = [
-    {
-        id: "1",
-        title: "Blood Donation Camp",
-        type: "Blood Donation",
-        date: "2025-09-05",
-        time: "09:00 AM",
-        location: "College Auditorium",
-        description: "Annual blood donation camp in collaboration with Kerala Blood Bank",
-        maxParticipants: 100,
-        registeredParticipants: 75,
-        status: "Upcoming",
-        organizer: "Dr. Rajesh Kumar"
-    },
-    {
-        id: "2",
-        title: "Tree Plantation Drive",
-        type: "Tree Tagging",
-        date: "2025-09-10",
-        time: "07:00 AM",
-        location: "College Campus",
-        description: "Campus tree plantation and tagging initiative for environmental conservation",
-        maxParticipants: 50,
-        registeredParticipants: 45,
-        status: "Upcoming",
-        organizer: "Prof. Meera Nair"
-    },
-    {
-        id: "3",
-        title: "Digital Literacy Program",
-        type: "Community Service",
-        date: "2025-08-25",
-        time: "02:00 PM",
-        location: "Nearby Village School",
-        description: "Teaching basic computer skills to rural students",
-        maxParticipants: 20,
-        registeredParticipants: 18,
-        status: "Completed",
-        organizer: "Arjun Krishnan"
-    },
-    {
-        id: "4",
-        title: "Health Awareness Workshop",
-        type: "Awareness Program",
-        date: "2025-08-30",
-        time: "10:00 AM",
-        location: "Community Hall",
-        description: "Awareness program on hygiene and preventive healthcare",
-        maxParticipants: 80,
-        registeredParticipants: 65,
-        status: "Ongoing",
-        organizer: "Dr. Priya Menon"
-    }
-];
+import DashboardNavigation from "../../../components/common/DashboardNavigation";
+import { Footer } from "../../../components/ui";
+import { Calendar, Users, MapPin, Clock, Activity as ActivityIcon } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shadcn/card";
+import { Badge } from "@/components/shadcn/badge";
+import { Skeleton } from "@/components/shadcn/skeleton";
+import { Alert, AlertDescription } from "@/components/shadcn/alert";
+import { Progress } from "@/components/shadcn/progress";
+import { useUnitActivities } from "@/hooks/useUnitActivities";
 
 interface UnitActivityProps {
-    user?: { name?: string; role?: string } | null;
+  user?: { name?: string; role?: string } | null;
 }
 
-export default function UnitActivity({ }: UnitActivityProps) {
+const typeLabels: Record<string, string> = {
+  camp: "Camp",
+  blood_donation: "Blood Donation",
+  tree_planting: "Tree Planting",
+  workshop: "Workshop",
+  awareness: "Awareness Program",
+  other: "Other",
+};
 
-    const getStatusBadge = (status: string) => {
-        const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-        switch (status) {
-            case 'Upcoming':
-                return `${baseClasses} bg-blue-100 text-blue-800`;
-            case 'Ongoing':
-                return `${baseClasses} bg-green-100 text-green-800`;
-            case 'Completed':
-                return `${baseClasses} bg-gray-100 text-gray-800`;
-            case 'Cancelled':
-                return `${baseClasses} bg-red-100 text-red-800`;
-            default:
-                return `${baseClasses} bg-gray-100 text-gray-800`;
-        }
-    };
+const typeColors: Record<string, string> = {
+  blood_donation: "border-l-blood-500 bg-blood-50/50",
+  tree_planting: "border-l-tree-500 bg-tree-50/50",
+  camp: "border-l-nss-500 bg-nss-50/50",
+  workshop: "border-l-blue-500 bg-blue-50/50",
+  awareness: "border-l-purple-500 bg-purple-50/50",
+  other: "border-l-gray-500 bg-gray-50/50",
+};
 
-    const getTypeColor = (type: string) => {
-        switch (type) {
-            case 'Blood Donation':
-                return 'border-l-red-500 bg-red-50';
-            case 'Tree Tagging':
-                return 'border-l-green-500 bg-green-50';
-            case 'Community Service':
-                return 'border-l-blue-500 bg-blue-50';
-            case 'Awareness Program':
-                return 'border-l-purple-500 bg-purple-50';
-            default:
-                return 'border-l-gray-500 bg-gray-50';
-        }
-    };
+export default function UnitActivity({}: UnitActivityProps) {
+  const { activities, isLoading, error, stats } = useUnitActivities();
 
-    const stats = [
-        {
-            label: 'Total Activities',
-            value: demoActivities.length,
-            icon: Calendar,
-            color: 'bg-nss-500'
-        },
-        {
-            label: 'Upcoming Events',
-            value: demoActivities.filter(a => a.status === 'Upcoming').length,
-            icon: Clock,
-            color: 'bg-nss-500'
-        },
-        {
-            label: 'Total Participants',
-            value: demoActivities.reduce((sum, a) => sum + a.registeredParticipants, 0),
-            icon: Users,
-            color: 'bg-nss-500'
-        }
-    ];
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "upcoming":
+        return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-0">Upcoming</Badge>;
+      case "ongoing":
+        return <Badge className="bg-tree-100 text-tree-800 hover:bg-tree-200 border-0">Ongoing</Badge>;
+      case "completed":
+        return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-200 border-0">Completed</Badge>;
+      case "cancelled":
+        return <Badge className="bg-blood-100 text-blood-800 hover:bg-blood-200 border-0">Cancelled</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <DashboardNavigation mode="unit" />
-            <div className="space-y-6 px-6">
-                {/* Header */}
+  const statCards = [
+    { label: "Total Activities", value: stats.total, icon: ActivityIcon, color: "text-nss-500" },
+    { label: "Upcoming", value: stats.upcoming, icon: Clock, color: "text-blue-500" },
+    { label: "Ongoing", value: stats.ongoing, icon: Calendar, color: "text-tree-500" },
+    { label: "Completed", value: stats.completed, icon: Users, color: "text-gray-500" },
+  ];
 
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <DashboardNavigation mode="unit" />
+      <div className="space-y-6 px-4 sm:px-6 pb-6">
+        {/* Error */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-
-                {/* Statistics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {stats.map((stat, index) => (
-                        <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                                </div>
-                                <div className={`h-12 w-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                                    <stat.icon className="h-6 w-6 text-white" />
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Activities List */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Scheduled Activities</h3>
-                        <p className="text-sm text-gray-600 mt-1">Manage upcoming and past NSS activities</p>
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <Skeleton className="h-4 w-24 mb-2" />
+                    <Skeleton className="h-8 w-16" />
+                  </CardContent>
+                </Card>
+              ))
+            : statCards.map((stat, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                        <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                      </div>
+                      <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                      </div>
                     </div>
-
-                    <div className="p-6 space-y-4">
-                        {demoActivities.map((activity) => (
-                            <div
-                                key={activity.id}
-                                className={`border-l-4 ${getTypeColor(activity.type)} p-4 rounded-r-lg shadow-sm`}
-                            >
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <h4 className="text-lg font-semibold text-gray-900">{activity.title}</h4>
-                                            <span className={getStatusBadge(activity.status)}>{activity.status}</span>
-                                            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                {activity.type}
-                                            </span>
-                                        </div>
-
-                                        <p className="text-gray-600 mb-3">{activity.description}</p>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                                            <div className="flex items-center space-x-2">
-                                                <Calendar className="h-4 w-4 text-gray-400" />
-                                                <span>{new Date(activity.date).toLocaleDateString()}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Clock className="h-4 w-4 text-gray-400" />
-                                                <span>{activity.time}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <MapPin className="h-4 w-4 text-gray-400" />
-                                                <span>{activity.location}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Users className="h-4 w-4 text-gray-400" />
-                                                <span>{activity.registeredParticipants}/{activity.maxParticipants} participants</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-3 text-sm text-gray-500">
-                                            Organizer: {activity.organizer}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex space-x-2 ml-4">
-                                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                            <Eye className="h-4 w-4" />
-                                        </button>
-                                        <button className="p-2 text-tree-600 hover:bg-tree-50 rounded-lg transition-colors">
-                                            <Check className="h-5 w-5" />
-                                        </button>
-                                        <button className="p-2 text-blood-600 hover:bg-blood-50 rounded-lg transition-colors">
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Progress Bar */}
-                                <div className="mt-4">
-                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                        <span>Registration Progress</span>
-                                        <span>{Math.round((activity.registeredParticipants / activity.maxParticipants) * 100)}%</span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className="bg-nss-500 h-2 rounded-full transition-all duration-300"
-                                            style={{
-                                                width: `${(activity.registeredParticipants / activity.maxParticipants) * 100}%`
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+                  </CardContent>
+                </Card>
+              ))}
         </div>
-    );
+
+        {/* Activities List */}
+        <Card>
+          <CardHeader>
+            <CardTitle>NSS Activities</CardTitle>
+            <CardDescription>All scheduled and past NSS activities</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-32 w-full rounded-lg" />
+                ))}
+              </div>
+            ) : activities.length === 0 ? (
+              <div className="py-12 text-center text-muted-foreground">
+                <ActivityIcon className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                <p className="text-lg font-medium">No activities yet</p>
+                <p className="text-sm mt-1">NSS activities will appear here once created.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activities.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className={`border-l-4 ${typeColors[activity.activity_type] || typeColors.other} p-5 rounded-r-lg`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <h4 className="text-base font-semibold text-gray-900">{activity.title}</h4>
+                          {getStatusBadge(activity.status)}
+                          <Badge variant="outline" className="text-xs">
+                            {typeLabels[activity.activity_type] || activity.activity_type}
+                          </Badge>
+                        </div>
+
+                        {activity.description && (
+                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                            {activity.description}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5" />
+                            <span>{new Date(activity.start_date).toLocaleDateString()}</span>
+                            {activity.end_date && (
+                              <span>- {new Date(activity.end_date).toLocaleDateString()}</span>
+                            )}
+                          </div>
+                          {activity.location && (
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5" />
+                              <span>{activity.location}</span>
+                            </div>
+                          )}
+                          {activity.organizer && (
+                            <div className="flex items-center gap-1.5">
+                              <Users className="h-3.5 w-3.5" />
+                              <span>{activity.organizer}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {activity.max_participants && (
+                      <div className="mt-4">
+                        <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                          <span>Capacity</span>
+                          <span>{activity.max_participants} max participants</span>
+                        </div>
+                        <Progress value={70} className="h-1.5" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      <div className="mt-16">
+        <Footer />
+      </div>
+    </div>
+  );
 }

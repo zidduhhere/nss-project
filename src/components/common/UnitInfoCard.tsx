@@ -36,8 +36,8 @@ export const UnitInfoCard = ({ className = '' }: UnitInfoCardProps) => {
     }
 
     return (
-        <div className={`md:h-18 bg-white rounded-xl shadow-sm border border-gray-200 p-2 ${className} hover:shadow-md transform transition-transform duration-300 hover:translate-y-1`}>
-            <div className="flex items-start space-x-4">
+        <div className={`md:h-18 bg-white rounded-xl shadow-sm border border-gray-200 p-4 ${className} hover:shadow-md transform transition-transform duration-300 hover:translate-y-1`}>
+            <div className="flex items-start gap-6">
                 {/* Coordinator Profile Picture */}
                 <div className="flex flex-col justify-center items-center">
                     <Placeholder
@@ -49,14 +49,14 @@ export const UnitInfoCard = ({ className = '' }: UnitInfoCardProps) => {
 
                 {/* Unit Information */}
                 <div className="flex-1 flex-row min-w-0">
-                    <div className="flex flex-col items-start space-y-1 mb-1">
+                    <div className="flex flex-col items-start gap-2 mb-2">
 
                         <span className="text-sm font-mono text-start text-black bg-gray-100 px-2  rounded">
                             {unitInfo.unitNumber}
                         </span>
                     </div>
 
-                    <div className="flex flex-col items-start space-y-1 mb-1">
+                    <div className="flex flex-col items-start gap-1 mb-2">
                         <div>
                             <p className="text-sm text-start font-semibold text-gray-900 truncate">
                                 {unitInfo.coordinatorName}
@@ -67,7 +67,7 @@ export const UnitInfoCard = ({ className = '' }: UnitInfoCardProps) => {
                         </div>
                     </div>
 
-                    <div className="flex items-start space-x-2">
+                    <div className="flex items-start gap-3">
 
                         <p className="text-xs text-start text-gray-500 truncate">
                             {unitInfo.college}
