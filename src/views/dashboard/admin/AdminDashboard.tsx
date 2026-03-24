@@ -47,12 +47,12 @@ const StatCard = ({
   >
     <CardHeader className="flex flex-row items-center justify-between pb-2">
       <CardDescription className="text-sm font-medium">{title}</CardDescription>
-      <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center', iconBg)}>
-        <Icon className={cn('h-5 w-5', iconColor)} />
+      <div className={cn('size-10 rounded-lg flex items-center justify-center', iconBg)}>
+        <Icon className={cn('size-5', iconColor)} />
       </div>
     </CardHeader>
     <CardContent>
-      <div className="text-3xl font-bold tracking-tight">{value}</div>
+      <div className="text-3xl font-bold tracking-tight tabular-nums">{value}</div>
       {description && (
         <p className="text-xs text-gray-500 mt-1">{description}</p>
       )}
@@ -144,7 +144,7 @@ const AdminDashboard = () => {
 
   if (statsLoading && !stats) {
     return (
-      <div className="font-isans min-h-screen bg-gray-50">
+      <div className="font-isans min-h-dvh bg-gray-50">
         <DashboardNavigation mode="admin" />
         <DashboardSkeleton />
       </div>
@@ -152,14 +152,14 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="font-isans min-h-screen bg-gray-50">
+    <div className="font-isans min-h-dvh bg-gray-50">
       <DashboardNavigation mode="admin" />
 
       <div className="container mx-auto px-4 py-8">
         {/* Error Alert */}
         {statsError && (
           <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
+            <AlertCircle className="size-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{statsError}</AlertDescription>
           </Alert>
@@ -168,7 +168,7 @@ const AdminDashboard = () => {
         {/* Header */}
         <div className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 text-balance">
               Admin Dashboard
             </h1>
             <p className="text-gray-500 mt-1">
@@ -180,7 +180,7 @@ const AdminDashboard = () => {
             disabled={isRefreshing}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <RefreshCw className={cn('h-4 w-4', isRefreshing && 'animate-spin')} />
+            <RefreshCw className={cn('size-4', isRefreshing && 'animate-spin')} />
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
@@ -224,36 +224,36 @@ const AdminDashboard = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardDescription className="text-sm font-medium">Total Students</CardDescription>
-              <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <Users className="h-5 w-5 text-blue-600" />
+              <div className="size-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <Users className="size-5 text-blue-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats?.totalStudents || 0}</div>
+              <div className="text-2xl font-bold tabular-nums">{stats?.totalStudents || 0}</div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardDescription className="text-sm font-medium">Rejected</CardDescription>
-              <div className="h-10 w-10 rounded-lg bg-blood-100 flex items-center justify-center">
-                <XCircle className="h-5 w-5 text-blood-600" />
+              <div className="size-10 rounded-lg bg-blood-100 flex items-center justify-center">
+                <XCircle className="size-5 text-blood-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats?.rejectedVolunteers || 0}</div>
+              <div className="text-2xl font-bold tabular-nums">{stats?.rejectedVolunteers || 0}</div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardDescription className="text-sm font-medium">Recent (7 days)</CardDescription>
-              <div className="h-10 w-10 rounded-lg bg-tree-100 flex items-center justify-center">
-                <TreePine className="h-5 w-5 text-tree-600" />
+              <div className="size-10 rounded-lg bg-tree-100 flex items-center justify-center">
+                <TreePine className="size-5 text-tree-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats?.recentRegistrations || 0}</div>
+              <div className="text-2xl font-bold tabular-nums">{stats?.recentRegistrations || 0}</div>
             </CardContent>
           </Card>
         </div>
@@ -261,13 +261,13 @@ const AdminDashboard = () => {
         {/* Recent Registrations Table */}
         <Card className="mb-8">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-xl">Recent Registrations</CardTitle>
+            <CardTitle className="text-xl text-balance">Recent Registrations</CardTitle>
             <button
               onClick={() => navigate('/dashboard/admin/volunteers')}
               className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
             >
               View All
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="size-4" />
             </button>
           </CardHeader>
           <CardContent>
@@ -279,13 +279,13 @@ const AdminDashboard = () => {
               </div>
             ) : registrationsError ? (
               <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
+                <AlertCircle className="size-4" />
                 <AlertTitle>Failed to load registrations</AlertTitle>
                 <AlertDescription>{registrationsError}</AlertDescription>
               </Alert>
             ) : registrations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <Users className="h-10 w-10 mb-3 text-gray-300" />
+                <Users className="size-10 mb-3 text-gray-300" />
                 <p className="text-sm">No recent registrations</p>
               </div>
             ) : (
@@ -362,12 +362,12 @@ const AdminDashboard = () => {
             >
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">
-                  <div className={cn('h-12 w-12 rounded-lg flex items-center justify-center transition-colors', action.iconBg)}>
-                    <action.icon className={cn('h-6 w-6', action.iconColor)} />
+                  <div className={cn('size-12 rounded-lg flex items-center justify-center transition-colors', action.iconBg)}>
+                    <action.icon className={cn('size-6', action.iconColor)} />
                   </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                  <ChevronRight className="size-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                 </div>
-                <CardTitle className="text-lg">{action.label}</CardTitle>
+                <CardTitle className="text-lg text-balance">{action.label}</CardTitle>
                 <CardDescription>{action.description}</CardDescription>
               </CardHeader>
             </Card>

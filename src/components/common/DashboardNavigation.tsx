@@ -17,24 +17,22 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
     const getNavItems = () => {
         if (mode === 'student') {
             return [
-                { name: 'Dashboard', path: '/dashboard/student' },
-                { name: 'Volunteer Registration', path: '/dashboard/student/volunteer-registration' },
-                { name: 'Submit Certificate', path: '/dashboard/student/submit' },
+                { name: 'Dashboard', path: '/dashboard/student', tourId: 'nav-dashboard' },
+                { name: 'Volunteer Registration', path: '/dashboard/student/volunteer-registration', tourId: 'nav-volunteer-registration' },
+                { name: 'Submit Certificate', path: '/dashboard/student/submit', tourId: 'nav-submit-certificate' },
             ];
         } else if (mode === 'admin') {
             return [
-                { name: 'Dashboard', path: '/dashboard/admin' },
-                { name: 'Volunteers', path: '/dashboard/admin/volunteers' },
-                { name: 'Users', path: '/dashboard/admin/users' },
-                // { name: 'Reports', path: '/dashboard/admin/reports' },
+                { name: 'Dashboard', path: '/dashboard/admin', tourId: 'nav-dashboard' },
+                { name: 'Volunteers', path: '/dashboard/admin/volunteers', tourId: 'nav-volunteers' },
+                { name: 'Users', path: '/dashboard/admin/users', tourId: 'nav-users' },
             ];
         } else {
             return [
-                { name: 'Dashboard', path: '/dashboard/unit' },
-                { name: 'Volunteers', path: '/dashboard/unit/volunteer' },
-                { name: 'Submissions', path: '/dashboard/unit/submissions' },
-                { name: 'Activity', path: '/dashboard/unit/activity' }
-
+                { name: 'Dashboard', path: '/dashboard/unit', tourId: 'nav-dashboard' },
+                { name: 'Volunteers', path: '/dashboard/unit/volunteer', tourId: 'nav-volunteers' },
+                { name: 'Submissions', path: '/dashboard/unit/submissions', tourId: 'nav-submissions' },
+                { name: 'Activity', path: '/dashboard/unit/activity', tourId: 'nav-activity' },
             ];
         }
     };
@@ -92,7 +90,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                         aria-expanded={isDrawerOpen}
                         className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-white hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
                     >
-                        <Menu className="h-6 w-6" />
+                        <Menu className="size-6" />
                         <span className="sr-only">Open navigation menu</span>
                     </button>
 
@@ -102,6 +100,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                             <NavLink
                                 key={item.path}
                                 to={item.path}
+                                data-tour={item.tourId}
                                 className={({ isActive }) =>
                                     `${baseItem} ${isActive ? linkActive : linkInactive}`
                                 }
@@ -121,7 +120,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                             onClick={handleProfile}
                             title="Profile"
                         >
-                            <User className="h-4 w-4" />
+                            <User className="size-4" />
                         </button>
 
                         {/* Logout Button */}
@@ -130,7 +129,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                             className='px-3 py-2 rounded-full text-sm font-medium transition-colors bg-red-600 hover:bg-red-500 flex items-center gap-2'
                             onClick={handleLogout}
                         >
-                            <LogOut className="h-4 w-4" />
+                            <LogOut className="size-4" />
                             <span>Logout</span>
                         </FilledButton>
                     </div>
@@ -157,7 +156,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                     {/* Drawer Header */}
                     <div className="flex items-center justify-between px-4 py-3  border-gray-200">
                         <div className="flex items-center gap-3">
-                            <img src={images.logo} alt="NSS" className="h-8 w-8" />
+                            <img src={images.logo} alt="NSS" className="size-8" />
                             <span className="font-semibold text-md text-white">Menu</span>
                         </div>
                         <button
@@ -166,7 +165,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                             className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                             aria-label="Close menu"
                         >
-                            <X className="h-5 w-5" />
+                            <X className="size-5" />
                         </button>
                     </div>
 
@@ -200,7 +199,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
 
                                 onClick={() => { closeDrawer(); handleProfile(); }}
                             >
-                                <User className="h-6 w-6" />
+                                <User className="size-6" />
                                 Profile
                             </OutlinedButton>
                             <FilledButton
@@ -208,7 +207,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                                 className='flex flex-row gap-2 w-full justify-center bg-red-600 hover:bg-red-500'
                                 onClick={() => { closeDrawer(); handleLogout(); }}
                             >
-                                <LogOut className="h-6 w-6" />
+                                <LogOut className="size-6" />
                                 Logout
                             </FilledButton>
 

@@ -42,8 +42,8 @@ export default function ActivitiesView() {
         const fetchActivities = async () => {
             try {
                 setLoading(true);
-                const data = await activitiesService.getAllActivities();
-                setActivities(data);
+                const result = await activitiesService.getAllActivities({ pageSize: 100 });
+                setActivities(result.items);
             } catch (err: any) {
                 setError(err.message || 'Failed to load activities');
             } finally {

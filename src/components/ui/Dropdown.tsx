@@ -1,10 +1,12 @@
 import React, { forwardRef } from 'react';
 import { FieldError } from 'react-hook-form';
 
+type DropdownOption = string | { label: string; value: string };
+
 interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     label?: string;
     error?: FieldError | null;
-    options: string[];
+    options: DropdownOption[];
     placeholder?: string;
 }
 
@@ -45,17 +47,15 @@ const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
                                 {placeholder}
                             </option>
                         )}
-                        {
-
-                            options.map((option, index) => {
-
-                                return (
-
-                                    <option key={index} value={option.split(' ')[0]}>
-                                        {option}
-                                    </option>
-                                );
-                            })}
+                        {options.map((option, index) => {
+                            const optValue = typeof option === 'string' ? option : option.value;
+                            const optLabel = typeof option === 'string' ? option : option.label;
+                            return (
+                                <option key={index} value={optValue}>
+                                    {optLabel}
+                                </option>
+                            );
+                        })}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                         <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

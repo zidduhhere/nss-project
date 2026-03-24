@@ -254,7 +254,7 @@ const AdminUsers = () => {
   ];
 
   return (
-    <div className="font-isans min-h-screen bg-gray-50">
+    <div className="font-isans min-h-dvh bg-gray-50">
       <DashboardNavigation mode="admin" />
 
       {/* Success Modal */}
@@ -280,7 +280,7 @@ const AdminUsers = () => {
                   onClick={handlers.handleCloseDetails}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -359,7 +359,7 @@ const AdminUsers = () => {
                       }}
                       className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                     >
-                      <ArrowUp className="w-4 h-4" />
+                      <ArrowUp className="size-4" />
                       <span>Promote to Unit</span>
                     </button>
                   )}
@@ -377,9 +377,9 @@ const AdminUsers = () => {
                       className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium"
                     >
                       {isUpdating ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin" />
                       ) : (
-                        <ArrowDown className="w-4 h-4" />
+                        <ArrowDown className="size-4" />
                       )}
                       <span>Demote to Student</span>
                     </button>
@@ -413,7 +413,7 @@ const AdminUsers = () => {
                 disabled={isRefreshing}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm"
               >
-                <RefreshCw className={`w-4 h-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`size-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
                 <span className="text-sm font-medium text-gray-700">Refresh</span>
               </button>
               <button
@@ -421,7 +421,7 @@ const AdminUsers = () => {
                 disabled={users.length === 0}
                 className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-sm"
               >
-                <Download className="w-4 h-4" />
+                <Download className="size-4" />
                 <span className="text-sm font-medium">Export CSV</span>
               </button>
             </div>
@@ -435,7 +435,7 @@ const AdminUsers = () => {
                   <p className="text-sm text-gray-600">Total Users</p>
                   <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
                 </div>
-                <Users className="w-8 h-8 text-blue-500" />
+                <Users className="size-8 text-blue-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -444,7 +444,7 @@ const AdminUsers = () => {
                   <p className="text-sm text-gray-600">Students</p>
                   <p className="text-2xl font-bold text-blue-600">{stats.totalStudents}</p>
                 </div>
-                <GraduationCap className="w-8 h-8 text-blue-500" />
+                <GraduationCap className="size-8 text-blue-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -453,7 +453,7 @@ const AdminUsers = () => {
                   <p className="text-sm text-gray-600">Units</p>
                   <p className="text-2xl font-bold text-purple-600">{stats.totalUnits}</p>
                 </div>
-                <Building2 className="w-8 h-8 text-purple-500" />
+                <Building2 className="size-8 text-purple-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -462,7 +462,7 @@ const AdminUsers = () => {
                   <p className="text-sm text-gray-600">With Applications</p>
                   <p className="text-2xl font-bold text-green-600">{stats.studentsWithApplications}</p>
                 </div>
-                <UserCheck className="w-8 h-8 text-green-500" />
+                <UserCheck className="size-8 text-green-500" />
               </div>
             </div>
           </div>
@@ -475,7 +475,7 @@ const AdminUsers = () => {
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               {/* Search Bar */}
               <div className="relative flex-1 w-full sm:max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 size-5" />
                 <input
                   type="text"
                   placeholder="Search by email, name, unit, college, or district..."
@@ -491,7 +491,7 @@ const AdminUsers = () => {
                   onClick={() => setShowFilters(!showFilters)}
                   className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Filter className="w-4 h-4" />
+                  <Filter className="size-4" />
                   <span className="text-sm font-medium">
                     {showFilters ? 'Hide Filters' : 'Show Filters'}
                   </span>
@@ -551,12 +551,12 @@ const AdminUsers = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <Loader2 className="w-12 h-12 text-primary-600 animate-spin mb-4" />
+              <Loader2 className="size-12 text-primary-600 animate-spin mb-4" />
               <p className="text-gray-600">Loading users...</p>
             </div>
           ) : users.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+              <AlertCircle className="size-12 text-gray-400 mb-4" />
               <p className="text-gray-600 text-lg">No users found</p>
               <p className="text-gray-500 text-sm mt-2">Try adjusting your filters</p>
             </div>
@@ -683,9 +683,9 @@ const AdminUsers = () => {
               }}
             >
               {isUpdating ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                <Loader2 className="size-4 animate-spin mr-2" />
               ) : (
-                <ArrowUp className="w-4 h-4 mr-2" />
+                <ArrowUp className="size-4 mr-2" />
               )}
               Promote to Unit
             </Button>

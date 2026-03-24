@@ -69,17 +69,12 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps) =>
     setSubmitError(null);
 
     try {
-      // Map display label → database enum value
-      const caseEnum =
-        DONATION_CASE_OPTIONS.find((o) => o.label === data.donationCase)?.value ??
-        data.donationCase.toLowerCase();
-
       await activitySubmissionService.submitBloodDonation(
         {
           hospitalName: data.hospitalName,
           donationDate: data.donationDate,
           typeDonated: data.donationType || null,
-          donationCase: caseEnum,
+          donationCase: data.donationCase,
           certificate: data.certificate?.[0] || null,
         },
         session.user.id
@@ -152,7 +147,7 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps) =>
           <Dropdown
             {...register("donationCase", { required: "Donation type is required" })}
             label="Type of Donation *"
-            options={DONATION_CASE_OPTIONS.map((o) => o.label)}
+            options={DONATION_CASE_OPTIONS.map((o) => ({ label: o.label, value: o.value }))}
             error={errors.donationCase}
           />
 

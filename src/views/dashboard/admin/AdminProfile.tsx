@@ -99,11 +99,11 @@ const AdminProfile = () => {
 
   if (isLoading && !adminProfile) {
     return (
-      <div className="font-isans min-h-screen bg-gray-50">
+      <div className="font-isans min-h-dvh bg-gray-50">
         <DashboardNavigation mode="admin" />
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center justify-center h-96">
-            <Loader2 className="w-12 h-12 text-primary-600 animate-spin mb-4" />
+            <Loader2 className="size-12 text-primary-600 animate-spin mb-4" />
             <p className="text-gray-600 text-lg">Loading your profile...</p>
           </div>
         </div>
@@ -113,14 +113,14 @@ const AdminProfile = () => {
 
   if (error && !adminProfile) {
     return (
-      <div className="font-isans min-h-screen bg-gray-50">
+      <div className="font-isans min-h-dvh bg-gray-50">
         <DashboardNavigation mode="admin" />
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-xl shadow-lg p-8 text-center">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-blood-100 rounded-full flex items-center justify-center">
-                    <AlertCircle className="w-8 h-8 text-blood-500" />
+                <div className="size-16 bg-blood-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="size-8 text-blood-500" />
                 </div>
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Unable to Load Profile</h2>
@@ -129,7 +129,7 @@ const AdminProfile = () => {
                 onClick={handleRefresh}
                 className="bg-primary-600 hover:bg-primary-700 text-white"
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`size-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
                 {isRefreshing ? 'Retrying...' : 'Try Again'}
               </Button>
             </div>
@@ -147,7 +147,7 @@ const AdminProfile = () => {
   };
 
   return (
-    <div className="font-isans min-h-screen bg-gray-50">
+    <div className="font-isans min-h-dvh bg-gray-50">
       <DashboardNavigation mode="admin" />
 
       {updateSuccess && (
@@ -173,7 +173,7 @@ const AdminProfile = () => {
             disabled={isRefreshing}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span className="text-sm font-medium text-gray-700">
               {isRefreshing ? 'Refreshing...' : 'Refresh'}
             </span>
@@ -184,18 +184,18 @@ const AdminProfile = () => {
           {/* Profile Card */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             {/* Profile Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-8">
+            <div className="bg-indigo-600 px-6 py-8">
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg">
-                    <Shield className="w-10 h-10 text-indigo-600" />
+                  <div className="size-20 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <Shield className="size-10 text-indigo-600" />
                   </div>
                   <div className="text-white">
                     <h2 className="text-2xl font-bold">
                       {displayProfile.full_name || 'Admin User'}
                     </h2>
                     <p className="text-indigo-100 flex items-center gap-2">
-                      <Shield className="w-4 h-4" />
+                      <Shield className="size-4" />
                       System Administrator
                     </p>
                   </div>
@@ -206,7 +206,7 @@ const AdminProfile = () => {
                       onClick={() => setIsEditing(true)}
                       className="flex flex-row justify-center items-center hover:border hover:border-white"
                     >
-                      <Edit2 className="w-4 h-4 mr-2" />
+                      <Edit2 className="size-4 mr-2" />
                       Edit Profile
                     </Button>
                   ) : (
@@ -218,12 +218,12 @@ const AdminProfile = () => {
                       >
                         {isUpdating ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            <Loader2 className="size-4 mr-2 animate-spin" />
                             Saving...
                           </>
                         ) : (
                           <>
-                            <Save className="w-4 h-4 mr-2" />
+                            <Save className="size-4 mr-2" />
                             Save
                           </>
                         )}
@@ -233,7 +233,7 @@ const AdminProfile = () => {
                         disabled={isUpdating}
                         className="bg-white text-gray-600 hover:bg-gray-50 border border-white flex items-center disabled:opacity-50"
                       >
-                        <X className="w-4 h-4 mr-2" />
+                        <X className="size-4 mr-2" />
                         Cancel
                       </Button>
                     </div>
@@ -247,7 +247,7 @@ const AdminProfile = () => {
               <div className="space-y-6">
                 {/* Email (Read-only) */}
                 <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                  <Mail className="w-5 h-5 text-gray-500 mt-0.5" />
+                  <Mail className="size-5 text-gray-500 mt-0.5" />
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Email Address
@@ -276,7 +276,7 @@ const AdminProfile = () => {
                     placeholder="Enter your phone number"
                   />
                   {!isEditing && (
-                    <Phone className="absolute right-3 top-9 w-5 h-5 text-gray-400" />
+                    <Phone className="absolute right-3 top-9 size-5 text-gray-400" />
                   )}
                 </div>
 
@@ -290,7 +290,7 @@ const AdminProfile = () => {
                     placeholder="Enter college identifier"
                   />
                   {!isEditing && (
-                    <Building2 className="absolute right-3 top-9 w-5 h-5 text-gray-400" />
+                    <Building2 className="absolute right-3 top-9 size-5 text-gray-400" />
                   )}
                 </div>
 

@@ -15,6 +15,7 @@ import { Button } from '@/components/shadcn/button';
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Separator } from '@/components/shadcn/separator';
 import { cn } from '@/lib/utils';
+import { TourProvider, TourOverlay, TourHelpButton, unitTourConfig } from '@/components/tour';
 
 interface UnitDashboardProps {
     user?: { name?: string; role?: string } | null;
@@ -34,14 +35,14 @@ function StatCard({ icon: Icon, label, value, subtitle, gradient, valueColor = '
         <Card className="hover:shadow-md transition-shadow">
             <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                    <div className={cn('h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center', gradient)}>
-                        <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <div className={cn('size-10 sm:size-12 rounded-xl flex items-center justify-center', gradient)}>
+                        <Icon className="size-5 sm:size-6 text-white" />
                     </div>
                     <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
                         {label}
                     </Badge>
                 </div>
-                <h3 className={cn('text-2xl sm:text-3xl font-bold mb-1', valueColor)}>{value}</h3>
+                <h3 className={cn('text-2xl sm:text-3xl font-bold mb-1 tabular-nums text-balance', valueColor)}>{value}</h3>
                 <p className="text-xs sm:text-sm text-gray-500">{subtitle}</p>
             </CardContent>
         </Card>
@@ -53,7 +54,7 @@ function StatCardSkeleton() {
         <Card>
             <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
-                    <Skeleton className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl" />
+                    <Skeleton className="size-10 sm:size-12 rounded-xl" />
                     <Skeleton className="h-5 w-16 rounded-full" />
                 </div>
                 <Skeleton className="h-8 w-16 mb-2" />
@@ -152,7 +153,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
             label: 'Total',
             value: stats?.totalVolunteers || 0,
             subtitle: 'Volunteers',
-            gradient: 'bg-gradient-to-br from-nss-500 to-nss-700',
+            gradient: 'bg-nss-600',
             valueColor: 'text-gray-900',
         },
         {
@@ -160,7 +161,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
             label: 'Approved',
             value: stats?.approvedVolunteers || 0,
             subtitle: 'By Unit',
-            gradient: 'bg-gradient-to-br from-green-500 to-green-700',
+            gradient: 'bg-green-600',
             valueColor: 'text-tree-700',
         },
         {
@@ -168,7 +169,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
             label: 'Certified',
             value: stats?.certifiedVolunteers || 0,
             subtitle: 'By Admin',
-            gradient: 'bg-gradient-to-br from-blue-500 to-blue-700',
+            gradient: 'bg-blue-600',
             valueColor: 'text-blue-700',
         },
         {
@@ -176,7 +177,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
             label: 'Pending',
             value: stats?.pendingApprovals || 0,
             subtitle: 'Awaiting Review',
-            gradient: 'bg-gradient-to-br from-yellow-500 to-yellow-700',
+            gradient: 'bg-yellow-600',
             valueColor: 'text-nss-700',
         },
         {
@@ -184,13 +185,13 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
             label: 'Rejected',
             value: stats?.rejectedVolunteers || 0,
             subtitle: 'Applications',
-            gradient: 'bg-gradient-to-br from-red-500 to-red-700',
+            gradient: 'bg-red-600',
             valueColor: 'text-blood-700',
         },
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-nss-50 font-isans">
+        <div className="min-h-dvh bg-gray-50 font-isans">
             <DashboardNavigation mode="unit" />
             <div className="space-y-6 px-4 sm:px-6 pb-6">
 
@@ -222,8 +223,8 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                     {/* Quick Stats */}
                     <Card>
                         <CardHeader className="pb-4">
-                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                                <TrendingUp className="h-5 w-5 text-nss-600" />
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-balance">
+                                <TrendingUp className="size-5 text-nss-600" />
                                 Quick Stats
                             </CardTitle>
                         </CardHeader>
@@ -254,8 +255,8 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                     {/* Unit Information */}
                     <Card>
                         <CardHeader className="pb-4">
-                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                                <Building className="h-5 w-5 text-nss-600" />
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-balance">
+                                <Building className="size-5 text-nss-600" />
                                 Unit Information
                             </CardTitle>
                         </CardHeader>
@@ -297,10 +298,10 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                     </Card>
 
                     {/* Recent Activity */}
-                    <Card className="bg-gradient-to-br from-nss-500 to-nss-700 border-none text-white">
+                    <Card className="bg-nss-600 border-none text-white">
                         <CardHeader className="pb-4">
-                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-white">
-                                <Calendar className="h-5 w-5" />
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-white text-balance">
+                                <Calendar className="size-5" />
                                 Recent Activity
                             </CardTitle>
                             <CardDescription className="text-nss-100">
@@ -310,7 +311,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                         <CardContent>
                             <Separator className="bg-white/20 mb-4" />
                             <p className="text-xs text-nss-200 mb-2">Last 7 Days</p>
-                            <p className="text-3xl font-bold">{stats?.pendingApprovals || 0}</p>
+                            <p className="text-3xl font-bold tabular-nums">{stats?.pendingApprovals || 0}</p>
                             <p className="text-sm text-nss-100 mt-1">New Applications</p>
                         </CardContent>
                     </Card>
@@ -321,16 +322,16 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                     <CardHeader>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-lg bg-nss-100 flex items-center justify-center">
-                                    <BookOpen className="h-5 w-5 text-nss-600" />
+                                <div className="size-10 rounded-lg bg-nss-100 flex items-center justify-center">
+                                    <BookOpen className="size-5 text-nss-600" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-xl">College Courses</CardTitle>
+                                    <CardTitle className="text-xl text-balance">College Courses</CardTitle>
                                     <CardDescription className="mt-1">Manage courses offered at your college</CardDescription>
                                 </div>
                             </div>
                             <Button variant="nss" onClick={() => setShowAddCourseModal(true)}>
-                                <Plus className="h-4 w-4" />
+                                <Plus className="size-4" />
                                 Add Course
                             </Button>
                         </div>
@@ -347,12 +348,12 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                             </div>
                         ) : courses.length === 0 ? (
                             <div className="text-center py-12">
-                                <div className="mx-auto h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                                    <BookOpen className="h-7 w-7 text-gray-400" />
+                                <div className="mx-auto size-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                                    <BookOpen className="size-7 text-gray-400" />
                                 </div>
                                 <p className="text-gray-600 mb-4">No courses added yet</p>
                                 <Button variant="outline" onClick={() => setShowAddCourseModal(true)}>
-                                    <Plus className="h-4 w-4" />
+                                    <Plus className="size-4" />
                                     Add Your First Course
                                 </Button>
                             </div>
@@ -361,17 +362,17 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                                 {courses.map((course) => (
                                     <div
                                         key={course.id}
-                                        className="group relative rounded-lg border border-nss-200 bg-gradient-to-br from-nss-50 to-nss-100/50 p-4 hover:shadow-md transition-all"
+                                        className="group relative rounded-lg border border-nss-200 bg-nss-50 p-4 hover:shadow-md transition-all"
                                     >
                                         <div className="flex justify-between items-start mb-2">
                                             <h4 className="font-semibold text-gray-900 text-sm pr-8">{course.name}</h4>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                className="absolute top-2 right-2 size-8 opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700 hover:bg-red-50"
                                                 onClick={() => setDeleteTarget({ id: course.id, name: course.name })}
                                             >
-                                                <Trash2 className="h-4 w-4" />
+                                                <Trash2 className="size-4" />
                                             </Button>
                                         </div>
                                         <Badge variant="secondary" className="font-mono text-xs">

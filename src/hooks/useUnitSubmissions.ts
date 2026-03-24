@@ -80,7 +80,7 @@ export const useUnitSubmissions = () => {
 
       // Fetch blood donation submissions
       const { data: bloodSubs, error: bloodError } = await supabase
-        .from("blood_donation_submissions")
+        .from("blood_donations")
         .select("*")
         .in("student_id", studentIds)
         .order("created_at", { ascending: false });
@@ -89,7 +89,7 @@ export const useUnitSubmissions = () => {
 
       // Fetch tree tagging submissions
       const { data: treeSubs, error: treeError } = await supabase
-        .from("tree_tagging_submissions")
+        .from("tree_tagging")
         .select("*")
         .in("student_id", studentIds)
         .order("created_at", { ascending: false });
@@ -118,12 +118,12 @@ export const useUnitSubmissions = () => {
           student_name: studentMap.get(s.student_id)?.name || "Unknown",
           student_ktu_id: studentMap.get(s.student_id)?.ktu_id || "",
           submission_type: "Tree Tagging" as const,
-          submitted_date: s.tagging_date || s.created_at,
+          submitted_date: s.created_at,
           status: s.status || "pending",
           details: `${s.trees_planted || 0} trees planted`,
           certificate_url: null,
           trees_planted: s.trees_planted,
-          tagged_tree_links: s.tagged_tree_links,
+          tagged_tree_links: s.tagged_links,
         })),
       ];
 

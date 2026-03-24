@@ -71,7 +71,7 @@ export const useUnitVolunteerManagement = (initialFilters?: VolunteerFilters) =>
 
     try {
       const data = await unitVolunteerService.getAllVolunteers(filters);
-      setVolunteers(data);
+      setVolunteers(data.items);
     } catch (err: any) {
       const errorMessage = err.message || "Failed to fetch volunteers";
       setError(errorMessage);
@@ -300,7 +300,7 @@ export const useUnitVolunteerManagement = (initialFilters?: VolunteerFilters) =>
         searchQuery,
         filters?.unit_id
       );
-      setVolunteers(data);
+      setVolunteers(data.items);
     } catch (err: any) {
       const errorMessage = err.message || "Failed to search volunteers";
       setError(errorMessage);

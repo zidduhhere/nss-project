@@ -174,8 +174,8 @@ export const useAdminVolunteerManagement = () => {
     setError(null);
 
     try {
-      const data = await adminService.getAllVolunteers(filters);
-      setVolunteers(data);
+      const result = await adminService.getAllVolunteers(filters, { pageSize: 200 });
+      setVolunteers(result.items);
     } catch (err: any) {
       setError(err.message || "Failed to fetch volunteers");
       setVolunteers([]);
@@ -315,9 +315,8 @@ export const useAdminUserManagement = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await adminService.getAllUsersWithDetails(filters);
-      setUsers(data);
-      console.log("Fetched users:", data);
+      const result = await adminService.getAllUsersWithDetails(filters, { pageSize: 200 });
+      setUsers(result.items);
     } catch (err: any) {
       setError(err.message || "Failed to fetch users");
       setUsers([]);

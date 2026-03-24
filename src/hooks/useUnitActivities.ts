@@ -10,8 +10,8 @@ export const useUnitActivities = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await activitiesService.getAllActivities();
-      setActivities(data);
+      const result = await activitiesService.getAllActivities({ pageSize: 100 });
+      setActivities(result.items);
     } catch (err: any) {
       console.error("Error fetching activities:", err);
       setError(err.message || "Failed to fetch activities");

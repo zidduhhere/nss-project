@@ -219,7 +219,7 @@ const AdminVolunteers = () => {
   };
 
   return (
-    <div className="font-isans min-h-screen bg-gray-50">
+    <div className="font-isans min-h-dvh bg-gray-50">
       <DashboardNavigation mode="admin" />
 
       {/* Success Modal */}
@@ -261,7 +261,7 @@ const AdminVolunteers = () => {
         {stats.approved > 0 && (
           <div className="mb-6 bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="size-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-semibold text-blue-900 text-sm">Volunteer Certification Available</h3>
                 <p className="text-blue-800 text-sm mt-1">
@@ -286,7 +286,7 @@ const AdminVolunteers = () => {
                 disabled={isRefreshing}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm"
               >
-                <RefreshCw className={`w-4 h-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`size-4 text-gray-600 ${isRefreshing ? 'animate-spin' : ''}`} />
                 <span className="text-sm font-medium text-gray-700">Refresh</span>
               </button>
               <div className="relative group">
@@ -295,11 +295,11 @@ const AdminVolunteers = () => {
                   disabled={volunteers.length === 0}
                   className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-sm"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="size-4" />
                   <span className="text-sm font-medium">Export</span>
                 </button>
                 {/* Export dropdown on hover */}
-                <div className="hidden group-hover:block absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                <div className="hidden group-hover:block absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
                   <button
                     onClick={() => handlers.handleExport(volunteers)}
                     disabled={volunteers.length === 0}
@@ -327,7 +327,7 @@ const AdminVolunteers = () => {
                   <p className="text-sm text-gray-600">Total</p>
                   <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
                 </div>
-                <Users className="w-8 h-8 text-blue-500" />
+                <Users className="size-8 text-blue-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-blue-200 p-4 bg-blue-50">
@@ -336,7 +336,7 @@ const AdminVolunteers = () => {
                   <p className="text-sm text-blue-700 font-medium">Certified</p>
                   <p className="text-2xl font-bold text-blue-600">{stats.certified}</p>
                 </div>
-                <CheckCircle className="w-8 h-8 text-blue-500" />
+                <CheckCircle className="size-8 text-blue-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -345,7 +345,7 @@ const AdminVolunteers = () => {
                   <p className="text-sm text-gray-600">Approved</p>
                   <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
                 </div>
-                <CheckCircle className="w-8 h-8 text-green-500" />
+                <CheckCircle className="size-8 text-green-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -354,7 +354,7 @@ const AdminVolunteers = () => {
                   <p className="text-sm text-gray-600">Pending</p>
                   <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
                 </div>
-                <Clock className="w-8 h-8 text-yellow-500" />
+                <Clock className="size-8 text-yellow-500" />
               </div>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
@@ -363,7 +363,7 @@ const AdminVolunteers = () => {
                   <p className="text-sm text-gray-600">Rejected</p>
                   <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
                 </div>
-                <XCircle className="w-8 h-8 text-red-500" />
+                <XCircle className="size-8 text-red-500" />
               </div>
             </div>
           </div>
@@ -376,7 +376,7 @@ const AdminVolunteers = () => {
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               {/* Search Bar */}
               <div className="relative flex-1 w-full sm:max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 size-5" />
                 <input
                   type="text"
                   placeholder="Search by name, KTU ID, email, or phone..."
@@ -392,7 +392,7 @@ const AdminVolunteers = () => {
                   onClick={() => setShowFilters(!showFilters)}
                   className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Filter className="w-4 h-4" />
+                  <Filter className="size-4" />
                   <span className="text-sm font-medium">
                     {showFilters ? 'Hide Filters' : 'Show Filters'}
                   </span>
@@ -529,12 +529,12 @@ const AdminVolunteers = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <Loader2 className="w-12 h-12 text-primary-600 animate-spin mb-4" />
+              <Loader2 className="size-12 text-primary-600 animate-spin mb-4" />
               <p className="text-gray-600">Loading volunteers...</p>
             </div>
           ) : volunteers.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+              <AlertCircle className="size-12 text-gray-400 mb-4" />
               <p className="text-gray-600 text-lg">No volunteers found</p>
               <p className="text-gray-500 text-sm mt-2">Try adjusting your filters</p>
             </div>

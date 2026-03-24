@@ -16,11 +16,11 @@ export default function BlogView() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [postsData, categoriesData] = await Promise.all([
-                    blogService.getPublishedPosts(),
+                const [postsResult, categoriesData] = await Promise.all([
+                    blogService.getPublishedPosts({ pageSize: 100 }),
                     blogService.getCategories(),
                 ]);
-                setPosts(postsData);
+                setPosts(postsResult.items);
                 setCategories(categoriesData);
             } catch (err: any) {
                 setError(err.message || 'Failed to load blog posts');
