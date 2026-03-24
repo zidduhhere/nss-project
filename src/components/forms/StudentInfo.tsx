@@ -1,25 +1,33 @@
 import { BookOpen } from "lucide-react";
 import { TextField } from "../ui";
 import { getAllDistricts } from "@/utils/data/taluks";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormRegister, UseFormWatch, UseFormSetValue } from "react-hook-form";
 import { FormFields } from "@/types/StudentFormSchema";
 import { useGeneralServices } from "@/hooks/useGeneralHook";
+import { useEffect } from "react";
 
 
 interface StudentInfoProps {
   register: UseFormRegister<FormFields>;
   errors: FieldErrors<FormFields>;
+  watch: UseFormWatch<FormFields>;
+  setValue: UseFormSetValue<FormFields>;
 }
 
-export default function StudentInfo({ register, errors }: StudentInfoProps) {
+export default function StudentInfo({ register, errors, watch, setValue }: StudentInfoProps) {
 
 
-   const {colleges, loading} = useGeneralServices();
+   const {districtBasedColleges, loading, fetchCollegesByDistrict} = useGeneralServices();
 
-    // Fetch colleges on component mount
-  
- 
-  
+   const selectedDistrict = watch("district");
+
+   useEffect(() => {
+     if (selectedDistrict) {
+       fetchCollegesByDistrict(selectedDistrict);
+       setValue("college", "");
+     }
+   }, [selectedDistrict]);
+
   const districts = getAllDistricts();
 
   if (loading) return <div>Loading...</div>;
@@ -74,13 +82,18 @@ export default function StudentInfo({ register, errors }: StudentInfoProps) {
           <div className="relative">
             <select
               {...register("college")}
+              disabled={!selectedDistrict || loading}
               style={{ WebkitAppearance: "none" }}
-              className="bg-white border border-gray-50 text-gray-900 text-sm rounded-lg focus:ring-nss-50 focus:border-nss-50 block w-full px-4 py-2 pr-10"
+              className="bg-white border border-gray-50 text-gray-900 text-sm rounded-lg focus:ring-nss-50 focus:border-nss-50 block w-full px-4 py-2 pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="" disabled>
-                Select your college
+                {!selectedDistrict
+                  ? "Select a district first"
+                  : loading
+                    ? "Loading colleges..."
+                    : "Select your college"}
               </option>
-              {colleges.map((college) => (
+              {districtBasedColleges.map((college) => (
                 <option key={college.id} value={college.id}>
                   {college.name}
                 </option>

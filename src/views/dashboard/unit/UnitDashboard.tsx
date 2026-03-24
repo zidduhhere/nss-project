@@ -191,6 +191,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
     ];
 
     return (
+        <TourProvider config={unitTourConfig}>
         <div className="min-h-dvh bg-gray-50 font-isans">
             <DashboardNavigation mode="unit" />
             <div className="space-y-6 px-4 sm:px-6 pb-6">
@@ -210,7 +211,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                 </div>
 
                 {/* Statistics Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+                <div data-tour="stat-cards" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
                     {isLoading
                         ? Array.from({ length: 5 }).map((_, i) => <StatCardSkeleton key={i} />)
                         : statCards.map((card) => <StatCard key={card.label} {...card} />)
@@ -221,7 +222,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
 
                     {/* Quick Stats */}
-                    <Card>
+                    <Card data-tour="quick-stats">
                         <CardHeader className="pb-4">
                             <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-balance">
                                 <TrendingUp className="size-5 text-nss-600" />
@@ -318,7 +319,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                 </div>
 
                 {/* College Courses Management Section */}
-                <Card>
+                <Card data-tour="college-courses">
                     <CardHeader>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div className="flex items-center gap-3">
@@ -445,6 +446,9 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
             <div className="mt-16">
                 <Footer />
             </div>
+            <TourOverlay />
+            <TourHelpButton />
         </div>
+        </TourProvider>
     );
 }

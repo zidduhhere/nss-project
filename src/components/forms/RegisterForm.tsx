@@ -16,7 +16,7 @@ import SuccessModal from '../common/SuccessModal';
 
 export default function RegisterForm() {
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<FormFields>({
+  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting }, } = useForm<FormFields>({
     resolver: zodResolver(FormSchema)
   });
 
@@ -113,7 +113,8 @@ export default function RegisterForm() {
         <StudentInfo
           register={register}
           errors={errors}
-
+          watch={watch}
+          setValue={setValue}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

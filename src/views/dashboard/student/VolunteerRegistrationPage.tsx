@@ -1,7 +1,7 @@
 import { Dropdown, FilledButton, TextField, Footer } from "@/components/ui";
 import { DashboardHeader } from "./sections";
-import { unitListForDropDown } from "@/utils/data/collegeUnits";
 import { useForm } from "react-hook-form";
+import { generalService, College } from "@/services/generalService";
 import {
     getAllDistricts,
     getTaluksByDistrict,
@@ -41,6 +41,9 @@ const VolunteerRegistrationPage = () => {
         useVolunteerRegistration();
 
     const [collegeCourses, setCollegeCourses] = useState<any[]>([]);
+    const [filteredUnits, setFilteredUnits] = useState<{ unitNumber: string; collegeName: string }[]>([]);
+    const [isLoadingUnits, setIsLoadingUnits] = useState(false);
+    const [collegeDistrict, setCollegeDistrict] = useState("");
 
     // Fetch college courses on component mount
     useEffect(() => {
@@ -56,6 +59,31 @@ const VolunteerRegistrationPage = () => {
     const watchTaluk = watch("taluk");
     const watchPhoto = watch("photo");
     const watchSignature = watch("signature");
+
+    // Fetch units filtered by college district when it changes
+    useEffect(() => {
+        if (!collegeDistrict) {
+            setFilteredUnits([]);
+            return;
+        }
+        let cancelled = false;
+        const fetchUnits = async () => {
+            setIsLoadingUnits(true);
+            try {
+                const units = await generalService.getUnitsByDistrict(collegeDistrict);
+                if (!cancelled) {
+                    setFilteredUnits(units);
+                    setValue("unit", "");
+                }
+            } catch {
+                if (!cancelled) setFilteredUnits([]);
+            } finally {
+                if (!cancelled) setIsLoadingUnits(false);
+            }
+        };
+        fetchUnits();
+        return () => { cancelled = true; };
+    }, [collegeDistrict, setValue]);
 
     // 🔧 DEBUGGING: Fill form with mock data
     // const fillMockData = () => {
@@ -153,12 +181,21 @@ const VolunteerRegistrationPage = () => {
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                                     <Dropdown
+                                        label="College District"
+                                        required
+                                        placeholder="Select college district"
+                                        options={getAllDistricts()}
+                                        value={collegeDistrict}
+                                        onChange={(e) => setCollegeDistrict(e.target.value)}
+                                    />
+                                    <Dropdown
                                         {...register("unit")}
                                         label="Select College Unit"
                                         required
-                                        placeholder="Select your college unit"
-                                        options={unitListForDropDown}
+                                        placeholder={isLoadingUnits ? "Loading colleges..." : collegeDistrict ? "Select your college unit" : "Select district first"}
+                                        options={filteredUnits.map((u) => `${u.unitNumber} - ${u.collegeName}`)}
                                         error={errors.unit}
+                                        disabled={!collegeDistrict || isLoadingUnits}
                                     />
                                     <Dropdown
                                         {...register("semester")}

@@ -20,6 +20,7 @@ import { Badge } from '@/components/shadcn/badge';
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/shadcn/alert';
 import { cn } from '@/lib/utils';
+import { TourProvider, TourOverlay, TourHelpButton, adminTourConfig } from '@/components/tour';
 
 const StatCard = ({
   title,
@@ -152,6 +153,7 @@ const AdminDashboard = () => {
   }
 
   return (
+    <TourProvider config={adminTourConfig}>
     <div className="font-isans min-h-dvh bg-gray-50">
       <DashboardNavigation mode="admin" />
 
@@ -176,6 +178,7 @@ const AdminDashboard = () => {
             </p>
           </div>
           <button
+            data-tour="refresh-button"
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -186,7 +189,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Primary Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div data-tour="stat-cards" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Volunteers"
             value={stats?.totalVolunteers || 0}
@@ -259,7 +262,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Registrations Table */}
-        <Card className="mb-8">
+        <Card className="mb-8" data-tour="recent-registrations">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl text-balance">Recent Registrations</CardTitle>
             <button
@@ -328,7 +331,7 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div data-tour="quick-actions" className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
               label: 'Manage Volunteers',
@@ -378,7 +381,10 @@ const AdminDashboard = () => {
       <div className="mt-16">
         <Footer />
       </div>
+      <TourOverlay />
+      <TourHelpButton />
     </div>
+    </TourProvider>
   );
 };
 
