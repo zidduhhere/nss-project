@@ -1,50 +1,31 @@
-import supabase from "./supabase"
-
+import supabase from "./supabase";
+import { handleSupabaseError } from "@/services/errors";
 
 export interface College {
-    id: string;
-    name: string;
-    district: string;
+  id: string;
+  name: string;
+  district: string;
 }
-
 
 export const generalService = {
+  getAllColleges: async (): Promise<College[]> => {
+    const { data, error } = await supabase
+      .from("colleges")
+      .select("*")
+      .order("name", { ascending: true });
 
-    getAllColleges : async () => {
-       try {
-         // Fetch colleges from the database or an external API
-         
-        const {data, error} = await supabase.from('colleges').select('*');
-        if (error) {
-            console.error("Error fetching colleges:", error);
-            return [];
-        }
-        console.log("Fetched colleges:", data);
-        return data as College[];
-       }
+    if (error) handleSupabaseError(error, "Failed to fetch colleges");
+    return (data as College[]) || [];
+  },
 
-       catch (error) {
-        console.error("Error fetching colleges:", error);
-        return [];
-       }
-    },
+  getCollegeOnDistrict: async (districtCode: string): Promise<College[]> => {
+    const { data, error } = await supabase
+      .from("colleges")
+      .select("*")
+      .eq("district", districtCode.toUpperCase())
+      .order("name", { ascending: true });
 
-    getCollegeOnDistrict: async (districtCode: string) => {
-        // Fetch colleges based on district from the database or an external API
-        try {
-            const {data, error} = await supabase
-            .from('colleges')
-            .select('*')
-            .eq('district', districtCode.toUpperCase());
-        if (error) {
-            console.error("Error fetching colleges by district:", error);
-            return [];
-        }
-        return data as College[];
-        }
-        catch (error) {
-            console.error("Error fetching colleges by district:", error);
-            return [];
-        }
-    }
-}
+    if (error) handleSupabaseError(error, "Failed to fetch colleges by district");
+    return (data as College[]) || [];
+  },
+};

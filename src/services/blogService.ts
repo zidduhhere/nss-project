@@ -1,4 +1,11 @@
 import supabase from "@/services/supabase";
+import { handleSupabaseError } from "@/services/errors";
+import {
+  PaginationParams,
+  resolvePagination,
+  buildPaginatedResult,
+  PaginatedResult,
+} from "@/services/pagination";
 
 export interface BlogPost {
   id: string;
@@ -15,94 +22,77 @@ export interface BlogPost {
   updated_at: string;
 }
 
-/**
- * Blog Service - Handles fetching blog posts from Supabase
- */
 export const blogService = {
-  /**
-   * Get all published blog posts, ordered by published date
-   */
-  getPublishedPosts: async (): Promise<BlogPost[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("published", true)
-        .order("published_at", { ascending: false });
+  getPublishedPosts: async (
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<BlogPost>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (error) throw error;
+    const { data, error, count } = await supabase
+      .from("blog_posts")
+      .select("*", { count: "exact" })
+      .eq("published", true)
+      .order("published_at", { ascending: false })
+      .range(from, to);
 
-      return (data as BlogPost[]) || [];
-    } catch (error: any) {
-      console.error("Error fetching blog posts:", error);
-      throw new Error(error.message || "Failed to fetch blog posts");
-    }
+    if (error) handleSupabaseError(error, "Failed to fetch blog posts");
+    return buildPaginatedResult(
+      (data as BlogPost[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 
-  /**
-   * Get a single blog post by slug
-   */
   getPostBySlug: async (slug: string): Promise<BlogPost | null> => {
-    try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("slug", slug)
-        .eq("published", true)
-        .single();
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("slug", slug)
+      .eq("published", true)
+      .single();
 
-      if (error) {
-        if (error.code === "PGRST116") return null; // Not found
-        throw error;
-      }
-
-      return data as BlogPost;
-    } catch (error: any) {
-      console.error("Error fetching blog post:", error);
-      throw new Error(error.message || "Failed to fetch blog post");
+    if (error) {
+      if (error.code === "PGRST116") return null;
+      handleSupabaseError(error, "Failed to fetch blog post");
     }
+    return data as BlogPost;
   },
 
-  /**
-   * Get blog posts by category
-   */
-  getPostsByCategory: async (category: string): Promise<BlogPost[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("published", true)
-        .eq("category", category)
-        .order("published_at", { ascending: false });
+  getPostsByCategory: async (
+    category: string,
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<BlogPost>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (error) throw error;
+    const { data, error, count } = await supabase
+      .from("blog_posts")
+      .select("*", { count: "exact" })
+      .eq("published", true)
+      .eq("category", category)
+      .order("published_at", { ascending: false })
+      .range(from, to);
 
-      return (data as BlogPost[]) || [];
-    } catch (error: any) {
-      console.error("Error fetching blog posts by category:", error);
-      throw new Error(error.message || "Failed to fetch blog posts");
-    }
+    if (error) handleSupabaseError(error, "Failed to fetch blog posts");
+    return buildPaginatedResult(
+      (data as BlogPost[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 
-  /**
-   * Get unique categories from published posts
-   */
   getCategories: async (): Promise<string[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("category")
-        .eq("published", true);
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("category")
+      .eq("published", true);
 
-      if (error) throw error;
+    if (error) handleSupabaseError(error, "Failed to fetch categories");
 
-      const categories = Array.from(
-        new Set(data?.map((d) => d.category).filter(Boolean))
-      ) as string[];
-      return categories.sort();
-    } catch (error: any) {
-      console.error("Error fetching categories:", error);
-      throw new Error(error.message || "Failed to fetch categories");
-    }
+    const categories = Array.from(
+      new Set(data?.map((d) => d.category).filter(Boolean))
+    ) as string[];
+    return categories.sort();
   },
 };

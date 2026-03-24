@@ -1,327 +1,356 @@
 import { VolunteerFormFields } from "@/types/VolunteerFormSchema";
 import supabase from "@/services/supabase";
+import { VolunteerProfile } from "@/types/VolunteerProfile";
+import { ServiceError, handleSupabaseError } from "@/services/errors";
+import { sanitizeFileName, sanitizeFilter } from "@/services/validationSchemas";
+import {
+  PaginationParams,
+  resolvePagination,
+  buildPaginatedResult,
+  PaginatedResult,
+} from "@/services/pagination";
 
-const sanitizeFileName = (name: string) =>
-  name.replace(/[^a-zA-Z0-9._-]/g, "_");
+// ── Shared filter interface (replaces duplicate definitions) ──
+export interface VolunteerFilters {
+  unit_id?: string;
+  status?: string;
+  semester?: number;
+  course?: string;
+  search?: string;
+  blood_group?: string;
+  isActive?: boolean;
+}
 
-/**
- * Volunteer Service - Handles all volunteer-related Supabase operations
- */
+export interface VolunteerUpdateData {
+  status?: string;
+  unit_id?: string;
+  unit_number?: string;
+}
+
 export const volunteerService = {
+  // ── Lookup helpers ───────────────────────────────────────────
 
+  getCollegeId: async (studentId: string): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("college_id")
+      .eq("id", studentId)
+      .single();
 
-  getCollegeId: async (studentId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("college_id")
-        .eq("id", studentId)
-        .single();
-      if (error) {
-        throw error;
-      }
-      return data?.college_id || null;
-    } catch (error) {
-      console.error("Error fetching college ID:", error);
-      return null;
+    if (error) {
+      if (error.code === "PGRST116") return null;
+      handleSupabaseError(error, "Failed to fetch college ID");
     }
+    return data?.college_id || null;
   },
 
   getCollegeCourses: async (studentId: string) => {
-    try {
-      const collegeId = await volunteerService.getCollegeId(studentId);
-      if (!collegeId) {
-        throw new Error("College ID not found for the student");
-      }
-      const { data, error } = await supabase
-        .from("courses")
-        .select("name, code")
-        .eq("college_id", collegeId)
-        .order("name", { ascending: true });
-
-      if (error) {
-          throw error;
-        }
-      return data || [];
-
-    } catch (error) {
-      console.error("Error fetching college courses:", error);
-      throw error;
+    const collegeId = await volunteerService.getCollegeId(studentId);
+    if (!collegeId) {
+      throw new ServiceError(
+        "College ID not found for the student",
+        "NOT_FOUND"
+      );
     }
-  },
-  
 
-  /**
-   * Register a new volunteer with file uploads
-   * @param data - Volunteer form data including photo and signature files
-   * @param userId - Authenticated user's ID from auth context
-   * @returns Promise with the created volunteer record
-   */
+    const { data, error } = await supabase
+      .from("courses")
+      .select("name, code")
+      .eq("college_id", collegeId)
+      .order("name", { ascending: true });
+
+    if (error) handleSupabaseError(error, "Failed to fetch college courses");
+    return data || [];
+  },
+
+  // ── Registration ─────────────────────────────────────────────
+
   registerVolunteer: async (data: VolunteerFormFields, userId: string) => {
+    // Check for duplicate registration
+    const { data: existing } = await supabase
+      .from("volunteers")
+      .select("student_id")
+      .eq("student_id", userId)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      throw new ServiceError(
+        "You have already registered as a volunteer.",
+        "DUPLICATE"
+      );
+    }
+
+    // Check KTU ID uniqueness
+    const { data: ktuCheck } = await supabase
+      .from("volunteers")
+      .select("ktu_id")
+      .eq("ktu_id", data.ktuId)
+      .limit(1);
+
+    if (ktuCheck && ktuCheck.length > 0) {
+      throw new ServiceError(
+        "A volunteer with this KTU ID already exists.",
+        "DUPLICATE"
+      );
+    }
+
+    // Upload photo
     let photoUrl = null;
+    if (data.photo instanceof File) {
+      const photoFileName = `${Date.now()}_${sanitizeFileName(data.photo.name)}_user_${userId}`;
+      const { error: photoError } = await supabase.storage
+        .from("volunteer-photos")
+        .upload(photoFileName, data.photo);
+
+      if (photoError) {
+        throw new ServiceError(
+          photoError.message || "Failed to upload photo",
+          "STORAGE_ERROR"
+        );
+      }
+
+      const { data: photoUrlData } = supabase.storage
+        .from("volunteer-photos")
+        .getPublicUrl(photoFileName);
+      photoUrl = photoUrlData.publicUrl;
+    }
+
+    // Upload signature
     let signatureUrl = null;
-    try {
+    if (data.signature instanceof File) {
+      const signatureFileName = `${Date.now()}_${sanitizeFileName(data.signature.name)}_user_${userId}`;
+      const { error: signatureError } = await supabase.storage
+        .from("volunteer-signatures")
+        .upload(signatureFileName, data.signature);
 
-     const isAlreadyRegistered = await supabase
-        .from("volunteers")
-        .select('student_id')
-        .eq('student_id', userId)
-
-
-      if (isAlreadyRegistered.data?.length != undefined && isAlreadyRegistered.data?.length > 0) {
-        throw new Error("You have already registered as a volunteer.");
+      if (signatureError) {
+        throw new ServiceError(
+          signatureError.message || "Failed to upload signature",
+          "STORAGE_ERROR"
+        );
       }
 
-      const ktuIdCheck = await supabase
-        .from("volunteers")
-        .select("ktu_id")
-        .eq("ktu_id", data.ktuId)
+      const { data: signatureUrlData } = supabase.storage
+        .from("volunteer-signatures")
+        .getPublicUrl(signatureFileName);
+      signatureUrl = signatureUrlData.publicUrl;
+    }
 
-      if (ktuIdCheck.data?.length != undefined && ktuIdCheck.data?.length > 0) {
-        throw new Error("A volunteer with this KTU ID already exists.");
-      }
-
-      // 1. Upload photo to Supabase Storage
-      if (data.photo instanceof File) {
-        const photoFileName = `${Date.now()}_${sanitizeFileName(data.photo.name)}_user_${userId}`;
-        const {error: photoError } = await supabase.storage
-          .from("volunteer-photos")
-          .upload(photoFileName, data.photo);
-
-        if (photoError) throw photoError;
-
-        // Get public URL for the photo
-        const { data: photoUrlData } = supabase.storage
-          .from("volunteer-photos")
-          .getPublicUrl(photoFileName);
-
-        photoUrl = photoUrlData.publicUrl;
-      }
-
-      // 2. Upload signature to Supabase Storage
-      if (data.signature instanceof File) {
-        const signatureFileName = `${Date.now()}_${sanitizeFileName(
-          data.signature.name
-        )}_user_${userId}`;
-        const { error: signatureError } =
-          await supabase.storage
-            .from("volunteer-signatures")
-            .upload(signatureFileName, data.signature);
-
-        if (signatureError) throw signatureError;
-
-        // Get public URL for the signature
-        const { data: signatureUrlData } = supabase.storage
-          .from("volunteer-signatures")
-          .getPublicUrl(signatureFileName);
-
-        signatureUrl = signatureUrlData.publicUrl;
-      }
-
-      // 3. Map unit name to unit_id from nss_units table
-      let unitId = null;
-      if (data.unit) {
-        const { data: unitData } = await supabase
-          .from("nss_units")
-          .select("id")
-          .eq("unit_number", data.unit)
-          .single();
-        
-        if (unitData) {
-          unitId = unitData.id;
-        }
-      }
-
-      const volunteerData = {
-        student_id: userId,
-        unit_id: unitId,
-        admission_year: data.admissionYear,
-        valid_from_year : null,
-        valid_to_year : null,
-        ktu_id: data.ktuId,
-        full_name : data.name,
-        status: "pending",
-        semester: data.semester,
-        course: data.course,
-        unit_number: data.unit,
-        enroll_no: null,
-        gender: data.gender.toLowerCase(),
-        dob: data.dob,
-        whatsapp_number: data.whatsappNumber,
-        contact_number: data.contactNumber,
-        religion: data.religion,
-        community: data.community,
-        blood_group: data.bloodGroup,
-        height: data.height ? parseFloat(data.height) : null,
-        weight: data.weight ? parseFloat(data.weight) : null,
-        district: data.district,
-        taluk: data.taluk,
-        village: data.village,
-        pincode: data.pincode,
-        parent_name: data.parent,
-        parent_contact_number: data.parentContact,
-        permanent_address: data.permanentAddress,
-        current_address: data.permanentAddress,
-        photo_url: photoUrl,
-        signature_url: signatureUrl,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        languages_known: data.languagesKnown || [],
-        area_of_interest: data.areaOfInterest || null,
-        hobbies: data.hobbies || null,
-        prior_experience: data.priorExperience || null,
-        cultural_talents: data.culturalTalents || null,
-        camp_interest: data.campInterest || null,
-      };
-
-      // 4. Insert volunteer record into database
-      const { data: volunteer, error: insertError } = await supabase
-        .from("volunteers")
-        .insert(volunteerData)
-        .select()
+    // Resolve unit name → unit_id
+    let unitId = null;
+    if (data.unit) {
+      const { data: unitData } = await supabase
+        .from("nss_units")
+        .select("id")
+        .eq("unit_number", data.unit)
         .single();
-
-      if (insertError) {
-        console.error("Database insert error:", insertError);
-        throw insertError;
-      }
-
-      return {
-        success: true,
-        message: "Volunteer registered successfully",
-        data: volunteer,
-      };
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to register volunteer") as Error;
+      if (unitData) unitId = unitData.id;
     }
+
+    const volunteerData = {
+      student_id: userId,
+      unit_id: unitId,
+      admission_year: data.admissionYear,
+      valid_from_year: null,
+      valid_to_year: null,
+      ktu_id: data.ktuId,
+      full_name: data.name,
+      status: "pending",
+      semester: data.semester,
+      course: data.course,
+      unit_number: data.unit,
+      enroll_no: null,
+      gender: data.gender.toLowerCase(),
+      dob: data.dob,
+      whatsapp_number: data.whatsappNumber,
+      contact_number: data.contactNumber,
+      religion: data.religion,
+      community: data.community,
+      blood_group: data.bloodGroup,
+      height: data.height ? parseFloat(data.height) : null,
+      weight: data.weight ? parseFloat(data.weight) : null,
+      district: data.district,
+      taluk: data.taluk,
+      village: data.village,
+      pincode: data.pincode,
+      parent_name: data.parent,
+      parent_contact_number: data.parentContact,
+      permanent_address: data.permanentAddress,
+      current_address: data.permanentAddress,
+      photo_url: photoUrl,
+      signature_url: signatureUrl,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      languages_known: data.languagesKnown || [],
+      area_of_interest: data.areaOfInterest || null,
+      hobbies: data.hobbies || null,
+      prior_experience: data.priorExperience || null,
+      cultural_talents: data.culturalTalents || null,
+      camp_interest: data.campInterest || null,
+    };
+
+    const { data: volunteer, error: insertError } = await supabase
+      .from("volunteers")
+      .insert(volunteerData)
+      .select()
+      .single();
+
+    if (insertError) handleSupabaseError(insertError, "Failed to register volunteer");
+
+    return { success: true, message: "Volunteer registered successfully", data: volunteer };
   },
 
-  /**
-   * Get volunteer by ID
-   */
-  getVolunteerById: async (id: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("volunteers")
-        .select("*")
-        .eq("id", id)
-        .single();
+  // ── CRUD (used by all roles) ─────────────────────────────────
 
-      if (error) throw error;
-      return data;
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to fetch volunteer");
-    }
+  getVolunteerById: async (id: string): Promise<VolunteerProfile> => {
+    const { data, error } = await supabase
+      .from("volunteers")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) handleSupabaseError(error, "Volunteer not found");
+    return data as VolunteerProfile;
   },
 
-  /**
-   * Get all volunteers (with optional filters)
-   */
-  getAllVolunteers: async (filters?: {
-    unit?: string;
-    status?: string;
-    semester?: string;
-  }) => {
-    try {
-      let query = supabase.from("volunteers").select("*");
+  getAllVolunteers: async (
+    filters?: VolunteerFilters,
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<VolunteerProfile>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (filters?.unit) {
-        query = query.eq("unit", filters.unit);
-      }
-      if (filters?.status) {
-        query = query.eq("status", filters.status);
-      }
-      if (filters?.semester) {
-        query = query.eq("semester", filters.semester);
-      }
+    let query = supabase
+      .from("volunteers")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false });
 
-      const { data, error } = await query.order("created_at", {
-        ascending: false,
-      });
-
-      if (error) throw error;
-      return data;
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to fetch volunteers");
+    if (filters?.unit_id) query = query.eq("unit_id", filters.unit_id);
+    if (filters?.status && filters.status !== "all")
+      query = query.eq("status", filters.status);
+    if (filters?.semester) query = query.eq("semester", filters.semester);
+    if (filters?.blood_group && filters.blood_group !== "all")
+      query = query.eq("blood_group", filters.blood_group);
+    if (filters?.course && filters.course !== "all") {
+      const safeCourse = sanitizeFilter(filters.course);
+      query = query.ilike("course", `%${safeCourse}%`);
     }
+    if (filters?.isActive !== undefined) {
+      query = filters.isActive
+        ? query.eq("status", "approved")
+        : query.neq("status", "approved");
+    }
+    if (filters?.search) {
+      const safeSearch = sanitizeFilter(filters.search);
+      query = query.or(
+        `full_name.ilike.%${safeSearch}%,ktu_id.ilike.%${safeSearch}%,contact_number.ilike.%${safeSearch}%`
+      );
+    }
+
+    const { data, error, count } = await query.range(from, to);
+
+    if (error) handleSupabaseError(error, "Failed to fetch volunteers");
+    return buildPaginatedResult(
+      (data as VolunteerProfile[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 
-  /**
-   * Update volunteer
-   */
+  // ── Status management ────────────────────────────────────────
+
+  updateVolunteerStatus: async (
+    volunteerId: string,
+    status: "pending" | "approved" | "rejected" | "certified"
+  ): Promise<VolunteerProfile> => {
+    const { data, error } = await supabase
+      .from("volunteers")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", volunteerId)
+      .select()
+      .single();
+
+    if (error) handleSupabaseError(error, "Failed to update volunteer status");
+    return data as VolunteerProfile;
+  },
+
+  bulkUpdateStatus: async (
+    volunteerIds: string[],
+    status: "approved" | "rejected" | "certified"
+  ): Promise<number> => {
+    const { data, error } = await supabase
+      .from("volunteers")
+      .update({ status, updated_at: new Date().toISOString() })
+      .in("id", volunteerIds)
+      .select();
+
+    if (error) handleSupabaseError(error, `Failed to ${status} volunteers`);
+    return data?.length || 0;
+  },
+
+  // ── Update / Delete ──────────────────────────────────────────
+
   updateVolunteer: async (
     id: string,
-    updates: Partial<VolunteerFormFields>
-  ) => {
-    try {
-      // Handle file uploads if new files provided
-      let photoUrl = undefined;
-      let signatureUrl = undefined;
+    updates: VolunteerUpdateData
+  ): Promise<VolunteerProfile> => {
+    const { data, error } = await supabase
+      .from("volunteers")
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select()
+      .single();
 
-      if (updates.photo instanceof File) {
-        const photoFileName = `${Date.now()}_${updates.photo.name}`;
-        const { error: photoError } = await supabase.storage
-          .from("volunteer-photos")
-          .upload(photoFileName, updates.photo);
-
-        if (photoError) throw photoError;
-
-        const { data: photoUrlData } = supabase.storage
-          .from("volunteer-photos")
-          .getPublicUrl(photoFileName);
-
-        photoUrl = photoUrlData.publicUrl;
-      }
-
-      if (updates.signature instanceof File) {
-        const signatureFileName = `${Date.now()}_${updates.signature.name}`;
-        const { error: signatureError } = await supabase.storage
-          .from("volunteer-signatures")
-          .upload(signatureFileName, updates.signature);
-
-        if (signatureError) throw signatureError;
-
-        const { data: signatureUrlData } = supabase.storage
-          .from("volunteer-signatures")
-          .getPublicUrl(signatureFileName);
-
-        signatureUrl = signatureUrlData.publicUrl;
-      }
-
-      // Prepare update data
-      const updateData: any = { ...updates };
-      if (photoUrl) updateData.photo_url = photoUrl;
-      if (signatureUrl) updateData.signature_url = signatureUrl;
-      delete updateData.photo;
-      delete updateData.signature;
-
-      const { data, error } = await supabase
-        .from("volunteers")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to update volunteer");
-    }
+    if (error) handleSupabaseError(error, "Failed to update volunteer");
+    return data as VolunteerProfile;
   },
 
-  /**
-   * Delete volunteer
-   */
-  deleteVolunteer: async (id: string) => {
-    try {
-      const { error } = await supabase.from("volunteers").delete().eq("id", id);
-
-      if (error) throw error;
-      return { success: true, message: "Volunteer deleted successfully" };
-    } catch (error: any) {
-      throw new Error(error.message || "Failed to delete volunteer");
-    }
+  deleteVolunteer: async (id: string): Promise<void> => {
+    const { error } = await supabase.from("volunteers").delete().eq("id", id);
+    if (error) handleSupabaseError(error, "Failed to delete volunteer");
   },
-  
+
+  // ── Stats (uses SQL-side counting where possible) ────────────
+
+  getVolunteerStats: async (unitId?: string) => {
+    let query = supabase.from("volunteers").select("status, semester");
+    if (unitId) query = query.eq("unit_id", unitId);
+
+    const { data, error } = await query;
+    if (error) handleSupabaseError(error, "Failed to fetch volunteer statistics");
+
+    const volunteers = data || [];
+    return {
+      total: volunteers.length,
+      approved: volunteers.filter((v) => v.status === "approved").length,
+      certified: volunteers.filter((v) => v.status === "certified").length,
+      pending: volunteers.filter((v) => v.status === "pending").length,
+      rejected: volunteers.filter((v) => v.status === "rejected").length,
+      bySemester: volunteers.reduce(
+        (acc, v) => {
+          const sem = v.semester || 0;
+          acc[sem] = (acc[sem] || 0) + 1;
+          return acc;
+        },
+        {} as Record<number, number>
+      ),
+    };
+  },
+
+  // ── Convenience wrappers ─────────────────────────────────────
+
+  getVolunteersByUnit: async (
+    unitId: string,
+    pagination?: PaginationParams
+  ) => volunteerService.getAllVolunteers({ unit_id: unitId }, pagination),
+
+  searchVolunteers: async (
+    searchQuery: string,
+    unitId?: string,
+    pagination?: PaginationParams
+  ) =>
+    volunteerService.getAllVolunteers(
+      { search: searchQuery, unit_id: unitId },
+      pagination
+    ),
 };
-

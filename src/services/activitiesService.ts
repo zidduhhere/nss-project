@@ -1,10 +1,23 @@
 import supabase from "@/services/supabase";
+import { handleSupabaseError } from "@/services/errors";
+import {
+  PaginationParams,
+  resolvePagination,
+  buildPaginatedResult,
+  PaginatedResult,
+} from "@/services/pagination";
 
 export interface Activity {
   id: string;
   title: string;
   description: string;
-  activity_type: "camp" | "blood_donation" | "tree_planting" | "workshop" | "awareness" | "other";
+  activity_type:
+    | "camp"
+    | "blood_donation"
+    | "tree_planting"
+    | "workshop"
+    | "awareness"
+    | "other";
   location: string | null;
   start_date: string;
   end_date: string | null;
@@ -16,87 +29,89 @@ export interface Activity {
   updated_at: string;
 }
 
-/**
- * Activities Service - Handles fetching NSS activities from Supabase
- */
 export const activitiesService = {
-  /**
-   * Get all activities ordered by start date
-   */
-  getAllActivities: async (): Promise<Activity[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .order("start_date", { ascending: false });
+  getAllActivities: async (
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<Activity>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (error) throw error;
+    const { data, error, count } = await supabase
+      .from("activities")
+      .select("*", { count: "exact" })
+      .order("start_date", { ascending: false })
+      .range(from, to);
 
-      return (data as Activity[]) || [];
-    } catch (error: any) {
-      console.error("Error fetching activities:", error);
-      throw new Error(error.message || "Failed to fetch activities");
-    }
+    if (error) handleSupabaseError(error, "Failed to fetch activities");
+    return buildPaginatedResult(
+      (data as Activity[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 
-  /**
-   * Get upcoming activities (start_date >= now)
-   */
-  getUpcomingActivities: async (): Promise<Activity[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .in("status", ["upcoming", "ongoing"])
-        .gte("start_date", new Date().toISOString())
-        .order("start_date", { ascending: true });
+  getUpcomingActivities: async (
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<Activity>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (error) throw error;
+    const { data, error, count } = await supabase
+      .from("activities")
+      .select("*", { count: "exact" })
+      .in("status", ["upcoming", "ongoing"])
+      .gte("start_date", new Date().toISOString())
+      .order("start_date", { ascending: true })
+      .range(from, to);
 
-      return (data as Activity[]) || [];
-    } catch (error: any) {
-      console.error("Error fetching upcoming activities:", error);
-      throw new Error(error.message || "Failed to fetch upcoming activities");
-    }
+    if (error) handleSupabaseError(error, "Failed to fetch upcoming activities");
+    return buildPaginatedResult(
+      (data as Activity[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 
-  /**
-   * Get past/completed activities
-   */
-  getPastActivities: async (): Promise<Activity[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .eq("status", "completed")
-        .order("start_date", { ascending: false });
+  getPastActivities: async (
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<Activity>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (error) throw error;
+    const { data, error, count } = await supabase
+      .from("activities")
+      .select("*", { count: "exact" })
+      .eq("status", "completed")
+      .order("start_date", { ascending: false })
+      .range(from, to);
 
-      return (data as Activity[]) || [];
-    } catch (error: any) {
-      console.error("Error fetching past activities:", error);
-      throw new Error(error.message || "Failed to fetch past activities");
-    }
+    if (error) handleSupabaseError(error, "Failed to fetch past activities");
+    return buildPaginatedResult(
+      (data as Activity[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 
-  /**
-   * Get activities by type
-   */
-  getActivitiesByType: async (type: Activity["activity_type"]): Promise<Activity[]> => {
-    try {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .eq("activity_type", type)
-        .order("start_date", { ascending: false });
+  getActivitiesByType: async (
+    type: Activity["activity_type"],
+    pagination?: PaginationParams
+  ): Promise<PaginatedResult<Activity>> => {
+    const { page, pageSize, from, to } = resolvePagination(pagination);
 
-      if (error) throw error;
+    const { data, error, count } = await supabase
+      .from("activities")
+      .select("*", { count: "exact" })
+      .eq("activity_type", type)
+      .order("start_date", { ascending: false })
+      .range(from, to);
 
-      return (data as Activity[]) || [];
-    } catch (error: any) {
-      console.error("Error fetching activities by type:", error);
-      throw new Error(error.message || "Failed to fetch activities");
-    }
+    if (error) handleSupabaseError(error, "Failed to fetch activities");
+    return buildPaginatedResult(
+      (data as Activity[]) || [],
+      count ?? 0,
+      page,
+      pageSize
+    );
   },
 };

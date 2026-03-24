@@ -1,8 +1,5 @@
 import supabase from "@/services/supabase";
-
-/**
- * Report Service - Handles all report generation and analytics
- */
+import { handleSupabaseError } from "@/services/errors";
 
 export interface ReportStats {
   totalVolunteers: number;
@@ -19,7 +16,7 @@ export interface ActivityReport {
   id: string;
   student_id: string;
   volunteer_name: string;
-  activity_type: 'blood_donation' | 'tree_tagging';
+  activity_type: "blood_donation" | "tree_tagging";
   submission_date: string;
   status: string;
   unit_number: string | null;
@@ -45,344 +42,236 @@ export interface MonthlyTrend {
 
 export const reportService = {
   /**
-   * Get comprehensive report statistics
+   * Get report stats using head-only count queries (no client-side counting)
    */
   getReportStats: async (): Promise<ReportStats> => {
-    try {
-      // Get volunteer counts
-      const { count: totalVolunteers } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true });
+    const [
+      totalVol, certifiedVol,
+      totalBlood, approvedBlood, pendingBlood, rejectedBlood,
+      totalTree, approvedTree, pendingTree, rejectedTree,
+      unitsData,
+    ] = await Promise.all([
+      supabase.from("volunteers").select("*", { count: "exact", head: true }),
+      supabase.from("volunteers").select("*", { count: "exact", head: true }).eq("status", "certified"),
+      // Fixed: use blood_donations (not blood_donation_submissions)
+      supabase.from("blood_donations").select("*", { count: "exact", head: true }),
+      supabase.from("blood_donations").select("*", { count: "exact", head: true }).eq("status", "approved"),
+      supabase.from("blood_donations").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("blood_donations").select("*", { count: "exact", head: true }).eq("status", "rejected"),
+      // Fixed: use tree_tagging (not tree_tagging_submissions)
+      supabase.from("tree_tagging").select("*", { count: "exact", head: true }),
+      supabase.from("tree_tagging").select("*", { count: "exact", head: true }).eq("status", "approved"),
+      supabase.from("tree_tagging").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("tree_tagging").select("*", { count: "exact", head: true }).eq("status", "rejected"),
+      supabase.from("nss_units").select("*", { count: "exact", head: true }),
+    ]);
 
-      const { count: certifiedVolunteers } = await supabase
-        .from("volunteers")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "certified");
+    const firstError = [
+      totalVol, certifiedVol,
+      totalBlood, approvedBlood, pendingBlood, rejectedBlood,
+      totalTree, approvedTree, pendingTree, rejectedTree,
+      unitsData,
+    ].find((r) => r.error);
+    if (firstError?.error) handleSupabaseError(firstError.error, "Failed to fetch report statistics");
 
-      // Get blood donation counts
-      const { count: totalBloodDonations } = await supabase
-        .from("blood_donation_submissions")
-        .select("*", { count: "exact", head: true });
-
-      const { count: approvedBlood } = await supabase
-        .from("blood_donation_submissions")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved");
-
-      const { count: pendingBlood } = await supabase
-        .from("blood_donation_submissions")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "pending");
-
-      const { count: rejectedBlood } = await supabase
-        .from("blood_donation_submissions")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "rejected");
-
-      // Get tree plantation counts
-      const { count: totalTreePlantations } = await supabase
-        .from("tree_tagging_submissions")
-        .select("*", { count: "exact", head: true });
-
-      const { count: approvedTree } = await supabase
-        .from("tree_tagging_submissions")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved");
-
-      const { count: pendingTree } = await supabase
-        .from("tree_tagging_submissions")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "pending");
-
-      const { count: rejectedTree } = await supabase
-        .from("tree_tagging_submissions")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "rejected");
-
-      // Get unique units
-      const { data: unitsData } = await supabase
-        .from("volunteers")
-        .select("unit_id")
-        .not("unit_id", "is", null);
-
-      const activeUnits = new Set(unitsData?.map((v) => v.unit_id)).size;
-
-      return {
-        totalVolunteers: totalVolunteers || 0,
-        totalBloodDonations: totalBloodDonations || 0,
-        totalTreePlantations: totalTreePlantations || 0,
-        approvedSubmissions: (approvedBlood || 0) + (approvedTree || 0),
-        pendingSubmissions: (pendingBlood || 0) + (pendingTree || 0),
-        rejectedSubmissions: (rejectedBlood || 0) + (rejectedTree || 0),
-        certifiedVolunteers: certifiedVolunteers || 0,
-        activeUnits,
-      };
-    } catch (error: any) {
-      console.error("Error fetching report stats:", error);
-      throw new Error(error.message || "Failed to fetch report statistics");
-    }
+    return {
+      totalVolunteers: totalVol.count || 0,
+      totalBloodDonations: totalBlood.count || 0,
+      totalTreePlantations: totalTree.count || 0,
+      approvedSubmissions: (approvedBlood.count || 0) + (approvedTree.count || 0),
+      pendingSubmissions: (pendingBlood.count || 0) + (pendingTree.count || 0),
+      rejectedSubmissions: (rejectedBlood.count || 0) + (rejectedTree.count || 0),
+      certifiedVolunteers: certifiedVol.count || 0,
+      activeUnits: unitsData.count || 0,
+    };
   },
 
   /**
-   * Get activity report (blood donations and tree plantations)
+   * Get activity report — fixed table names
    */
   getActivityReport: async (filters?: {
-    activityType?: 'blood_donation' | 'tree_tagging' | 'all';
+    activityType?: "blood_donation" | "tree_tagging" | "all";
     status?: string;
     startDate?: string;
     endDate?: string;
   }): Promise<ActivityReport[]> => {
-    try {
-      const activities: ActivityReport[] = [];
+    const activities: ActivityReport[] = [];
 
-      // Fetch blood donations if applicable
-      if (!filters?.activityType || filters.activityType === 'all' || filters.activityType === 'blood_donation') {
-        let bloodQuery = supabase
-          .from("blood_donation_submissions")
-          .select(`
-            id,
-            student_id,
-            created_at,
-            status,
-            volunteers!inner(full_name, unit_number)
-          `)
-          .order("created_at", { ascending: false });
+    if (!filters?.activityType || filters.activityType === "all" || filters.activityType === "blood_donation") {
+      let bloodQuery = supabase
+        .from("blood_donations")
+        .select("id, student_id, created_at, status, volunteers!inner(full_name, unit_number)")
+        .order("created_at", { ascending: false });
 
-        if (filters?.status && filters.status !== 'all') {
-          bloodQuery = bloodQuery.eq("status", filters.status);
-        }
-        if (filters?.startDate) {
-          bloodQuery = bloodQuery.gte("created_at", filters.startDate);
-        }
-        if (filters?.endDate) {
-          bloodQuery = bloodQuery.lte("created_at", filters.endDate);
-        }
+      if (filters?.status && filters.status !== "all") bloodQuery = bloodQuery.eq("status", filters.status);
+      if (filters?.startDate) bloodQuery = bloodQuery.gte("created_at", filters.startDate);
+      if (filters?.endDate) bloodQuery = bloodQuery.lte("created_at", filters.endDate);
 
-        const { data: bloodData, error: bloodError } = await bloodQuery;
-        if (bloodError) throw bloodError;
+      const { data: bloodData, error: bloodError } = await bloodQuery;
+      if (bloodError) handleSupabaseError(bloodError, "Failed to fetch blood donations");
 
-        bloodData?.forEach((item: any) => {
-          activities.push({
-            id: item.id,
-            student_id: item.student_id,
-            volunteer_name: item.volunteers?.full_name || 'Unknown',
-            activity_type: 'blood_donation',
-            submission_date: item.created_at,
-            status: item.status,
-            unit_number: item.volunteers?.unit_number || null,
-          });
+      bloodData?.forEach((item: Record<string, unknown>) => {
+        const vol = item.volunteers as { full_name?: string; unit_number?: string } | null;
+        activities.push({
+          id: item.id as string,
+          student_id: item.student_id as string,
+          volunteer_name: vol?.full_name || "Unknown",
+          activity_type: "blood_donation",
+          submission_date: item.created_at as string,
+          status: item.status as string,
+          unit_number: vol?.unit_number || null,
         });
-      }
-
-      // Fetch tree plantations if applicable
-      if (!filters?.activityType || filters.activityType === 'all' || filters.activityType === 'tree_tagging') {
-        let treeQuery = supabase
-          .from("tree_tagging_submissions")
-          .select(`
-            id,
-            student_id,
-            created_at,
-            status,
-            volunteers!inner(full_name, unit_number)
-          `)
-          .order("created_at", { ascending: false });
-
-        if (filters?.status && filters.status !== 'all') {
-          treeQuery = treeQuery.eq("status", filters.status);
-        }
-        if (filters?.startDate) {
-          treeQuery = treeQuery.gte("created_at", filters.startDate);
-        }
-        if (filters?.endDate) {
-          treeQuery = treeQuery.lte("created_at", filters.endDate);
-        }
-
-        const { data: treeData, error: treeError } = await treeQuery;
-        if (treeError) throw treeError;
-
-        treeData?.forEach((item: any) => {
-          activities.push({
-            id: item.id,
-            student_id: item.student_id,
-            volunteer_name: item.volunteers?.full_name || 'Unknown',
-            activity_type: 'tree_tagging',
-            submission_date: item.created_at,
-            status: item.status,
-            unit_number: item.volunteers?.unit_number || null,
-          });
-        });
-      }
-
-      // Sort by date
-      return activities.sort((a, b) => 
-        new Date(b.submission_date).getTime() - new Date(a.submission_date).getTime()
-      );
-    } catch (error: any) {
-      console.error("Error fetching activity report:", error);
-      throw new Error(error.message || "Failed to fetch activity report");
+      });
     }
+
+    if (!filters?.activityType || filters.activityType === "all" || filters.activityType === "tree_tagging") {
+      let treeQuery = supabase
+        .from("tree_tagging")
+        .select("id, student_id, created_at, status, volunteers!inner(full_name, unit_number)")
+        .order("created_at", { ascending: false });
+
+      if (filters?.status && filters.status !== "all") treeQuery = treeQuery.eq("status", filters.status);
+      if (filters?.startDate) treeQuery = treeQuery.gte("created_at", filters.startDate);
+      if (filters?.endDate) treeQuery = treeQuery.lte("created_at", filters.endDate);
+
+      const { data: treeData, error: treeError } = await treeQuery;
+      if (treeError) handleSupabaseError(treeError, "Failed to fetch tree tagging");
+
+      treeData?.forEach((item: Record<string, unknown>) => {
+        const vol = item.volunteers as { full_name?: string; unit_number?: string } | null;
+        activities.push({
+          id: item.id as string,
+          student_id: item.student_id as string,
+          volunteer_name: vol?.full_name || "Unknown",
+          activity_type: "tree_tagging",
+          submission_date: item.created_at as string,
+          status: item.status as string,
+          unit_number: vol?.unit_number || null,
+        });
+      });
+    }
+
+    return activities.sort(
+      (a, b) => new Date(b.submission_date).getTime() - new Date(a.submission_date).getTime()
+    );
   },
 
   /**
-   * Get unit-wise performance report
+   * Get unit-wise report — fixed table names
    */
   getUnitReport: async (): Promise<UnitReport[]> => {
-    try {
-      // Get all volunteers with unit information
-      const { data: volunteers, error: volError } = await supabase
-        .from("volunteers")
-        .select("id, unit_id, unit_number, status, student_id")
-        .not("unit_id", "is", null);
+    const { data: volunteers, error: volError } = await supabase
+      .from("volunteers")
+      .select("id, unit_id, unit_number, status, student_id")
+      .not("unit_id", "is", null);
 
-      if (volError) throw volError;
+    if (volError) handleSupabaseError(volError, "Failed to fetch volunteers");
 
-      // Group by unit
-      const unitMap = new Map<string, UnitReport>();
+    const unitMap = new Map<string, UnitReport>();
 
-      volunteers?.forEach((vol) => {
-        if (!vol.unit_id) return;
+    volunteers?.forEach((vol) => {
+      if (!vol.unit_id) return;
 
-        if (!unitMap.has(vol.unit_id)) {
-          unitMap.set(vol.unit_id, {
-            unit_id: vol.unit_id,
-            unit_number: vol.unit_number || 'Unknown',
-            total_volunteers: 0,
-            certified_volunteers: 0,
-            approved_volunteers: 0,
-            pending_volunteers: 0,
-            blood_donations: 0,
-            tree_plantations: 0,
-          });
-        }
-
-        const unit = unitMap.get(vol.unit_id)!;
-        unit.total_volunteers++;
-        
-        if (vol.status === 'certified') unit.certified_volunteers++;
-        if (vol.status === 'approved') unit.approved_volunteers++;
-        if (vol.status === 'pending') unit.pending_volunteers++;
-      });
-
-      // Get activity counts for each volunteer
-      const studentIds = volunteers?.map(v => v.student_id) || [];
-      
-      const { data: bloodDonations } = await supabase
-        .from("blood_donation_submissions")
-        .select("student_id, volunteers!inner(unit_id)")
-        .in("student_id", studentIds)
-        .eq("status", "approved");
-
-      const { data: treePlantations } = await supabase
-        .from("tree_tagging_submissions")
-        .select("student_id, volunteers!inner(unit_id)")
-        .in("student_id", studentIds)
-        .eq("status", "approved");
-
-      // Add activity counts
-      bloodDonations?.forEach((item: any) => {
-        const unitId = item.volunteers?.unit_id;
-        if (unitId && unitMap.has(unitId)) {
-          unitMap.get(unitId)!.blood_donations++;
-        }
-      });
-
-      treePlantations?.forEach((item: any) => {
-        const unitId = item.volunteers?.unit_id;
-        if (unitId && unitMap.has(unitId)) {
-          unitMap.get(unitId)!.tree_plantations++;
-        }
-      });
-
-      return Array.from(unitMap.values()).sort((a, b) => 
-        b.total_volunteers - a.total_volunteers
-      );
-    } catch (error: any) {
-      console.error("Error fetching unit report:", error);
-      throw new Error(error.message || "Failed to fetch unit report");
-    }
-  },
-
-  /**
-   * Get monthly trends for the last 6 months
-   */
-  getMonthlyTrends: async (): Promise<MonthlyTrend[]> => {
-    try {
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-      // Get blood donations
-      const { data: bloodData } = await supabase
-        .from("blood_donation_submissions")
-        .select("created_at")
-        .gte("created_at", sixMonthsAgo.toISOString())
-        .eq("status", "approved");
-
-      // Get tree plantations
-      const { data: treeData } = await supabase
-        .from("tree_tagging_submissions")
-        .select("created_at")
-        .gte("created_at", sixMonthsAgo.toISOString())
-        .eq("status", "approved");
-
-      // Get new volunteers
-      const { data: volunteerData } = await supabase
-        .from("volunteers")
-        .select("created_at")
-        .gte("created_at", sixMonthsAgo.toISOString());
-
-      // Group by month
-      const monthMap = new Map<string, MonthlyTrend>();
-      
-      const getMonthKey = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      };
-
-      const getMonthLabel = (monthKey: string) => {
-        const [year, month] = monthKey.split('-');
-        const date = new Date(parseInt(year), parseInt(month) - 1);
-        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-      };
-
-      // Initialize last 6 months
-      for (let i = 5; i >= 0; i--) {
-        const date = new Date();
-        date.setMonth(date.getMonth() - i);
-        const key = getMonthKey(date.toISOString());
-        monthMap.set(key, {
-          month: getMonthLabel(key),
+      if (!unitMap.has(vol.unit_id)) {
+        unitMap.set(vol.unit_id, {
+          unit_id: vol.unit_id,
+          unit_number: vol.unit_number || "Unknown",
+          total_volunteers: 0,
+          certified_volunteers: 0,
+          approved_volunteers: 0,
+          pending_volunteers: 0,
           blood_donations: 0,
           tree_plantations: 0,
-          new_volunteers: 0,
         });
       }
 
-      // Count activities
-      bloodData?.forEach((item) => {
-        const key = getMonthKey(item.created_at);
-        if (monthMap.has(key)) {
-          monthMap.get(key)!.blood_donations++;
-        }
+      const unit = unitMap.get(vol.unit_id)!;
+      unit.total_volunteers++;
+      if (vol.status === "certified") unit.certified_volunteers++;
+      if (vol.status === "approved") unit.approved_volunteers++;
+      if (vol.status === "pending") unit.pending_volunteers++;
+    });
+
+    const studentIds = volunteers?.map((v) => v.student_id) || [];
+
+    if (studentIds.length > 0) {
+      const [bloodResult, treeResult] = await Promise.all([
+        supabase
+          .from("blood_donations")
+          .select("student_id, volunteers!inner(unit_id)")
+          .in("student_id", studentIds)
+          .eq("status", "approved"),
+        supabase
+          .from("tree_tagging")
+          .select("student_id, volunteers!inner(unit_id)")
+          .in("student_id", studentIds)
+          .eq("status", "approved"),
+      ]);
+
+      bloodResult.data?.forEach((item: Record<string, unknown>) => {
+        const vol = item.volunteers as { unit_id?: string } | null;
+        const unitId = vol?.unit_id;
+        if (unitId && unitMap.has(unitId)) unitMap.get(unitId)!.blood_donations++;
       });
 
-      treeData?.forEach((item) => {
-        const key = getMonthKey(item.created_at);
-        if (monthMap.has(key)) {
-          monthMap.get(key)!.tree_plantations++;
-        }
+      treeResult.data?.forEach((item: Record<string, unknown>) => {
+        const vol = item.volunteers as { unit_id?: string } | null;
+        const unitId = vol?.unit_id;
+        if (unitId && unitMap.has(unitId)) unitMap.get(unitId)!.tree_plantations++;
       });
-
-      volunteerData?.forEach((item) => {
-        const key = getMonthKey(item.created_at);
-        if (monthMap.has(key)) {
-          monthMap.get(key)!.new_volunteers++;
-        }
-      });
-
-      return Array.from(monthMap.values());
-    } catch (error: any) {
-      console.error("Error fetching monthly trends:", error);
-      throw new Error(error.message || "Failed to fetch monthly trends");
     }
+
+    return Array.from(unitMap.values()).sort((a, b) => b.total_volunteers - a.total_volunteers);
+  },
+
+  /**
+   * Monthly trends — fixed table names
+   */
+  getMonthlyTrends: async (): Promise<MonthlyTrend[]> => {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const since = sixMonthsAgo.toISOString();
+
+    const [bloodResult, treeResult, volResult] = await Promise.all([
+      supabase.from("blood_donations").select("created_at").gte("created_at", since).eq("status", "approved"),
+      supabase.from("tree_tagging").select("created_at").gte("created_at", since).eq("status", "approved"),
+      supabase.from("volunteers").select("created_at").gte("created_at", since),
+    ]);
+
+    const getMonthKey = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    };
+
+    const getMonthLabel = (monthKey: string) => {
+      const [year, month] = monthKey.split("-");
+      const date = new Date(parseInt(year), parseInt(month) - 1);
+      return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    };
+
+    const monthMap = new Map<string, MonthlyTrend>();
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const key = getMonthKey(date.toISOString());
+      monthMap.set(key, { month: getMonthLabel(key), blood_donations: 0, tree_plantations: 0, new_volunteers: 0 });
+    }
+
+    bloodResult.data?.forEach((item) => {
+      const key = getMonthKey(item.created_at);
+      if (monthMap.has(key)) monthMap.get(key)!.blood_donations++;
+    });
+
+    treeResult.data?.forEach((item) => {
+      const key = getMonthKey(item.created_at);
+      if (monthMap.has(key)) monthMap.get(key)!.tree_plantations++;
+    });
+
+    volResult.data?.forEach((item) => {
+      const key = getMonthKey(item.created_at);
+      if (monthMap.has(key)) monthMap.get(key)!.new_volunteers++;
+    });
+
+    return Array.from(monthMap.values());
   },
 };

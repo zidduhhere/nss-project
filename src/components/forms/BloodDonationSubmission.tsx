@@ -11,6 +11,17 @@ import { UseAuthContext } from "@/context/AuthContext";
 import SuccessModal from "@/components/common/SuccessModal";
 import { Alert, AlertDescription } from "@/components/shadcn/alert";
 
+/**
+ * Valid enum values for blood_donation_case_type in the database.
+ * These must match exactly (lowercase) with the Supabase enum.
+ */
+const DONATION_CASE_OPTIONS = [
+  { label: "Whole Blood", value: "whole blood" },
+  { label: "Platelets", value: "platelets" },
+  { label: "RBC (Red Blood Cells)", value: "rbc" },
+  { label: "Double Blood Cells", value: "double blood cells" },
+] as const;
+
 interface BloodDonationFormValues {
   hospitalName: string;
   donationDate: string;
@@ -58,12 +69,17 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps) =>
     setSubmitError(null);
 
     try {
+      // Map display label → database enum value
+      const caseEnum =
+        DONATION_CASE_OPTIONS.find((o) => o.label === data.donationCase)?.value ??
+        data.donationCase.toLowerCase();
+
       await activitySubmissionService.submitBloodDonation(
         {
           hospitalName: data.hospitalName,
           donationDate: data.donationDate,
-          typeDonated: data.donationType,
-          donationCase: data.donationCase,
+          typeDonated: data.donationType || null,
+          donationCase: caseEnum,
           certificate: data.certificate?.[0] || null,
         },
         session.user.id
@@ -134,17 +150,16 @@ const BloodDonationSubmission = ({ onSuccess }: BloodDonationSubmissionProps) =>
           </div>
 
           <Dropdown
-            {...register("donationType", { required: "Type of Donation is required" })}
-            label="Type Of Donation *"
-            options={["Platelets", "Whole Blood", "Plasma", "Double Red Cells"]}
-            error={errors.donationType}
+            {...register("donationCase", { required: "Donation type is required" })}
+            label="Type of Donation *"
+            options={DONATION_CASE_OPTIONS.map((o) => o.label)}
+            error={errors.donationCase}
           />
 
-          <TextArea
-            {...register("donationCase")}
-            label="Donation Case (Optional)"
-            placeholder="Describe the case or reason for donation (optional)"
-            rows={4}
+          <TextField
+            {...register("donationType")}
+            label="Additional Details (Optional)"
+            placeholder="Any extra details about the donation"
           />
 
           <ImagePreviewFileUpload

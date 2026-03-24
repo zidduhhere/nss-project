@@ -1,4 +1,6 @@
 import supabase from "@/services/supabase";
+import { ServiceError, handleSupabaseError } from "@/services/errors";
+import { contactFormSchema } from "@/services/validationSchemas";
 
 export interface ContactSubmission {
   id?: string;
@@ -8,28 +10,27 @@ export interface ContactSubmission {
   created_at?: string;
 }
 
-/**
- * Contact Service - Handles contact form submissions to Supabase
- */
 export const contactService = {
-  /**
-   * Submit a contact form message
-   */
-  submitContactForm: async (data: Omit<ContactSubmission, "id" | "created_at">): Promise<void> => {
-    try {
-      const { error } = await supabase
-        .from("contact_submissions")
-        .insert([{
-          name: data.name,
-          email: data.email,
-          message: data.message,
-          created_at: new Date().toISOString(),
-        }]);
-
-      if (error) throw error;
-    } catch (error: any) {
-      console.error("Error submitting contact form:", error);
-      throw new Error(error.message || "Failed to send message");
+  submitContactForm: async (
+    data: Omit<ContactSubmission, "id" | "created_at">
+  ): Promise<void> => {
+    const parsed = contactFormSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new ServiceError(
+        parsed.error.issues.map((i) => i.message).join(", "),
+        "VALIDATION_ERROR"
+      );
     }
+
+    const { error } = await supabase.from("contact_submissions").insert([
+      {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        message: parsed.data.message,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (error) handleSupabaseError(error, "Failed to send message");
   },
 };
