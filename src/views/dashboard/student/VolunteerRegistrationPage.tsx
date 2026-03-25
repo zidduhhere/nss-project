@@ -41,7 +41,7 @@ const VolunteerRegistrationPage = () => {
         useVolunteerRegistration();
 
     const [collegeCourses, setCollegeCourses] = useState<any[]>([]);
-    const [filteredUnits, setFilteredUnits] = useState<{ unitNumber: string; collegeName: string }[]>([]);
+    const [filteredUnits, setFilteredUnits] = useState<{ id: string; unitNumber: string; collegeName: string }[]>([]);
     const [isLoadingUnits, setIsLoadingUnits] = useState(false);
     const [collegeDistrict, setCollegeDistrict] = useState("");
 
@@ -193,7 +193,10 @@ const VolunteerRegistrationPage = () => {
                                         label="Select College Unit"
                                         required
                                         placeholder={isLoadingUnits ? "Loading colleges..." : collegeDistrict ? "Select your college unit" : "Select district first"}
-                                        options={filteredUnits.map((u) => `${u.unitNumber} - ${u.collegeName}`)}
+                                        options={filteredUnits.map((u) => ({
+                                            value: u.unitNumber,
+                                            label: `${u.unitNumber} - ${u.collegeName}`,
+                                        }))}
                                         error={errors.unit}
                                         disabled={!collegeDistrict || isLoadingUnits}
                                     />

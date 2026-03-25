@@ -52,10 +52,10 @@ export const generalService = {
 
   getUnitsByDistrict: async (
     district: string
-  ): Promise<{ unitNumber: string; collegeName: string }[]> => {
+  ): Promise<{ id: string; unitNumber: string; collegeName: string }[]> => {
     const { data, error } = await supabase
       .from("nss_units")
-      .select("unit_number, colleges!inner(name, district)")
+      .select("id, unit_number, colleges!inner(name, district)")
       .eq("colleges.district", toDistrictCode(district))
       .order("unit_number", { ascending: true });
 
@@ -65,6 +65,7 @@ export const generalService = {
       (data || []).map((row: Record<string, unknown>) => {
         const college = row.colleges as { name?: string } | null;
         return {
+          id: row.id as string,
           unitNumber: row.unit_number as string,
           collegeName: college?.name || "Unknown",
         };

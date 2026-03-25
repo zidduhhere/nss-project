@@ -136,14 +136,17 @@ export const volunteerService = {
       signatureUrl = signatureUrlData.publicUrl;
     }
 
-    // Resolve unit name → unit_id
+    // Resolve unit_number → unit_id
     let unitId = null;
-    if (data.unit) {
-      const { data: unitData } = await supabase
+    const unitNumber = data.unit;
+    if (unitNumber) {
+      const { data: unitData, error: unitError } = await supabase
         .from("nss_units")
         .select("id")
-        .eq("unit_number", data.unit)
+        .eq("unit_number", unitNumber)
         .single();
+      if (unitError)
+        handleSupabaseError(unitError, "Failed to resolve unit");
       if (unitData) unitId = unitData.id;
     }
 
@@ -158,7 +161,7 @@ export const volunteerService = {
       status: "pending",
       semester: data.semester,
       course: data.course,
-      unit_number: data.unit,
+      unit_number: unitNumber,
       enroll_no: null,
       gender: data.gender.toLowerCase(),
       dob: data.dob,
