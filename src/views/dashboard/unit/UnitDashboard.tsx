@@ -192,9 +192,9 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
 
     return (
         <TourProvider config={unitTourConfig}>
-        <div className="min-h-dvh bg-gray-50 font-isans">
+        <div className="min-h-dvh bg-gray-50 font-isans flex flex-col">
             <DashboardNavigation mode="unit" />
-            <div className="space-y-6 px-4 sm:px-6 pb-6">
+            <div className="space-y-6 px-4 sm:px-6 pb-6 flex-grow">
 
                 {/* Header Section */}
                 <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-between gap-6">
@@ -443,9 +443,7 @@ export default function UnitDashboard({ }: UnitDashboardProps) {
                 onConfirm={handleDeleteCourse}
             />
 
-            <div className="mt-16">
-                <Footer />
-            </div>
+            <Footer />
             <TourOverlay />
             <TourHelpButton />
         </div>

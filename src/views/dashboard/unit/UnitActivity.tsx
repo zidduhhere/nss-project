@@ -56,9 +56,9 @@ export default function UnitActivity({}: UnitActivityProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <DashboardNavigation mode="unit" />
-      <div className="space-y-6 px-4 sm:px-6 pb-6">
+      <div className="space-y-6 px-4 sm:px-6 pb-6 flex-grow">
         {/* Error */}
         {error && (
           <Alert variant="destructive">
@@ -176,9 +176,7 @@ export default function UnitActivity({}: UnitActivityProps) {
           </CardContent>
         </Card>
       </div>
-      <div className="fixed bottom-0 w-full">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }

@@ -74,7 +74,7 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
     const uniqueSemesters = Array.from(new Set(volunteers.map(v => v.semester).filter(Boolean))).sort() as number[];
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
             <DashboardNavigation mode="unit" />
 
             {/* Success Modal */}
@@ -93,7 +93,7 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                 />
             )}
 
-            <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6">
+            <div className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6 flex-grow">
                 {/* Filters and Search */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
                     <div className="flex flex-col gap-3 sm:gap-4">
@@ -211,9 +211,7 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                 onClose={handleCloseOverlay}
                 userRole="unit"
             />
-            <div className="fixed bottom-0 w-full">
-                <Footer />
-            </div>
+            <Footer />
         </div>
     );
 }
