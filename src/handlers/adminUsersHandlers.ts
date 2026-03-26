@@ -1,4 +1,5 @@
 import { UserWithDetails } from '@/types/UserWithDetails';
+import { formatDate } from '@/utils/dateUtils';
 
 export class AdminUsersHandlers {
   private setSelectedUser: (user: UserWithDetails | null) => void;
@@ -72,7 +73,7 @@ export class AdminUsersHandlers {
       user.college_name || 'N/A',
       user.district || 'N/A',
       user.volunteer_applications?.toString() || '0',
-      new Date(user.created_at).toLocaleDateString(),
+      formatDate(user.created_at),
     ]);
 
     const csvContent = [

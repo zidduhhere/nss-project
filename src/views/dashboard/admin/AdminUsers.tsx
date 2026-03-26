@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { formatDate, formatDateTime } from '@/utils/dateUtils';
 import {
   Search,
   Filter,
@@ -234,7 +235,7 @@ const AdminUsers = () => {
       width: '10%',
       render: (value: string) => (
         <div className="text-gray-600 text-sm">
-          {new Date(value).toLocaleDateString()}
+          {formatDate(value)}
         </div>
       ),
     },
@@ -337,7 +338,7 @@ const AdminUsers = () => {
                   <div>
                     <label className="text-sm font-medium text-gray-500">Created At</label>
                     <p className="mt-1 text-gray-900">
-                      {new Date(selectedUser.created_at).toLocaleString()}
+                      {formatDateTime(selectedUser.created_at)}
                     </p>
                   </div>
                 </div>

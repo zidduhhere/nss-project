@@ -7,6 +7,13 @@ export interface College {
   district: string;
 }
 
+export interface HomepageStats {
+  bloodDonations: number;
+  treesTagged: number;
+  activeVolunteers: number;
+  activeUnits: number;
+}
+
 const DISTRICT_NAME_TO_CODE: Record<string, string> = {
   Thiruvananthapuram: "TVM",
   Kollam: "KOL",
@@ -71,5 +78,24 @@ export const generalService = {
         };
       })
     );
+  },
+
+  getHomepageStats: async (): Promise<HomepageStats> => {
+    const [bloodRes, treeRes, volunteerRes, unitRes] = await Promise.all([
+      supabase.from("blood_donations").select("*", { count: "exact", head: true }),
+      supabase.from("tree_tagging").select("*", { count: "exact", head: true }),
+      supabase.from("volunteers").select("*", { count: "exact", head: true }).eq("status", "approved"),
+      supabase.from("nss_units").select("*", { count: "exact", head: true }),
+    ]);
+
+    const firstError = [bloodRes, treeRes, volunteerRes, unitRes].find((r) => r.error);
+    if (firstError?.error) handleSupabaseError(firstError.error, "Failed to fetch homepage stats");
+
+    return {
+      bloodDonations: bloodRes.count || 0,
+      treesTagged: treeRes.count || 0,
+      activeVolunteers: volunteerRes.count || 0,
+      activeUnits: unitRes.count || 0,
+    };
   },
 };

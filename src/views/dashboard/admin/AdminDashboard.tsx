@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '@/utils/dateUtils';
 import {
   Users,
   UserCheck,
@@ -320,7 +321,7 @@ const AdminDashboard = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-gray-600">
-                        {new Date(registration.created_at).toLocaleDateString()}
+                        {formatDate(registration.created_at)}
                       </TableCell>
                     </TableRow>
                   ))}

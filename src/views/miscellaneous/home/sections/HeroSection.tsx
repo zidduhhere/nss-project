@@ -5,8 +5,14 @@ import React from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
+import { HomepageStats } from "@/services/generalService";
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  stats: HomepageStats | null;
+  isLoading: boolean;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ stats, isLoading }) => {
   useGSAP(() => {
     const headertextSplit = SplitText.create(".hero-slogan", {
       type: "words",
@@ -69,7 +75,7 @@ export const HeroSection: React.FC = () => {
           <div className="grid grid-cols-3 gap-6 pt-6 max-w-xl">
             <div className="text-left">
               <div className="text-2xl md:text-3xl font-semibold text-white">
-                500+
+                {isLoading ? "---" : `${stats?.bloodDonations ?? 0}+`}
               </div>
               <div className="text-xs text-gray-200 uppercase tracking-wide">
                 Blood Donations
@@ -77,7 +83,7 @@ export const HeroSection: React.FC = () => {
             </div>
             <div className="text-left">
               <div className="text-2xl md:text-3xl font-semibold text-white">
-                1000+
+                {isLoading ? "---" : `${stats?.treesTagged ?? 0}+`}
               </div>
               <div className="text-xs text-gray-200 uppercase tracking-wide">
                 Trees Planted
@@ -85,7 +91,7 @@ export const HeroSection: React.FC = () => {
             </div>
             <div className="text-left">
               <div className="text-2xl md:text-3xl font-semibold text-white">
-                200+
+                {isLoading ? "---" : `${stats?.activeVolunteers ?? 0}+`}
               </div>
               <div className="text-xs text-gray-200 uppercase tracking-wide">
                 Active Members

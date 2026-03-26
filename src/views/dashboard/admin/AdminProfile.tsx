@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { formatDate } from '@/utils/dateUtils';
 import {
   Edit2,
   Save,
@@ -301,25 +302,21 @@ const AdminProfile = () => {
                     <div className="p-3 bg-gray-50 rounded-lg">
                       <p className="text-xs text-gray-600 mb-1">Account Created</p>
                       <p className="text-sm font-medium text-gray-900">
-                        {adminProfile?.created_at
-                          ? new Date(adminProfile.created_at).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })
-                          : 'N/A'}
+                        {formatDate(adminProfile?.created_at, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
                       </p>
                     </div>
                     <div className="p-3 bg-gray-50 rounded-lg">
                       <p className="text-xs text-gray-600 mb-1">Last Updated</p>
                       <p className="text-sm font-medium text-gray-900">
-                        {adminProfile?.updated_at
-                          ? new Date(adminProfile.updated_at).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })
-                          : 'N/A'}
+                        {formatDate(adminProfile?.updated_at, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
                       </p>
                     </div>
                   </div>

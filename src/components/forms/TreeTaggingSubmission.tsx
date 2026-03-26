@@ -38,7 +38,7 @@ const TreeTaggingSubmission = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleInputChange =
-    (field: keyof TreeTaggingSubmissionData) =>
+    (field: keyof TreeTaggingFormData) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setFormData((prev) => ({
         ...prev,
@@ -84,9 +84,11 @@ const TreeTaggingSubmission = ({
       await activitySubmissionService.submitTreeTagging(
         {
           treesPlanted: parseInt(formData.treesPlanted),
-          taggedTreeLinks: formData.taggedTreeLinks.filter((link) => link.trim() !== ""),
+          taggedTreeLinks: formData.taggedTreeLinks.filter(
+            (link) => link.trim() !== "",
+          ),
         },
-        session.user.id
+        session.user.id,
       );
 
       setShowSuccess(true);
@@ -103,7 +105,9 @@ const TreeTaggingSubmission = ({
       }
     } catch (err: any) {
       console.error("Submission error:", err);
-      setSubmitError(err.message || "Failed to submit tree tagging. Please try again.");
+      setSubmitError(
+        err.message || "Failed to submit tree tagging. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }

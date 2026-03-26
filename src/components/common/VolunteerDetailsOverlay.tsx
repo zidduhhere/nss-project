@@ -3,6 +3,7 @@ import { X, User, Phone, MapPin, GraduationCap, Heart, Users, Globe, UserCheck, 
 import { VolunteerProfile } from '@/types/VolunteerProfile';
 import { FilledButton, OutlinedButton } from '../ui';
 import { unitVolunteerService } from '@/services/unitVolunteerService';
+import { formatDate } from '@/utils/dateUtils';
 
 interface VolunteerDetailsOverlayProps {
     volunteer: VolunteerProfile | null;
@@ -82,14 +83,6 @@ export const VolunteerDetailsOverlay: React.FC<VolunteerDetailsOverlayProps> = (
     };
 
     if (!isOpen || !localVolunteer) return null;
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-IN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
 
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {

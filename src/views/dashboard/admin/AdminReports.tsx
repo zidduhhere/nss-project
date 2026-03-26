@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatDate } from '@/utils/dateUtils';
 import {
   FileText,
   TrendingUp,
@@ -49,7 +50,7 @@ const AdminReports = () => {
     const rows = activities.map(activity => [
       activity.volunteer_name,
       activity.activity_type === 'blood_donation' ? 'Blood Donation' : 'Tree Plantation',
-      new Date(activity.submission_date).toLocaleDateString(),
+      formatDate(activity.submission_date),
       activity.status,
       activity.unit_number || 'N/A',
     ]);
@@ -320,7 +321,7 @@ const AdminReports = () => {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
-                        {new Date(activity.submission_date).toLocaleDateString()}
+                        {formatDate(activity.submission_date)}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">{activity.unit_number || 'N/A'}</td>
                       <td className="py-3 px-4 text-sm">

@@ -1,6 +1,12 @@
 import React from 'react';
+import { HomepageStats } from '@/services/generalService';
 
-export const HowItWorksSection: React.FC = () => {
+interface HowItWorksSectionProps {
+    stats: HomepageStats | null;
+    isLoading: boolean;
+}
+
+export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({ stats, isLoading }) => {
     return (
         <section className="py-24 bg-white fade-in">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,10 +28,10 @@ export const HowItWorksSection: React.FC = () => {
                         <div className="relative bg-white border border-gray-200 rounded-2xl p-8 shadow-lg space-y-6">
                             <div className="flex items-center justify-between"><h3 className="font-semibold text-gray-900 font-isans">Live Impact</h3><span className="text-xs px-2 py-1 rounded-full bg-nss-600 text-white">Updated</span></div>
                             <div className="grid grid-cols-2 gap-6">
-                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">500+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Blood Donations</p></div>
-                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">1000+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Trees Tagged</p></div>
-                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">200+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Active Students</p></div>
-                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">80+</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">UNIT Reviews</p></div>
+                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">{isLoading ? "---" : `${stats?.bloodDonations ?? 0}+`}</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Blood Donations</p></div>
+                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">{isLoading ? "---" : `${stats?.treesTagged ?? 0}+`}</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Trees Tagged</p></div>
+                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">{isLoading ? "---" : `${stats?.activeVolunteers ?? 0}+`}</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Active Students</p></div>
+                                <div className="p-4 rounded-xl bg-nss-600/5 border border-nss-600/20"><div className="text-2xl font-bold text-nss-600 font-isans">{isLoading ? "---" : `${stats?.activeUnits ?? 0}+`}</div><p className="text-xs uppercase tracking-wide text-gray-600 mt-1">Active Units</p></div>
                             </div>
                             <p className="text-sm text-gray-600 leading-relaxed">Data represents cumulative impact recorded on the platform and inspires continuous participation.</p>
                         </div>
