@@ -99,8 +99,8 @@ export const reportService = {
 
     if (!filters?.activityType || filters.activityType === "all" || filters.activityType === "blood_donation") {
       let bloodQuery = supabase
-        .from("blood_donations")
-        .select("id, student_id, created_at, status, volunteers!inner(full_name, unit_number)")
+        .from("blood_donations_with_volunteer")
+        .select("id, student_id, created_at, status, volunteer_name, volunteer_unit_number")
         .order("created_at", { ascending: false });
 
       if (filters?.status && filters.status !== "all") bloodQuery = bloodQuery.eq("status", filters.status);
@@ -111,23 +111,22 @@ export const reportService = {
       if (bloodError) handleSupabaseError(bloodError, "Failed to fetch blood donations");
 
       bloodData?.forEach((item: Record<string, unknown>) => {
-        const vol = item.volunteers as { full_name?: string; unit_number?: string } | null;
         activities.push({
           id: item.id as string,
           student_id: item.student_id as string,
-          volunteer_name: vol?.full_name || "Unknown",
+          volunteer_name: (item.volunteer_name as string) || "Unknown",
           activity_type: "blood_donation",
           submission_date: item.created_at as string,
           status: item.status as string,
-          unit_number: vol?.unit_number || null,
+          unit_number: (item.volunteer_unit_number as string) || null,
         });
       });
     }
 
     if (!filters?.activityType || filters.activityType === "all" || filters.activityType === "tree_tagging") {
       let treeQuery = supabase
-        .from("tree_tagging")
-        .select("id, student_id, created_at, status, volunteers!inner(full_name, unit_number)")
+        .from("tree_tagging_with_volunteer")
+        .select("id, student_id, created_at, status, volunteer_name, volunteer_unit_number")
         .order("created_at", { ascending: false });
 
       if (filters?.status && filters.status !== "all") treeQuery = treeQuery.eq("status", filters.status);
@@ -138,15 +137,14 @@ export const reportService = {
       if (treeError) handleSupabaseError(treeError, "Failed to fetch tree tagging");
 
       treeData?.forEach((item: Record<string, unknown>) => {
-        const vol = item.volunteers as { full_name?: string; unit_number?: string } | null;
         activities.push({
           id: item.id as string,
           student_id: item.student_id as string,
-          volunteer_name: vol?.full_name || "Unknown",
+          volunteer_name: (item.volunteer_name as string) || "Unknown",
           activity_type: "tree_tagging",
           submission_date: item.created_at as string,
           status: item.status as string,
-          unit_number: vol?.unit_number || null,
+          unit_number: (item.volunteer_unit_number as string) || null,
         });
       });
     }
@@ -194,29 +192,33 @@ export const reportService = {
 
     const studentIds = volunteers?.map((v) => v.student_id) || [];
 
+    // Build student_id -> unit_id lookup from already-fetched volunteers
+    const studentUnitMap = new Map<string, string>();
+    volunteers?.forEach((v) => {
+      if (v.student_id && v.unit_id) studentUnitMap.set(v.student_id, v.unit_id);
+    });
+
     if (studentIds.length > 0) {
       const [bloodResult, treeResult] = await Promise.all([
         supabase
           .from("blood_donations")
-          .select("student_id, volunteers!inner(unit_id)")
+          .select("student_id")
           .in("student_id", studentIds)
           .eq("status", "approved"),
         supabase
           .from("tree_tagging")
-          .select("student_id, volunteers!inner(unit_id)")
+          .select("student_id")
           .in("student_id", studentIds)
           .eq("status", "approved"),
       ]);
 
       bloodResult.data?.forEach((item: Record<string, unknown>) => {
-        const vol = item.volunteers as { unit_id?: string } | null;
-        const unitId = vol?.unit_id;
+        const unitId = studentUnitMap.get(item.student_id as string);
         if (unitId && unitMap.has(unitId)) unitMap.get(unitId)!.blood_donations++;
       });
 
       treeResult.data?.forEach((item: Record<string, unknown>) => {
-        const vol = item.volunteers as { unit_id?: string } | null;
-        const unitId = vol?.unit_id;
+        const unitId = studentUnitMap.get(item.student_id as string);
         if (unitId && unitMap.has(unitId)) unitMap.get(unitId)!.tree_plantations++;
       });
     }

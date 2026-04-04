@@ -80,6 +80,49 @@ export const generalService = {
     );
   },
 
+  getStudentCollegeInfo: async (
+    studentId: string
+  ): Promise<{ collegeId: string; collegeName: string; district: string } | null> => {
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("college_id")
+      .eq("id", studentId)
+      .single();
+
+    if (profileError || !profile?.college_id) return null;
+
+    const { data: college, error: collegeError } = await supabase
+      .from("colleges")
+      .select("id, name, district")
+      .eq("id", profile.college_id)
+      .single();
+
+    if (collegeError || !college) return null;
+
+    return {
+      collegeId: college.id,
+      collegeName: college.name,
+      district: college.district,
+    };
+  },
+
+  getUnitsByCollege: async (
+    collegeId: string
+  ): Promise<{ id: string; unitNumber: string }[]> => {
+    const { data, error } = await supabase
+      .from("nss_units")
+      .select("id, unit_number")
+      .eq("college_id", collegeId)
+      .order("unit_number", { ascending: true });
+
+    if (error) handleSupabaseError(error, "Failed to fetch units by college");
+
+    return (data || []).map((row: any) => ({
+      id: row.id,
+      unitNumber: row.unit_number,
+    }));
+  },
+
   getHomepageStats: async (): Promise<HomepageStats> => {
     const [bloodRes, treeRes, volunteerRes, unitRes] = await Promise.all([
       supabase.from("blood_donations").select("*", { count: "exact", head: true }),

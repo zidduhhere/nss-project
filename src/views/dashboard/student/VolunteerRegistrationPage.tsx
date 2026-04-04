@@ -1,7 +1,7 @@
 import { Dropdown, FilledButton, TextField, Footer } from "@/components/ui";
 import { DashboardHeader } from "./sections";
 import { useForm } from "react-hook-form";
-import { generalService, College } from "@/services/generalService";
+import { generalService } from "@/services/generalService";
 import {
     getAllDistricts,
     getTaluksByDistrict,
@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePreviewFileUpload, LoadingSpinner } from "@/components/common";
 import { bloodGroups, communities, religions } from "@/utils/data/community";
 import { useVolunteerRegistration } from "@/hooks/useVolunteerRegistration";
+import { UseAuthContext } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
 import ErrorPop from "@/components/common/ErrorPop";
 import SuccessModal from "@/components/common/SuccessModal";
@@ -39,51 +40,45 @@ const VolunteerRegistrationPage = () => {
 
     const { registerVolunteer, isLoading, error, resetState, getCollegeCourses } =
         useVolunteerRegistration();
+    const { session } = UseAuthContext();
 
     const [collegeCourses, setCollegeCourses] = useState<any[]>([]);
-    const [filteredUnits, setFilteredUnits] = useState<{ id: string; unitNumber: string; collegeName: string }[]>([]);
-    const [isLoadingUnits, setIsLoadingUnits] = useState(false);
+    const [collegeUnits, setCollegeUnits] = useState<{ id: string; unitNumber: string }[]>([]);
+    const [isLoadingCollegeInfo, setIsLoadingCollegeInfo] = useState(true);
     const [collegeDistrict, setCollegeDistrict] = useState("");
+    const [collegeName, setCollegeName] = useState("");
 
-    // Fetch college courses on component mount
+    // Fetch college info (district, name) and units from the student's profile
     useEffect(() => {
-        const fetchCourses = async () => {
-            const courses = await getCollegeCourses();
-            setCollegeCourses(courses);
+        const fetchCollegeInfo = async () => {
+            if (!session?.user?.id) return;
+            setIsLoadingCollegeInfo(true);
+            try {
+                const [info, courses] = await Promise.all([
+                    generalService.getStudentCollegeInfo(session.user.id),
+                    getCollegeCourses(),
+                ]);
+                setCollegeCourses(courses);
+                if (info) {
+                    setCollegeDistrict(info.district);
+                    setCollegeName(info.collegeName);
+                    const units = await generalService.getUnitsByCollege(info.collegeId);
+                    setCollegeUnits(units);
+                }
+            } catch (err) {
+                console.error("Error fetching college info:", err);
+            } finally {
+                setIsLoadingCollegeInfo(false);
+            }
         };
-        fetchCourses();
-    }, []);
+        fetchCollegeInfo();
+    }, [session?.user?.id]);
 
     // Watch district and taluk values from React Hook Form state
     const watchDistrict = watch("district");
     const watchTaluk = watch("taluk");
     const watchPhoto = watch("photo");
     const watchSignature = watch("signature");
-
-    // Fetch units filtered by college district when it changes
-    useEffect(() => {
-        if (!collegeDistrict) {
-            setFilteredUnits([]);
-            return;
-        }
-        let cancelled = false;
-        const fetchUnits = async () => {
-            setIsLoadingUnits(true);
-            try {
-                const units = await generalService.getUnitsByDistrict(collegeDistrict);
-                if (!cancelled) {
-                    setFilteredUnits(units);
-                    setValue("unit", "");
-                }
-            } catch {
-                if (!cancelled) setFilteredUnits([]);
-            } finally {
-                if (!cancelled) setIsLoadingUnits(false);
-            }
-        };
-        fetchUnits();
-        return () => { cancelled = true; };
-    }, [collegeDistrict, setValue]);
 
     // 🔧 DEBUGGING: Fill form with mock data
     // const fillMockData = () => {
@@ -180,25 +175,23 @@ const VolunteerRegistrationPage = () => {
                                     Institution Details
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                                    <Dropdown
+                                    <TextField
                                         label="College District"
                                         required
-                                        placeholder="Select college district"
-                                        options={getAllDistricts()}
-                                        value={collegeDistrict}
-                                        onChange={(e) => setCollegeDistrict(e.target.value)}
+                                        value={isLoadingCollegeInfo ? "Loading..." : collegeDistrict || "N/A"}
+                                        disabled
                                     />
                                     <Dropdown
                                         {...register("unit")}
                                         label="Select College Unit"
                                         required
-                                        placeholder={isLoadingUnits ? "Loading colleges..." : collegeDistrict ? "Select your college unit" : "Select district first"}
-                                        options={filteredUnits.map((u) => ({
+                                        placeholder={isLoadingCollegeInfo ? "Loading units..." : collegeUnits.length > 0 ? "Select your unit" : "No units found for your college"}
+                                        options={collegeUnits.map((u) => ({
                                             value: u.unitNumber,
-                                            label: `${u.unitNumber} - ${u.collegeName}`,
+                                            label: u.unitNumber,
                                         }))}
                                         error={errors.unit}
-                                        disabled={!collegeDistrict || isLoadingUnits}
+                                        disabled={isLoadingCollegeInfo || collegeUnits.length === 0}
                                     />
                                     <Dropdown
                                         {...register("semester")}

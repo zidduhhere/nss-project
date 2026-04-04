@@ -5,6 +5,7 @@ import { Filter, Search, Download, Loader2, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getVolunteerColumns } from '@/structures/tables';
 import { useUnitVolunteerManagement } from '@/hooks/useUnitVolunteerManagement';
+import { exportVolunteersToCSV } from '@/utils/exportUtils';
 import { VolunteerProfile } from '@/types/VolunteerProfile';
 import SuccessModal from '@/components/common/SuccessModal';
 import ErrorPop from '@/components/common/ErrorPop';
@@ -141,11 +142,10 @@ export default function UnitVolunteers({ }: UnitVolunteersProps) {
                                 variant='primary'
                                 size='md'
                                 className='flex flex-row justify-center items-center gap-2 flex-1 sm:flex-none'
+                                onClick={() => exportVolunteersToCSV(volunteers)}
                             >
-
                                 <Download className="h-4 w-4" />
                                 <span>Export</span>
-
                             </FilledButton>
                         </div>
                     </div>

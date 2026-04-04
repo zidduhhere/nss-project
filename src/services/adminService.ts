@@ -11,6 +11,23 @@ import {
   buildPaginatedResult,
   PaginatedResult,
 } from "@/services/pagination";
+export interface AdminSubmission {
+  id: string;
+  student_id: string;
+  student_name: string;
+  student_ktu_id: string;
+  unit_number: string | null;
+  submission_type: "Blood Donation" | "Tree Tagging";
+  submitted_date: string;
+  status: string;
+  details: string;
+  certificate_url?: string | null;
+  hospital_name?: string;
+  type_donated?: string;
+  donation_case?: string;
+  trees_planted?: number;
+  tagged_tree_links?: string[];
+}
 
 export const adminService = {
   // ── Profile ──────────────────────────────────────────────────
@@ -533,5 +550,123 @@ export const adminService = {
 
     if (error) handleSupabaseError(error, "Failed to demote unit to student");
     return data as UserProfile;
+  },
+
+  // ── Activity Submissions (admin override) ─────────────────────
+
+  getAllSubmissions: async (filters?: {
+    type?: string;
+    status?: string;
+    search?: string;
+  }): Promise<AdminSubmission[]> => {
+    const submissions: AdminSubmission[] = [];
+
+    const shouldFetchBlood =
+      !filters?.type || filters.type === "Blood Donation" || filters.type === "all";
+    const shouldFetchTree =
+      !filters?.type || filters.type === "Tree Tagging" || filters.type === "all";
+
+    // Use database views that pre-join volunteer info (no FK needed)
+    const bloodPromise = shouldFetchBlood
+      ? (() => {
+          let q = supabase
+            .from("blood_donations_with_volunteer")
+            .select("*")
+            .order("created_at", { ascending: false });
+          if (filters?.status && filters.status !== "all") q = q.eq("status", filters.status);
+          return q;
+        })()
+      : null;
+
+    const treePromise = shouldFetchTree
+      ? (() => {
+          let q = supabase
+            .from("tree_tagging_with_volunteer")
+            .select("*")
+            .order("created_at", { ascending: false });
+          if (filters?.status && filters.status !== "all") q = q.eq("status", filters.status);
+          return q;
+        })()
+      : null;
+
+    const [bloodResult, treeResult] = await Promise.all([
+      bloodPromise,
+      treePromise,
+    ]);
+
+    if (bloodResult?.error) handleSupabaseError(bloodResult.error, "Failed to fetch blood donations");
+    if (treeResult?.error) handleSupabaseError(treeResult.error, "Failed to fetch tree tagging submissions");
+
+    (bloodResult?.data || []).forEach((item: any) => {
+      submissions.push({
+        id: item.id,
+        student_id: item.student_id,
+        student_name: item.volunteer_name || "Unknown",
+        student_ktu_id: item.volunteer_ktu_id || "",
+        unit_number: item.volunteer_unit_number || null,
+        submission_type: "Blood Donation",
+        submitted_date: item.donation_date || item.created_at,
+        status: item.status || "pending",
+        details: item.hospital_name || "",
+        certificate_url: item.certificate_url,
+        hospital_name: item.hospital_name,
+        type_donated: item.type_donated,
+        donation_case: item.donation_case,
+      });
+    });
+
+    (treeResult?.data || []).forEach((item: any) => {
+      submissions.push({
+        id: item.id,
+        student_id: item.student_id,
+        student_name: item.volunteer_name || "Unknown",
+        student_ktu_id: item.volunteer_ktu_id || "",
+        unit_number: item.volunteer_unit_number || null,
+        submission_type: "Tree Tagging",
+        submitted_date: item.created_at,
+        status: item.status || "pending",
+        details: `${item.trees_planted || 0} trees planted`,
+        certificate_url: null,
+        trees_planted: item.trees_planted,
+        tagged_tree_links: item.tagged_links,
+      });
+    });
+
+    // Apply client-side search filter
+    let filtered = submissions;
+    if (filters?.search) {
+      const q = filters.search.toLowerCase();
+      filtered = submissions.filter(
+        (s) =>
+          s.student_name.toLowerCase().includes(q) ||
+          s.student_ktu_id.toLowerCase().includes(q) ||
+          s.details.toLowerCase().includes(q) ||
+          (s.unit_number && s.unit_number.toLowerCase().includes(q))
+      );
+    }
+
+    return filtered.sort(
+      (a, b) =>
+        new Date(b.submitted_date).getTime() - new Date(a.submitted_date).getTime()
+    );
+  },
+
+  overrideSubmissionStatus: async (
+    id: string,
+    submissionType: "Blood Donation" | "Tree Tagging",
+    status: "approved" | "rejected" | "pending"
+  ) => {
+    const table =
+      submissionType === "Blood Donation" ? "blood_donations" : "tree_tagging";
+
+    const { data, error } = await supabase
+      .from(table)
+      .update({ status })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) handleSupabaseError(error, `Failed to update submission status to ${status}`);
+    return data;
   },
 };

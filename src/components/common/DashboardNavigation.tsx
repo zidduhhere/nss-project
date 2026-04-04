@@ -25,6 +25,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
             return [
                 { name: 'Dashboard', path: '/dashboard/admin', tourId: 'nav-dashboard' },
                 { name: 'Volunteers', path: '/dashboard/admin/volunteers', tourId: 'nav-volunteers' },
+                { name: 'Submissions', path: '/dashboard/admin/submissions', tourId: 'nav-submissions' },
                 { name: 'Users', path: '/dashboard/admin/users', tourId: 'nav-users' },
             ];
         } else {
@@ -154,7 +155,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Drawer Header */}
-                    <div className="flex items-center justify-between px-4 py-3  border-gray-200">
+                    <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
                         <div className="flex items-center gap-3">
                             <img src={images.logo} alt="NSS" className="size-8" />
                             <span className="font-semibold text-md text-white">Menu</span>
@@ -162,7 +163,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                         <button
                             type="button"
                             onClick={closeDrawer}
-                            className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                            className="p-2 rounded-md text-white/70 hover:text-white hover:bg-white/10"
                             aria-label="Close menu"
                         >
                             <X className="size-5" />
@@ -170,47 +171,43 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                     </div>
 
                     {/* Drawer Content: Nav Links */}
-                    <div className="flex items-center justify-between flex-col px-3 py-24 h-full">
-                        <nav className="flex flex-col gap-6 w-full">
+                    <div className="flex flex-col justify-between px-3 py-6 h-[calc(100%-60px)] overflow-y-auto">
+                        <nav className="flex flex-col gap-1 w-full">
                             {getNavItems().map((item) => (
-
                                 <NavLink
                                     key={item.path}
                                     to={item.path}
                                     onClick={closeDrawer}
                                     className={({ isActive }) =>
-                                        `font-isans px-6 py-6 rounded-full font-medium transition-colors text-white/80 ${isActive ? 'bg-white/10' : 'text-white/80 '
+                                        `font-isans px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
                                         }`
                                     }
                                     end
                                 >
                                     {item.name}
                                 </NavLink>
-
                             ))}
                         </nav>
 
                         {/* Actions */}
-                        <div className=" mt-6 border-t border-gray-200 pt-4 flex flex-col  w-full items-center gap-4">
+                        <div className="mt-6 border-t border-white/10 pt-4 flex flex-col w-full items-center gap-3">
                             <OutlinedButton
-                                size='lg'
-                                className='flex flex-row w-full justify-center gap-2 '
+                                size='md'
+                                className='flex flex-row w-full justify-center gap-2'
                                 loadingText='Loading...'
-
                                 onClick={() => { closeDrawer(); handleProfile(); }}
                             >
-                                <User className="size-6" />
+                                <User className="size-5" />
                                 Profile
                             </OutlinedButton>
                             <FilledButton
-                                size='lg'
+                                size='md'
                                 className='flex flex-row gap-2 w-full justify-center bg-red-600 hover:bg-red-500'
                                 onClick={() => { closeDrawer(); handleLogout(); }}
                             >
-                                <LogOut className="size-6" />
+                                <LogOut className="size-5" />
                                 Logout
                             </FilledButton>
-
                         </div>
                     </div>
                 </aside>

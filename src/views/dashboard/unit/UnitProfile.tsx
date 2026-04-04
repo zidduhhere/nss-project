@@ -1,11 +1,54 @@
-import DashboardNavigation from '../../../components/common/DashboardNavigation';
-import { UnitInfoCard, DashboardHeader } from '../../../components/common';
-import { TextField, TextArea, StatCard, FilledButton, OutlinedButton, Footer } from '../../../components/ui';
-import { Calendar, Building, Users, KeyRound, AlertCircle, CheckCircle2, RefreshCw, MapPin, User, UserCheck, Clock, UserX } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import {
+    Edit2,
+    Save,
+    X,
+    AlertCircle,
+    RefreshCw,
+    Loader2,
+    Mail,
+    Phone,
+    MapPin,
+    Calendar,
+    Building,
+    Users,
+    UserCheck,
+    Clock,
+    UserX,
+    KeyRound,
+    User,
+    Shield,
+} from 'lucide-react';
+import DashboardNavigation from '@/components/common/DashboardNavigation';
+import Button from '@/components/ui/Button';
+import TextField from '@/components/ui/TextField';
+import TextArea from '@/components/ui/TextArea';
+import Footer from '@/components/ui/Footer';
 import { useUnitProfile } from '@/hooks/useUnitProfile';
 import { UseAuthContext } from '@/context/AuthContext';
 import { UnitProfileUpdate } from '@/types/UnitProfile';
+import ErrorPop from '@/components/common/ErrorPop';
+import SuccessModal from '@/components/common/SuccessModal';
+import { Badge } from '@/components/shadcn/badge';
+
+const InfoItem = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) => (
+    <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+        <div className="size-9 rounded-lg bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+            <Icon className="size-4 text-gray-500" />
+        </div>
+        <div className="min-w-0">
+            <p className="text-xs font-medium text-gray-500">{label}</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{value || 'N/A'}</p>
+        </div>
+    </div>
+);
+
+const StatItem = ({ label, value, color }: { label: string; value: number; color: string }) => (
+    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+        <span className="text-sm text-gray-600">{label}</span>
+        <span className={`text-lg font-bold ${color}`}>{value}</span>
+    </div>
+);
 
 interface UnitProfileProps {
     user?: { name?: string; role?: string } | null;
@@ -27,11 +70,12 @@ export default function UnitProfile({ }: UnitProfileProps) {
     } = useUnitProfile(unitId || '');
 
     const [isEditing, setIsEditing] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [formData, setFormData] = useState<UnitProfileUpdate>({});
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [resetLoading, setResetLoading] = useState(false);
+    const [resetError, setResetError] = useState<string | null>(null);
 
-    // Update form data when profile loads
     useEffect(() => {
         if (profile && !isEditing) {
             setFormData({
@@ -44,6 +88,11 @@ export default function UnitProfile({ }: UnitProfileProps) {
         }
     }, [profile, isEditing]);
 
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        try { await refreshProfile(); } finally { setIsRefreshing(false); }
+    };
+
     const handleSave = async () => {
         try {
             await updateProfile(formData);
@@ -51,14 +100,12 @@ export default function UnitProfile({ }: UnitProfileProps) {
             setSuccessMessage('Profile updated successfully!');
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err: any) {
-            // Error is handled by the hook
             console.error('Save failed:', err);
         }
     };
 
     const handleCancel = () => {
         setIsEditing(false);
-        // Reset form to current profile data
         if (profile) {
             setFormData({
                 po_name: profile.po_name || '',
@@ -75,324 +122,282 @@ export default function UnitProfile({ }: UnitProfileProps) {
             alert('Email address not found in profile');
             return;
         }
-
-        const confirmed = confirm(
-            `Send password reset link to ${profile.po_email}?`
-        );
-
+        const confirmed = confirm(`Send password reset link to ${profile.po_email}?`);
         if (!confirmed) return;
-
         try {
             setResetLoading(true);
+            setResetError(null);
             await resetPassword();
             alert(`Password reset link sent to ${profile.po_email}. Please check your email.`);
         } catch (err: any) {
-            alert(`Failed to send reset email: ${err.message}`);
+            setResetError(err.message || 'Failed to send reset email');
         } finally {
             setResetLoading(false);
         }
     };
 
-    if (isLoading) {
+    // Loading state
+    if (isLoading && !profile) {
         return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="font-isans min-h-screen bg-gray-50">
                 <DashboardNavigation mode="unit" />
-                <div className="flex items-center justify-center h-[60vh]">
-                    <div className="text-center">
-                        <div className="w-16 h-16 border-4 border-nss-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-600 font-medium">Loading profile...</p>
+                <div className="container mx-auto px-4 py-8">
+                    <div className="flex flex-col items-center justify-center h-96">
+                        <Loader2 className="size-12 text-primary-600 animate-spin mb-4" />
+                        <p className="text-gray-600 text-lg">Loading profile...</p>
                     </div>
                 </div>
             </div>
         );
     }
 
-    if (!profile) {
+    // Error state
+    if (error && !profile) {
         return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="font-isans min-h-screen bg-gray-50">
                 <DashboardNavigation mode="unit" />
-                <div className="flex items-center justify-center h-[60vh]">
-                    <div className="text-center">
-                        <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                        <p className="text-gray-900 font-semibold text-lg mb-2">Profile Not Found</p>
-                        <p className="text-gray-600 mb-4">Unable to load your unit profile.</p>
-                        <FilledButton onClick={refreshProfile}>Try Again</FilledButton>
+                <div className="container mx-auto px-4 py-8">
+                    <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 text-center">
+                        <div className="size-16 bg-blood-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertCircle className="size-8 text-blood-500" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Unable to Load Profile</h2>
+                        <p className="text-gray-600 mb-6">{error}</p>
+                        <Button onClick={handleRefresh} className="bg-primary-600 hover:bg-primary-700 text-white">
+                            <RefreshCw className={`size-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            {isRefreshing ? 'Retrying...' : 'Try Again'}
+                        </Button>
                     </div>
                 </div>
+                <Footer />
             </div>
         );
     }
+
+    if (!profile) return null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-nss-50">
+        <div className="font-isans min-h-screen bg-gray-50">
             <DashboardNavigation mode="unit" />
-            <div className="space-y-6 px-4 sm:px-6 pb-6">
-                {/* Success/Error Messages */}
-                {successMessage && (
-                    <div className="bg-tree-50 border border-tree-200 rounded-xl p-4 flex items-center gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-tree-600 flex-shrink-0" />
-                        <p className="text-tree-800 font-medium">{successMessage}</p>
-                    </div>
-                )}
 
-                {error && (
-                    <div className="bg-blood-50 border border-blood-200 rounded-xl p-4 flex items-center gap-3">
-                        <AlertCircle className="h-5 w-5 text-blood-600 flex-shrink-0" />
-                        <div className="flex-1">
-                            <p className="text-red-800 font-medium">{error}</p>
+            {successMessage && (
+                <SuccessModal title="Profile Updated" message={successMessage} />
+            )}
+            {(error || resetError) && (
+                <ErrorPop error={error || resetError || ''} onCloseClick={() => setResetError(null)} />
+            )}
+
+            <div className="container mx-auto px-4 py-8 max-w-5xl">
+                {/* Profile Header Card */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                    <div className="bg-gradient-to-r from-nss-600 to-nss-500 px-6 py-8 sm:px-8">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="size-20 rounded-full border-4 border-white/30 bg-white flex items-center justify-center">
+                                    <Building className="size-10 text-nss-600" />
+                                </div>
+                                <div className="text-white">
+                                    <h1 className="text-xl sm:text-2xl font-bold">{profile.unit_number}</h1>
+                                    <p className="text-white/80 text-sm">{profile.college_name || 'NSS Unit'}</p>
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <Badge className="bg-white/20 text-white border-0 text-xs">
+                                            <MapPin className="size-3 mr-1" />
+                                            {profile.college_district || 'N/A'}
+                                        </Badge>
+                                        {stats?.establishedYear && (
+                                            <Badge className="bg-white/20 text-white border-0 text-xs">
+                                                <Calendar className="size-3 mr-1" />
+                                                Est. {stats.establishedYear}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 w-full sm:w-auto">
+                                {!isEditing ? (
+                                    <>
+                                        <button
+                                            onClick={handleRefresh}
+                                            disabled={isRefreshing}
+                                            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
+                                        >
+                                            <RefreshCw className={`size-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                                        </button>
+                                        <Button
+                                            onClick={() => setIsEditing(true)}
+                                            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border-0"
+                                        >
+                                            <Edit2 className="size-4" />
+                                            Edit Profile
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            onClick={handleCancel}
+                                            disabled={isUpdating}
+                                            className="bg-white/10 hover:bg-white/20 text-white border-0 disabled:opacity-50"
+                                        >
+                                            <X className="size-4 mr-1" /> Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={handleSave}
+                                            disabled={isUpdating}
+                                            className="bg-white text-nss-700 hover:bg-gray-100 disabled:opacity-50"
+                                        >
+                                            {isUpdating ? (
+                                                <><Loader2 className="size-4 mr-1 animate-spin" /> Saving...</>
+                                            ) : (
+                                                <><Save className="size-4 mr-1" /> Save</>
+                                            )}
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
                         </div>
-                        <button
-                            onClick={refreshProfile}
-                            className="text-red-600 hover:text-red-700 transition-colors"
-                        >
-                            <RefreshCw className="h-5 w-5" />
-                        </button>
                     </div>
-                )}
 
-                {/* Header */}
-                <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-between gap-6">
-                    <DashboardHeader
-                        title="Unit Profile"
-                        subtitle="Manage your NSS unit information and settings"
-                        icon={Building}
-                        badges={[
-                            { icon: Building, text: profile.unit_number || 'N/A' },
-                            { icon: MapPin, text: profile.college_district || 'N/A' }
-                        ]}
-                    />
-
-                    {/* Unit Info Card */}
-                    <UnitInfoCard className="w-full lg:w-80 flex-shrink-0" />
+                    {/* Quick Info Bar */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-100 border-b border-gray-100">
+                        {[
+                            { icon: Mail, label: 'PO Email', value: profile.po_email || 'N/A' },
+                            { icon: Phone, label: 'PO Phone', value: profile.po_phone || 'N/A' },
+                            { icon: Users, label: 'Volunteers', value: String(stats?.totalVolunteers || 0) },
+                            { icon: UserCheck, label: 'Approved', value: String(stats?.approvedVolunteers || 0) },
+                        ].map((item, i) => (
+                            <div key={i} className="px-4 py-3 text-center">
+                                <item.icon className="size-4 text-gray-400 mx-auto mb-1" />
+                                <p className="text-xs text-gray-500">{item.label}</p>
+                                <p className="text-sm font-medium text-gray-900 truncate">{item.value}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {/* Main Profile Form */}
-                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 lg:p-8">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
-                            <div>
-                                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">Unit Information</h3>
-                                <p className="text-sm text-gray-500">Manage your unit and Program Officer details</p>
+                {/* Main Content */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left: Editable Fields */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Unit Details (Read-only) */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <Building className="size-5 text-nss-500" />
+                                Unit Details
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <TextField label="Unit Number" value={profile.unit_number} disabled />
+                                <TextField label="College" value={profile.college_name || ''} disabled />
+                                <TextField label="District" value={profile.college_district || ''} disabled />
+                                <TextField label="Established" value={stats?.establishedYear || 'N/A'} disabled />
                             </div>
-                            {!isEditing ? (
-                                <FilledButton 
-                                    onClick={() => setIsEditing(true)}
-                                    variant="primary"
-                                    className="w-full sm:w-auto"
-                                >
-                                    Edit Profile
-                                </FilledButton>
-                            ) : (
-                                <div className="flex gap-3 w-full sm:w-auto">
-                                    <OutlinedButton 
-                                        onClick={handleCancel}
-                                        disabled={isUpdating}
-                                        className="border-gray-300 text-gray-700 hover:border-gray-400 flex-1 sm:flex-none"
-                                    >
-                                        Cancel
-                                    </OutlinedButton>
-                                    <FilledButton 
-                                        onClick={handleSave}
-                                        isLoading={isUpdating}
-                                        loadingText="Saving..."
-                                        variant="primary"
-                                        className="flex-1 sm:flex-none"
-                                    >
-                                        Save Changes
-                                    </FilledButton>
-                                </div>
-                            )}
                         </div>
 
-                        <div className="space-y-6">
-                            {/* Read-only Unit Info */}
-                            <div className="bg-gradient-to-br from-nss-50 to-nss-100 rounded-xl p-4 sm:p-6 border border-nss-200">
-                                <h4 className="text-sm font-semibold text-nss-800 mb-4 flex items-center gap-2">
-                                    <Building className="h-4 w-4" />
-                                    Unit Details (Read-only)
-                                </h4>
+                        {/* Program Officer Details (Editable) */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <User className="size-5 text-nss-500" />
+                                Program Officer Details
+                            </h3>
+                            <div className="space-y-4">
+                                <TextField
+                                    label="Program Officer Name"
+                                    placeholder="Dr. John Doe"
+                                    value={formData.po_name || ''}
+                                    onChange={(e) => setFormData({ ...formData, po_name: e.target.value })}
+                                    disabled={!isEditing}
+                                />
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs font-medium text-nss-700 mb-1 block">Unit Number</label>
-                                        <p className="text-nss-900 font-semibold text-lg">{profile.unit_number}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-nss-700 mb-1 block">College</label>
-                                        <p className="text-nss-900 font-medium">{profile.college_name}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-nss-700 mb-1 block">District</label>
-                                        <p className="text-nss-900 font-medium">{profile.college_district}</p>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-medium text-nss-700 mb-1 block">Established</label>
-                                        <p className="text-nss-900 font-medium">{stats?.establishedYear || 'N/A'}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Editable Program Officer Details */}
-                            <div>
-                                <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                                    <User className="h-4 w-4" />
-                                    Program Officer Details
-                                </h4>
-                                <div className="space-y-4">
                                     <TextField
-                                        label="Program Officer Name"
-                                        placeholder="Dr. John Doe"
-                                        value={formData.po_name || ''}
-                                        onChange={(e) => setFormData({ ...formData, po_name: e.target.value })}
+                                        label="Email Address"
+                                        type="email"
+                                        placeholder="po@college.edu"
+                                        value={formData.po_email || ''}
+                                        onChange={(e) => setFormData({ ...formData, po_email: e.target.value })}
                                         disabled={!isEditing}
                                     />
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <TextField
-                                            label="Email Address"
-                                            type="email"
-                                            placeholder="po@college.edu"
-                                            value={formData.po_email || ''}
-                                            onChange={(e) => setFormData({ ...formData, po_email: e.target.value })}
-                                            disabled={!isEditing}
-                                        />
-                                        <TextField
-                                            label="Phone Number"
-                                            placeholder="9876543210"
-                                            value={formData.po_phone || ''}
-                                            onChange={(e) => {
-                                                const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                                setFormData({ ...formData, po_phone: value });
-                                            }}
-                                            disabled={!isEditing}
-                                        />
-                                    </div>
-
                                     <TextField
-                                        label="Designation"
-                                        placeholder="Associate Professor & NSS Coordinator"
-                                        value={formData.po_designation || ''}
-                                        onChange={(e) => setFormData({ ...formData, po_designation: e.target.value })}
+                                        label="Phone Number"
+                                        placeholder="9876543210"
+                                        value={formData.po_phone || ''}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                            setFormData({ ...formData, po_phone: value });
+                                        }}
                                         disabled={!isEditing}
-                                    />
-
-                                    <TextArea
-                                        label="Address"
-                                        placeholder="Faculty Quarters, College Campus"
-                                        value={formData.po_address || ''}
-                                        onChange={(e) => setFormData({ ...formData, po_address: e.target.value })}
-                                        disabled={!isEditing}
-                                        rows={3}
                                     />
                                 </div>
+                                <TextField
+                                    label="Designation"
+                                    placeholder="Associate Professor & NSS Coordinator"
+                                    value={formData.po_designation || ''}
+                                    onChange={(e) => setFormData({ ...formData, po_designation: e.target.value })}
+                                    disabled={!isEditing}
+                                />
+                                <TextArea
+                                    label="Address"
+                                    placeholder="Faculty Quarters, College Campus"
+                                    value={formData.po_address || ''}
+                                    onChange={(e) => setFormData({ ...formData, po_address: e.target.value })}
+                                    disabled={!isEditing}
+                                    rows={3}
+                                />
                             </div>
                         </div>
                     </div>
 
-                    {/* Stats & Actions Sidebar */}
+                    {/* Right: Info Sidebar */}
                     <div className="space-y-6">
-                        {/* Unit Statistics */}
-                        <div className="space-y-3">
-                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 px-1">
-                                <Users className="h-5 w-5 text-nss-600" />
-                                Unit Statistics
+                        {/* Volunteer Statistics */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <Users className="size-5 text-nss-500" />
+                                Volunteer Statistics
                             </h3>
-                            
-                            <StatCard
-                                titleStat={String(stats?.totalVolunteers || 0)}
-                                subtitle="Total Volunteers"
-                                icon={Users}
-                                iconColor="text-white"
-                                iconBgColor="bg-gradient-to-br from-nss-500 to-nss-700"
-                            />
-                            
-                            <StatCard
-                                titleStat={String(stats?.approvedVolunteers || 0)}
-                                subtitle="Approved"
-                                description="By Unit"
-                                icon={UserCheck}
-                                iconColor="text-white"
-                                iconBgColor="bg-gradient-to-br from-green-500 to-green-700"
-                            />
-                            
-                            <StatCard
-                                titleStat={String(stats?.certifiedVolunteers || 0)}
-                                subtitle="Certified"
-                                description="By Admin"
-                                icon={UserCheck}
-                                iconColor="text-white"
-                                iconBgColor="bg-gradient-to-br from-blue-500 to-blue-700"
-                            />
-                            
-                            <StatCard
-                                titleStat={String(stats?.pendingApprovals || 0)}
-                                subtitle="Pending Approvals"
-                                description="Awaiting Review"
-                                icon={Clock}
-                                iconColor="text-white"
-                                iconBgColor="bg-gradient-to-br from-yellow-500 to-yellow-700"
-                            />
-                            
-                            <StatCard
-                                titleStat={String(stats?.rejectedVolunteers || 0)}
-                                subtitle="Rejected"
-                                description="Applications"
-                                icon={UserX}
-                                iconColor="text-white"
-                                iconBgColor="bg-gradient-to-br from-red-500 to-red-700"
-                            />
+                            <div className="space-y-2">
+                                <StatItem label="Total Volunteers" value={stats?.totalVolunteers || 0} color="text-gray-900" />
+                                <StatItem label="Approved" value={stats?.approvedVolunteers || 0} color="text-tree-600" />
+                                <StatItem label="Certified" value={stats?.certifiedVolunteers || 0} color="text-blue-600" />
+                                <StatItem label="Pending" value={stats?.pendingApprovals || 0} color="text-nss-600" />
+                                <StatItem label="Rejected" value={stats?.rejectedVolunteers || 0} color="text-blood-600" />
+                            </div>
                         </div>
 
-                        {/* Security Actions */}
-                        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
-                                <KeyRound className="h-5 w-5 text-nss-600" />
+                        {/* Quick Info */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Info</h3>
+                            <div className="space-y-3">
+                                <InfoItem icon={Building} label="Unit Number" value={profile.unit_number} />
+                                <InfoItem icon={MapPin} label="District" value={profile.college_district || 'N/A'} />
+                                <InfoItem icon={Calendar} label="Established" value={stats?.establishedYear || 'N/A'} />
+                                <InfoItem icon={Shield} label="College" value={profile.college_name || 'N/A'} />
+                            </div>
+                        </div>
+
+                        {/* Security */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <KeyRound className="size-5 text-nss-500" />
                                 Security
                             </h3>
-                            <FilledButton
-                                variant="lightNss"
+                            <Button
                                 onClick={handlePasswordReset}
-                                isLoading={resetLoading}
-                                loadingText="Sending..."
-                                className="w-full flex items-center justify-center gap-2"
+                                disabled={resetLoading}
+                                className="w-full bg-nss-50 text-nss-700 hover:bg-nss-100 border border-nss-200"
                             >
-                                <KeyRound className="h-4 w-4" />
-                                Reset Password
-                            </FilledButton>
+                                {resetLoading ? (
+                                    <><Loader2 className="size-4 mr-2 animate-spin" /> Sending...</>
+                                ) : (
+                                    <><KeyRound className="size-4 mr-2" /> Reset Password</>
+                                )}
+                            </Button>
                             <p className="text-xs text-gray-500 mt-3 text-center">
                                 A reset link will be sent to your email
                             </p>
                         </div>
-
-                        {/* Quick Info */}
-                        <div className="bg-gradient-to-br from-nss-500 to-nss-700 rounded-2xl shadow-lg p-4 sm:p-6 text-white">
-                            <h3 className="text-sm font-semibold mb-4 opacity-90">Quick Info</h3>
-                            <div className="space-y-3">
-                                <div className="flex items-start gap-3">
-                                    <Calendar className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <p className="text-xs opacity-80">Established Year</p>
-                                        <p className="font-semibold">{stats?.establishedYear || 'N/A'}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <Building className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <p className="text-xs opacity-80">Unit Number</p>
-                                        <p className="font-semibold">{profile.unit_number}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <p className="text-xs opacity-80">Location</p>
-                                        <p className="font-semibold">{profile.college_district}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
+
             <div className="mt-16">
                 <Footer />
             </div>
