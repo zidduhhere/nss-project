@@ -141,7 +141,20 @@ export default function Navbar({}: NavbarProps) {
             <div className="hidden lg:flex items-center space-x-3">
               {isLoggedIn ? (
                 <div className="hidden lg:flex items-center space-x-3">
-                  <ProfilePlaceholder size="sm" />
+                  <button
+                    onClick={() => {
+                      const profileRoutes: Record<string, string> = {
+                        student: '/dashboard/student/profile',
+                        unit: '/dashboard/unit/profile',
+                        admin: '/dashboard/admin/profile',
+                      };
+                      const userRole = role?.role;
+                      navigate(userRole ? profileRoutes[userRole] || '/dashboard' : '/dashboard');
+                    }}
+                    className="hover:opacity-80 transition-opacity"
+                  >
+                    <ProfilePlaceholder size="sm" />
+                  </button>
                   <OutlinedButton onClick={async () => { await logoutUser(); navigate("/home"); }} size="md">
                     Logout
                   </OutlinedButton>
@@ -188,7 +201,7 @@ export default function Navbar({}: NavbarProps) {
           ></div>
 
           {/* Side Menu */}
-          <div className="fixed top-0 right-0 w-80 h-full bg-black/95 backdrop-blur-lg border-l border-white/10 transform transition-transform duration-300 ease-in-out">
+          <div className="fixed top-0 right-0 w-80 h-full bg-black border-l border-white/10 transform transition-transform duration-300 ease-in-out">
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">

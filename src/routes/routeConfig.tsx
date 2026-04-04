@@ -28,6 +28,8 @@ const AdminVolunteers = lazy(() => import('@/views/dashboard/admin/AdminVoluntee
 const AdminUsers = lazy(() => import('@/views/dashboard/admin/AdminUsers'));
 const AdminReports = lazy(() => import('@/views/dashboard/admin/AdminReports'));
 const AdminSubmissions = lazy(() => import('@/views/dashboard/admin/AdminSubmissions'));
+const AdminActivities = lazy(() => import('@/views/dashboard/admin/AdminActivities'));
+const CreateActivity = lazy(() => import('@/views/dashboard/unit/CreateActivity'));
 const ResetPasswordView = lazy(() => import('@/views/auth/reset-password/ResetPasswordView'));
 
 
@@ -63,7 +65,10 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/unit/profile', component: UnitProfile, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/volunteer', component: UnitVolunteers, protected: true, roles: ['unit'] },
     { path: '/dashboard/unit/submissions', component: UnitSubmissions, protected: true, roles: ['unit'] },
-    { path: '/dashboard/unit/activity', component: UnitActivity, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/activities', component: UnitActivity, protected: true, roles: ['unit'] },
+    { path: '/dashboard/unit/activities/create', component: CreateActivity, protected: true, roles: ['unit'] },
+    // Legacy redirect
+    { path: '/dashboard/unit/activity', component: () => <Navigate to="/dashboard/unit/activities" replace /> },
     // Legacy redirect
     { path: '/dashboard/faculty', component: () => <Navigate to="/dashboard/unit" replace /> },
     { path: '/adminlogin', label: 'Admin Login', nav: false, component: AdminLoginView },
@@ -73,6 +78,7 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/admin/users', component: AdminUsers, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/reports', component: AdminReports, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/submissions', component: AdminSubmissions, protected: true, roles: ['admin'] },
+    { path: '/dashboard/admin/activities', component: AdminActivities, protected: true, roles: ['admin'] },
     { path: '/auth/reset-password', component: ResetPasswordView },
     
 ];

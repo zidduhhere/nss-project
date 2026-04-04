@@ -1,6 +1,7 @@
+import { useNavigate } from "react-router-dom";
 import DashboardNavigation from "../../../components/common/DashboardNavigation";
-import { Footer } from "../../../components/ui";
-import { Calendar, Users, MapPin, Clock, Activity as ActivityIcon } from "lucide-react";
+import { Footer, FilledButton } from "../../../components/ui";
+import { Calendar, Users, MapPin, Clock, Activity as ActivityIcon, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/shadcn/card";
 import { Badge } from "@/components/shadcn/badge";
 import { Skeleton } from "@/components/shadcn/skeleton";
@@ -31,6 +32,7 @@ const typeColors: Record<string, string> = {
 };
 
 export default function UnitActivity({}: UnitActivityProps) {
+  const navigate = useNavigate();
   const { activities, isLoading, error, stats } = useUnitActivities();
 
   const getStatusBadge = (status: string) => {
@@ -65,6 +67,24 @@ export default function UnitActivity({}: UnitActivityProps) {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
+        {/* Header with Create Button */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Activities</h1>
+            <p className="text-sm text-gray-500">Manage and track your NSS activities</p>
+          </div>
+          <FilledButton
+            variant="primary"
+            size="md"
+            onClick={() => navigate('/dashboard/unit/activities/create')}
+          >
+            <div className="flex items-center gap-2">
+              <Plus className="size-4" />
+              Create Activity
+            </div>
+          </FilledButton>
+        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -128,6 +148,15 @@ export default function UnitActivity({}: UnitActivityProps) {
                           <Badge variant="outline" className="text-xs">
                             {typeLabels[activity.activity_type] || activity.activity_type}
                           </Badge>
+                          {(activity as any).approval_status && (activity as any).approval_status !== 'pending' && (
+                            <Badge className={`text-xs border-0 ${
+                              (activity as any).approval_status === 'approved' ? 'bg-tree-100 text-tree-800' :
+                              (activity as any).approval_status === 'rejected' ? 'bg-blood-100 text-blood-800' :
+                              'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {(activity as any).approval_status === 'changes_requested' ? 'Changes Requested' : (activity as any).approval_status}
+                            </Badge>
+                          )}
                         </div>
 
                         {activity.description && (

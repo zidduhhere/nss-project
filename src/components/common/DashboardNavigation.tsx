@@ -26,6 +26,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                 { name: 'Dashboard', path: '/dashboard/admin', tourId: 'nav-dashboard' },
                 { name: 'Volunteers', path: '/dashboard/admin/volunteers', tourId: 'nav-volunteers' },
                 { name: 'Submissions', path: '/dashboard/admin/submissions', tourId: 'nav-submissions' },
+                { name: 'Activities', path: '/dashboard/admin/activities', tourId: 'nav-activities' },
                 { name: 'Users', path: '/dashboard/admin/users', tourId: 'nav-users' },
             ];
         } else {
@@ -33,7 +34,7 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                 { name: 'Dashboard', path: '/dashboard/unit', tourId: 'nav-dashboard' },
                 { name: 'Volunteers', path: '/dashboard/unit/volunteer', tourId: 'nav-volunteers' },
                 { name: 'Submissions', path: '/dashboard/unit/submissions', tourId: 'nav-submissions' },
-                { name: 'Activity', path: '/dashboard/unit/activity', tourId: 'nav-activity' },
+                { name: 'Activities', path: '/dashboard/unit/activities', tourId: 'nav-activities' },
             ];
         }
     };
