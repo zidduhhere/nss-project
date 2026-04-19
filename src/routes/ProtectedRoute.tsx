@@ -5,7 +5,7 @@ import { GlobalLoader } from '@/components/common/GlobalLoader';
 
 interface ProtectedRouteProps {
     component: ComponentType<any>;
-    roles?: Array<'student' | 'unit' | 'admin'>;
+    roles?: Array<'student' | 'unit' | 'admin' | 'flagship_admin' | 'rco'>;
     [key: string]: any;
 }
 

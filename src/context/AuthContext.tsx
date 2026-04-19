@@ -11,6 +11,16 @@ type AuthProviderProps = PropsWithChildren<{}>;
 
 
 
+function buildRoleResult(data: Record<string, any> | null): RoleResult {
+    if (!data) return { role: 'student' };
+    const { role, unit_id, certificate_type, allowed_colleges, created_by } = data;
+    if (role === 'unit') return { role: 'unit', unit_id: unit_id ?? '' };
+    if (role === 'flagship_admin') return { role: 'flagship_admin', certificate_type: certificate_type ?? '' };
+    if (role === 'rco') return { role: 'rco', allowed_colleges: allowed_colleges ?? [], created_by: created_by ?? '' };
+    if (role === 'admin') return { role: 'admin' };
+    return { role: 'student' };
+}
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const [session, setSession] = useState<Session | null>(null);
@@ -27,12 +37,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 const { data } = await supabase.auth.getSession();
                 if (data.session && isMounted) {
                     setSession(data.session);
-                    const fetched_role = (await supabase.from("profiles").select("role, unit_id").eq("id", data.session.user.id).single());
+                    const fetched_role = (await supabase.from("profiles").select("role, unit_id, certificate_type, allowed_colleges, created_by").eq("id", data.session.user.id).single());
                     const roleName = fetched_role.data?.role;
                     const unitId = fetched_role.data?.unit_id;
 
                     if (roleName && isMounted) {
-                        setRole({role: roleName, unit_id: unitId} as RoleResult);
+                        setRole(buildRoleResult(fetched_role.data));
                     }
                     else if (isMounted) {
                         setRole(null);
@@ -56,12 +66,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 setRole(null);
             }
             else {
-                supabase.from("profiles").select("role, unit_id").eq("id", session.user.id).single().then(({data}) => {
+                supabase.from("profiles").select("role, unit_id, certificate_type, allowed_colleges, created_by").eq("id", session.user.id).single().then(({data}) => {
                     if (!isMounted) return;
                     const roleName = data?.role;
-                    const unitId = data?.unit_id;
                     if (roleName) {
-                        setRole({role: roleName, unit_id: unitId} as RoleResult);
+                        setRole(buildRoleResult(data));
                     }
                 });
             }
@@ -149,12 +158,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             //Extract the roke from the profiles table
             //unit_id is not null for the units
-           const {data: role} = await supabase.from("profiles").select("role, unit_id").eq("id", userId).single();
+           const {data: role} = await supabase.from("profiles").select("role, unit_id, certificate_type, allowed_colleges, created_by").eq("id", userId).single();
 
             
             //assign the role to the state variable by checking the unit condition
             if(role) {
-                setRole({ role: role.role, unit_id: role.unit_id } as const);
+                setRole(buildRoleResult(role));
             }
             else {
                 setRole(null);

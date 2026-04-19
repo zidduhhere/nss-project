@@ -6,10 +6,12 @@ export type AuthReturnType = {
     session: Session | null;
 }
 
-export type RoleResult  = 
+export type RoleResult  =
     | { role: 'student' }
     | { role: 'unit'; unit_id: string }
-    | { role: 'admin' };
+    | { role: 'admin' }
+    | { role: 'flagship_admin'; certificate_type: string }
+    | { role: 'rco'; allowed_colleges: string[]; created_by: string };
 
 
 export type AuthContextType = {

@@ -31,7 +31,11 @@ const AdminSubmissions = lazy(() => import('@/views/dashboard/admin/AdminSubmiss
 const AdminActivities = lazy(() => import('@/views/dashboard/admin/AdminActivities'));
 const CreateActivity = lazy(() => import('@/views/dashboard/unit/CreateActivity'));
 const ResetPasswordView = lazy(() => import('@/views/auth/reset-password/ResetPasswordView'));
-
+const FlagshipAdminDashboard = lazy(() => import('@/views/dashboard/flagship-admin/FlagshipAdminDashboard'));
+const FlagshipAdminSubmissions = lazy(() => import('@/views/dashboard/flagship-admin/FlagshipAdminSubmissions'));
+const FlagshipAdminManageRCO = lazy(() => import('@/views/dashboard/flagship-admin/FlagshipAdminManageRCO'));
+const RCODashboard = lazy(() => import('@/views/dashboard/rco/RCODashboard'));
+const RCOSubmissions = lazy(() => import('@/views/dashboard/rco/RCOSubmissions'));
 
 export interface AppRoute {
     path: string;
@@ -39,7 +43,7 @@ export interface AppRoute {
     nav?: boolean;
 
     protected?: boolean;   // Requires auth
-    roles?: Array<'student' | 'unit' | 'admin'>; // Allowed roles
+    roles?: Array<'student' | 'unit' | 'admin' | 'flagship_admin' | 'rco'>; // Allowed roles
     component: ComponentType<any>;
 }
 
@@ -80,7 +84,13 @@ export const appRoutes: AppRoute[] = [
     { path: '/dashboard/admin/submissions', component: AdminSubmissions, protected: true, roles: ['admin'] },
     { path: '/dashboard/admin/activities', component: AdminActivities, protected: true, roles: ['admin'] },
     { path: '/auth/reset-password', component: ResetPasswordView },
-    
+    // Flagship Admin routes
+    { path: '/dashboard/flagship-admin', component: FlagshipAdminDashboard, protected: true, roles: ['flagship_admin'] },
+    { path: '/dashboard/flagship-admin/submissions', component: FlagshipAdminSubmissions, protected: true, roles: ['flagship_admin'] },
+    { path: '/dashboard/flagship-admin/manage-rco', component: FlagshipAdminManageRCO, protected: true, roles: ['flagship_admin'] },
+    // RCO routes
+    { path: '/dashboard/rco', component: RCODashboard, protected: true, roles: ['rco'] },
+    { path: '/dashboard/rco/submissions', component: RCOSubmissions, protected: true, roles: ['rco'] },
 ];
 
 export const notFoundRoute: AppRoute = { path: '*', component: NotFoundView };

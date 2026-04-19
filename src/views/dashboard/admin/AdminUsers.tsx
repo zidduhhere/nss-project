@@ -30,6 +30,9 @@ import { Label } from '@/components/shadcn/label';
 import { Button } from '@/components/shadcn/button';
 import { Alert, AlertDescription } from '@/components/shadcn/alert';
 import { useGeneralServices } from '@/hooks/useGeneralHook';
+import { UserProfile } from '@/types/UserProfile';
+import { Droplets, TreePine, UserPlus, Trash2 } from 'lucide-react';
+import { Select as ShadSelect, SelectContent as ShadSelectContent, SelectItem as ShadSelectItem, SelectTrigger as ShadSelectTrigger, SelectValue as ShadSelectValue } from '@/components/shadcn/select';
 
 const AdminUsers = () => {
   // User management hook

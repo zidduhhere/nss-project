@@ -29,10 +29,13 @@ const AdminLogin = () => {
             
             if (result.role === 'admin') {
                 navigate('/dashboard/admin');
+            } else if (result.role === 'flagship_admin') {
+                navigate('/dashboard/flagship-admin');
+            } else if (result.role === 'rco') {
+                navigate('/dashboard/rco');
             } else {
                 setErrorMessage('Access denied. Admin credentials required.');
                 await logoutUser();
-                
             }
         } catch (error) {
              if (error instanceof Error) {

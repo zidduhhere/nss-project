@@ -669,4 +669,43 @@ export const adminService = {
     if (error) handleSupabaseError(error, `Failed to update submission status to ${status}`);
     return data;
   },
+
+  // ── Flagship Admin management ─────────────────────────────────
+
+  listFlagshipAdmins: async (): Promise<UserProfile[]> => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("role", "flagship_admin")
+      .order("created_at", { ascending: false });
+    if (error) handleSupabaseError(error, "Failed to fetch flagship admins");
+    return (data as UserProfile[]) || [];
+  },
+
+  createFlagshipAdmin: async (params: {
+    email: string;
+    password: string;
+    full_name: string;
+    certificate_type: "Blood Donation" | "Tree Tagging";
+  }): Promise<{ user_id: string }> => {
+    const { data, error } = await supabase.functions.invoke("create-privileged-user", {
+      body: { action: "create", role: "flagship_admin", ...params },
+    });
+    if (error) throw new Error(error.message || "Failed to create flagship admin");
+    if (data?.error) throw new Error(data.error);
+    return data;
+  },
+
+  removeFlagshipAdmin: async (userId: string): Promise<void> => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        role: "student",
+        certificate_type: null,
+        created_by: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", userId);
+    if (error) handleSupabaseError(error, "Failed to remove flagship admin");
+  },
 };

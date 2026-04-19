@@ -5,7 +5,7 @@ import { UseAuthContext } from '@/context/AuthContext';
 import images from '@/assets/images';
 import { FilledButton, OutlinedButton } from '../ui';
 interface DashboardNavigationProps {
-    mode: 'student' | 'unit' | 'admin';
+    mode: 'student' | 'unit' | 'admin' | 'flagship-admin' | 'rco';
 }
 
 const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
@@ -29,6 +29,17 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
                 { name: 'Activities', path: '/dashboard/admin/activities', tourId: 'nav-activities' },
                 { name: 'Users', path: '/dashboard/admin/users', tourId: 'nav-users' },
             ];
+        } else if (mode === 'flagship-admin') {
+            return [
+                { name: 'Dashboard', path: '/dashboard/flagship-admin', tourId: 'nav-dashboard' },
+                { name: 'Submissions', path: '/dashboard/flagship-admin/submissions', tourId: 'nav-submissions' },
+                { name: 'Manage RCOs', path: '/dashboard/flagship-admin/manage-rco', tourId: 'nav-rco' },
+            ];
+        } else if (mode === 'rco') {
+            return [
+                { name: 'Dashboard', path: '/dashboard/rco', tourId: 'nav-dashboard' },
+                { name: 'Submissions', path: '/dashboard/rco/submissions', tourId: 'nav-submissions' },
+            ];
         } else {
             return [
                 { name: 'Dashboard', path: '/dashboard/unit', tourId: 'nav-dashboard' },
@@ -47,10 +58,11 @@ const DashboardNavigation = ({ mode }: DashboardNavigationProps) => {
 
 
     const handleProfile = () => {
-        const profilePath = mode === 'student'
-            ? '/dashboard/student/profile'
-            : mode === 'admin'
-            ? '/dashboard/admin/profile'
+        const profilePath =
+            mode === 'student' ? '/dashboard/student/profile'
+            : mode === 'admin' ? '/dashboard/admin/profile'
+            : mode === 'flagship-admin' ? '/dashboard/flagship-admin'
+            : mode === 'rco' ? '/dashboard/rco'
             : '/dashboard/unit/profile';
         navigate(profilePath);
     };
