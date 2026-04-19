@@ -86,6 +86,59 @@ const AdminUsers = () => {
   // Unique districts for filter
   const [uniqueDistricts, setUniqueDistricts] = useState<string[]>([]);
 
+  // Flagship admin management state
+  const [flagshipAdmins, setFlagshipAdmins] = useState<UserProfile[]>([]);
+  const [faLoading, setFaLoading] = useState(true);
+  const [faError, setFaError] = useState<string | null>(null);
+  const [faSuccess, setFaSuccess] = useState<string | null>(null);
+  const [isCreateFAOpen, setIsCreateFAOpen] = useState(false);
+  const [confirmRemoveFAId, setConfirmRemoveFAId] = useState<string | null>(null);
+  const [faForm, setFaForm] = useState({ email: '', password: '', full_name: '', certificate_type: '' as 'Blood Donation' | 'Tree Tagging' | '' });
+  const [faFormError, setFaFormError] = useState<string | null>(null);
+  const [faSubmitting, setFaSubmitting] = useState(false);
+
+  const loadFlagshipAdmins = async () => {
+    setFaLoading(true);
+    try {
+      const data = await adminService.listFlagshipAdmins();
+      setFlagshipAdmins(data);
+    } catch (e: any) {
+      setFaError(e.message);
+    } finally {
+      setFaLoading(false);
+    }
+  };
+
+  useEffect(() => { loadFlagshipAdmins(); }, []);
+  useEffect(() => { if (faSuccess) { const t = setTimeout(() => setFaSuccess(null), 3000); return () => clearTimeout(t); } }, [faSuccess]);
+
+  const handleCreateFA = async () => {
+    setFaFormError(null);
+    if (!faForm.email || !faForm.password || !faForm.full_name || !faForm.certificate_type) {
+      setFaFormError('All fields are required.'); return;
+    }
+    if (faForm.password.length < 6) { setFaFormError('Password must be at least 6 characters.'); return; }
+    setFaSubmitting(true);
+    try {
+      await adminService.createFlagshipAdmin({ ...faForm, certificate_type: faForm.certificate_type as 'Blood Donation' | 'Tree Tagging' });
+      setFaSuccess(`Flagship Admin account created for ${faForm.full_name}`);
+      setIsCreateFAOpen(false);
+      setFaForm({ email: '', password: '', full_name: '', certificate_type: '' });
+      await loadFlagshipAdmins();
+    } catch (e: any) { setFaFormError(e.message || 'Failed to create flagship admin'); }
+    finally { setFaSubmitting(false); }
+  };
+
+  const handleRemoveFA = async () => {
+    if (!confirmRemoveFAId) return;
+    try {
+      await adminService.removeFlagshipAdmin(confirmRemoveFAId);
+      setFaSuccess('Flagship Admin removed successfully.');
+      setFlagshipAdmins((prev) => prev.filter((f) => f.id !== confirmRemoveFAId));
+    } catch (e: any) { setFaError(e.message || 'Failed to remove flagship admin'); }
+    finally { setConfirmRemoveFAId(null); }
+  };
+
   // Fetch unique districts on mount
   useEffect(() => {
     const fetchDistricts = async () => {
@@ -578,6 +631,80 @@ const AdminUsers = () => {
           </div>
         )}
       </div>
+
+      {/* ── Flagship Admin Management ─────────────────────────── */}
+      <div className="container mx-auto px-4 pb-8 space-y-4 mt-10">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Flagship Admins</h2>
+            <p className="text-sm text-gray-500">Manage certificate-programme administrators.</p>
+          </div>
+          <Button onClick={() => setIsCreateFAOpen(true)} className="flex items-center gap-2" size="sm">
+            <UserPlus className="h-4 w-4" />Create Flagship Admin
+          </Button>
+        </div>
+        {faSuccess && <SuccessModal title="Success" message={faSuccess} />}
+        {faError && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3">{faError}</div>}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {faLoading
+            ? Array.from({ length: 2 }).map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)
+            : flagshipAdmins.length === 0
+            ? <div className="col-span-3 py-8 text-center text-gray-400 text-sm">No flagship admins yet. Create one above.</div>
+            : flagshipAdmins.map((fa) => (
+                <div key={fa.id} className="flex items-start justify-between p-4 rounded-xl border bg-white gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{fa.full_name || '—'}</p>
+                    <p className="text-xs text-gray-500 truncate">{fa.email}</p>
+                    <span className={`inline-flex items-center gap-1 mt-1.5 text-xs px-2 py-0.5 rounded-full border ${fa.certificate_type === 'Blood Donation' ? 'text-blood-700 bg-blood-50 border-blood-200' : 'text-tree-700 bg-tree-50 border-tree-200'}`}>
+                      {fa.certificate_type === 'Blood Donation' ? <Droplets className="h-3 w-3" /> : <TreePine className="h-3 w-3" />}
+                      {fa.certificate_type}
+                    </span>
+                  </div>
+                  <button onClick={() => setConfirmRemoveFAId(fa.id)} className="text-red-400 hover:text-red-600 p-1 rounded" title="Remove">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+        </div>
+      </div>
+
+      {/* Create Flagship Admin Dialog */}
+      <Dialog open={isCreateFAOpen} onOpenChange={setIsCreateFAOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Create Flagship Admin</DialogTitle><DialogDescription>This account can verify all certificates of one type.</DialogDescription></DialogHeader>
+          <div className="space-y-3">
+            {faFormError && <Alert variant="destructive"><AlertDescription>{faFormError}</AlertDescription></Alert>}
+            <div className="space-y-1"><Label>Full Name</Label><Input placeholder="Enter full name" value={faForm.full_name} onChange={(e) => setFaForm({ ...faForm, full_name: e.target.value })} /></div>
+            <div className="space-y-1"><Label>Email</Label><Input type="email" placeholder="admin@example.com" value={faForm.email} onChange={(e) => setFaForm({ ...faForm, email: e.target.value })} /></div>
+            <div className="space-y-1"><Label>Password</Label><Input type="password" placeholder="Min 6 characters" value={faForm.password} onChange={(e) => setFaForm({ ...faForm, password: e.target.value })} /></div>
+            <div className="space-y-1">
+              <Label>Certificate Type</Label>
+              <ShadSelect value={faForm.certificate_type} onValueChange={(v) => setFaForm({ ...faForm, certificate_type: v as any })}>
+                <ShadSelectTrigger><ShadSelectValue placeholder="Select type…" /></ShadSelectTrigger>
+                <ShadSelectContent>
+                  <ShadSelectItem value="Blood Donation"><span className="flex items-center gap-2"><Droplets className="h-4 w-4 text-red-500" />Blood Donation</span></ShadSelectItem>
+                  <ShadSelectItem value="Tree Tagging"><span className="flex items-center gap-2"><TreePine className="h-4 w-4 text-green-500" />Tree Tagging</span></ShadSelectItem>
+                </ShadSelectContent>
+              </ShadSelect>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 mt-2">
+            <Button variant="outline" onClick={() => setIsCreateFAOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateFA} disabled={faSubmitting}>{faSubmitting ? 'Creating…' : 'Create'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirm Remove FA Dialog */}
+      <Dialog open={!!confirmRemoveFAId} onOpenChange={() => setConfirmRemoveFAId(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader><DialogTitle>Remove Flagship Admin</DialogTitle><DialogDescription>Their role will be downgraded to student. This cannot be undone easily.</DialogDescription></DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setConfirmRemoveFAId(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleRemoveFA}>Remove</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="mt-16">
         <Footer />

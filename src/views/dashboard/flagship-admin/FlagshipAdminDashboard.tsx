@@ -58,10 +58,10 @@ const FlagshipAdminDashboard = () => {
   ];
 
   return (
-    <div className="font-isans min-h-screen bg-gray-50">
+    <div className="font-isans min-h-screen bg-gray-50 flex flex-col">
       <DashboardNavigation mode="flagship-admin" />
 
-      <div className="container mx-auto px-4 py-8 space-y-6">
+      <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -129,7 +129,7 @@ const FlagshipAdminDashboard = () => {
         </div>
       </div>
 
-      <div className="mt-16"><Footer /></div>
+      <Footer />
     </div>
   );
 };

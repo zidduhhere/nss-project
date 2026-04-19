@@ -36,8 +36,11 @@ export default function LoginLeftSide() {
                 navigate('/dashboard/unit');
             } else if (result.role === 'admin') {
                 navigate('/dashboard/admin');
-            }
-            else {
+            } else if (result.role === 'flagship_admin') {
+                navigate('/dashboard/flagship-admin');
+            } else if (result.role === 'rco') {
+                navigate('/dashboard/rco');
+            } else {
                 setErrorMessage("Unknown user role. Please contact support.");
             }
         }

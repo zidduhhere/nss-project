@@ -14,7 +14,7 @@ export const flagshipAdminService = {
 
     let query = supabase
       .from(table)
-      .select(`*, profiles!${table}_student_id_fkey(full_name, ktu_id, college_id, mobile)`)
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (filters?.status && filters.status !== "all") {
@@ -24,8 +24,21 @@ export const flagshipAdminService = {
     const { data, error } = await query;
     if (error) handleSupabaseError(error, "Failed to fetch submissions");
 
-    let submissions: AdminSubmission[] = (data || []).map((item: any) => {
-      const profile = item.profiles;
+    const rows = data || [];
+
+    // Fetch profiles for all unique student_ids in one query
+    const studentIds = [...new Set(rows.map((r: any) => r.student_id).filter(Boolean))];
+    const profileMap: Record<string, any> = {};
+    if (studentIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, ktu_id, college_id, mobile")
+        .in("id", studentIds);
+      (profiles || []).forEach((p: any) => { profileMap[p.id] = p; });
+    }
+
+    let submissions: AdminSubmission[] = rows.map((item: any) => {
+      const profile = profileMap[item.student_id];
       if (certificateType === "Blood Donation") {
         return {
           id: item.id,

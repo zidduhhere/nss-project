@@ -1,4 +1,4 @@
-import { College, generalService } from "@/services/generalService";
+import { College, CollegeWithUnit, generalService } from "@/services/generalService";
 import { useEffect, useState } from "react";
 
 
@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 export const useGeneralServices = () => {
 
  const [colleges, setColleges] = useState<College[]>([]);
+ const [collegesWithUnits, setCollegesWithUnits] = useState<CollegeWithUnit[]>([]);
  const [districtBasedColleges, setDistrictBasedColleges] = useState<College[]>([]);
  const [loading, setLoading] = useState<boolean>(false);
 
 
  useEffect(() => {
-    // Fetch all colleges on hook initialization
     fetchAllColleges();
+    fetchAllCollegesWithUnits();
  }, []);
 
 
@@ -31,6 +32,15 @@ export const useGeneralServices = () => {
         }
    }
 
+   const fetchAllCollegesWithUnits = async () => {
+        try {
+            const response = await generalService.getAllCollegesWithUnits();
+            setCollegesWithUnits(response);
+        } catch (error) {
+            console.error("Error fetching colleges with units:", error);
+        }
+   };
+
    const fetchCollegesByDistrict = async (districtCode: string) => {
         try {
             setLoading(true);
@@ -47,6 +57,7 @@ export const useGeneralServices = () => {
 
    return {
     colleges,
+    collegesWithUnits,
     districtBasedColleges,
     loading,
     fetchAllColleges,

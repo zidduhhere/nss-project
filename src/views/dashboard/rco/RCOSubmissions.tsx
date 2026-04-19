@@ -69,11 +69,11 @@ const RCOSubmissions = () => {
   ];
 
   return (
-    <div className="font-isans min-h-screen bg-gray-50">
+    <div className="font-isans min-h-screen bg-gray-50 flex flex-col">
       <DashboardNavigation mode="rco" />
       {successMessage && <SuccessModal title="Success" message={successMessage} />}
 
-      <div className="container mx-auto px-4 py-8 space-y-6">
+      <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
@@ -244,7 +244,7 @@ const RCOSubmissions = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="mt-16"><Footer /></div>
+      <Footer />
     </div>
   );
 };

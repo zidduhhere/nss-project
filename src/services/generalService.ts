@@ -7,6 +7,27 @@ export interface College {
   district: string;
 }
 
+export interface CollegeWithUnit extends College {
+  unit_number: string | null;
+}
+
+export const DISTRICT_CODE_TO_NAME: Record<string, string> = {
+  TVM: "Thiruvananthapuram",
+  KOL: "Kollam",
+  PAT: "Pathanamthitta",
+  ALA: "Alappuzha",
+  KOT: "Kottayam",
+  IDU: "Idukki",
+  ERN: "Ernakulam",
+  THR: "Thrissur",
+  PAL: "Palakkad",
+  MAL: "Malappuram",
+  KOZ: "Kozhikode",
+  WAY: "Wayanad",
+  KAN: "Kannur",
+  KAS: "Kasargode",
+};
+
 export interface HomepageStats {
   bloodDonations: number;
   treesTagged: number;
@@ -43,6 +64,23 @@ export const generalService = {
 
     if (error) handleSupabaseError(error, "Failed to fetch colleges");
     return (data as College[]) || [];
+  },
+
+  getAllCollegesWithUnits: async (): Promise<CollegeWithUnit[]> => {
+    const { data, error } = await supabase
+      .from("colleges")
+      .select("id, name, district, nss_units(unit_number)")
+      .order("name", { ascending: true });
+
+    if (error) handleSupabaseError(error, "Failed to fetch colleges with units");
+
+    return ((data as any[]) || []).map((c) => {
+      const units: { unit_number: string }[] = c.nss_units || [];
+      const minUnit = units
+        .map((u) => u.unit_number)
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))[0] ?? null;
+      return { id: c.id, name: c.name, district: c.district, unit_number: minUnit };
+    });
   },
 
   getCollegeOnDistrict: async (districtCode: string): Promise<College[]> => {
