@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import {
   Search,
   Filter,
@@ -487,7 +488,7 @@ export default function AdminActivities() {
                   <h4 className="text-sm font-semibold text-gray-700 mb-2">Report</h4>
                   <div
                     className="prose prose-sm max-w-none text-gray-600 bg-gray-50 rounded-xl p-4"
-                    dangerouslySetInnerHTML={{ __html: selectedActivity.report }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedActivity.report) }}
                   />
                 </div>
               )}
