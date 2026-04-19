@@ -1,8 +1,0 @@
-src/views/dashboard/admin/AdminUsers.tsx
-ARCHITECTURE.md
-README.md
-docs/authentication.md
-docs/PAID_EXTENSIONS_SPEC.md
-docs/SUPABASE_SETUP.md
-src/assets/images/logos/nss-logo.png
-src/assets/images/logos/nss-logo.webp

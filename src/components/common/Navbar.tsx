@@ -72,6 +72,7 @@ export default function Navbar({}: NavbarProps) {
   }, []);
 
   return (
+    <>
     <nav className="bg-transparent py-4 navbar sticky top-0 z-50 font-isans">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-6">
         <div className="bg-black border border-white/10 rounded-2xl">
@@ -191,9 +192,11 @@ export default function Navbar({}: NavbarProps) {
         </div>
       </div>
 
+    </nav>
+
       {/* Drawer for mobile & tablet */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50">
+        <div className="lg:hidden fixed inset-0 z-[100]">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm"
@@ -206,8 +209,8 @@ export default function Navbar({}: NavbarProps) {
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">NSS</span>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                    <img src={images.logo} alt="NSS logo" className="w-8 h-8 object-contain" />
                   </div>
                   <span className="text-white font-semibold">Menu</span>
                 </div>
@@ -308,6 +311,6 @@ export default function Navbar({}: NavbarProps) {
           </div>
         </div>
       )}
-    </nav>
+    </>
   );
 }
